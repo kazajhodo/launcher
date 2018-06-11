@@ -23,7 +23,7 @@ comments=(
 
 # Capture our fun comment and output to confuse users
 commentscount=${#comments[@]}
-target=$((random%10))
+target=$((RANDOM%7))
 
 echo
 echo ${comments[target]}
