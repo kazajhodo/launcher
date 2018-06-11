@@ -2,7 +2,10 @@
 Bash script that swaps system and terminal php versions using Homebrew.
 
 # Dependencies
-Written on macOS Sierra, 10.12.6. Feel free to use/modify. Developed for personal use.
+Homebrew.
+Written on macOS Sierra, 10.12.6.
+
+Feel free to use/modify. Developed for personal use.
 
 # Functionality walkthrough
 Detects if Homebrew is installed, if not exits.
