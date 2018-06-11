@@ -74,11 +74,11 @@ brew unlink php@$phpversion && brew link php@$phpchange --force
 brew services start php@$phpchange
 
 # Show running version of php
-echo 'Currently running php version:'
+echo 'Current system php version:'
 ps aux | grep php
 
 #Show running console version of php
-echo 'Terminal version of php:'
+echo 'Current terminal php version:'
 php -v
 
 
