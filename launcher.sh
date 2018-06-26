@@ -43,8 +43,6 @@ set -- $phpversion
 phpversion="$4"
 phpversion=${phpversion:0:3}
 
-echo $phpversion
-
 # Update php version and reload source
 # Capture current user to use in paths
 file="$HOME/.zshrc"
@@ -74,13 +72,16 @@ brew unlink php@$phpversion && brew link php@$phpchange --force
 brew services start php@$phpchange
 
 # Show running version of php
+echo
 echo 'Current system php version:'
 ps aux | grep php
+echo
 
 #Show running console version of php
+echo
 echo 'Current terminal php version:'
 php -v
-
+echo
 
 #
 #
