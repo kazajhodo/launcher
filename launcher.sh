@@ -43,6 +43,15 @@ set -- $phpversion
 phpversion="$4"
 phpversion=${phpversion:0:3}
 
+if [[ $phpversion == $phpchange ]]; then
+  echo
+  echo "HEY!"
+  echo "Php current version and specified version are the same you lunk. We're done here."
+  echo
+  php -v
+  exit
+fi
+
 # Update php version and reload source
 # Capture current user to use in paths
 file="$HOME/.zshrc"
@@ -52,13 +61,6 @@ awk '!/php@/' $file > temp && mv temp $file
 
 # Export new php version to path
 echo "export PATH=\"/usr/local/opt/php@$phpchange/bin:/usr/local/opt/php@$phpchange/sbin:\$PATH\"" >> $file
-
-#
-#
-# Writing to path working, but not properly changing
-# Attempt with new above, already input, just not tested
-# 
-# 
 
 # Reload source to ensure we have current php version
 source '/etc/profile'
@@ -70,6 +72,9 @@ echo 'Swapping php versions.'
 brew services stop php@$phpversion    
 brew unlink php@$phpversion && brew link php@$phpchange --force
 brew services start php@$phpchange
+
+# Reload source again to ensure we have switched php version
+source '/etc/profile'
 
 # Show running version of php
 echo
@@ -103,17 +108,26 @@ echo
 
 # Project loaders
 
-# Checks if sublime is installed
+# Checks if [ide] is installed
 # If it is, requests project you wish to open
-# Assumes projects will be set by the script installer
+# Assumes projects will be set by the dev using the script
 
 # Projects location variable
 # To be used in all below editor opening blocks, should be incorporate more
 projects="$HOME/Projects/"
 
-if which subl >/dev/null 2>&1; then
-  echo
-  echo 'What Sublime project are you working in? Give me the foldername exactly.'
-  read project
-  subl $projects$project
+# Uncomment the editor you wish to use
+
+#if which subl >/dev/null 2>&1; then
+#  echo
+#  echo 'Which project are you working in? Give me the foldername exactly.'
+#  read project
+#  subl $projects$project
+#fi
+
+if which code >/dev/null 2>&1; then
+	echo
+	echo 'Which project are you working in? Give me the foldername exactly.'
+	read project
+	code $projects$project 
 fi
