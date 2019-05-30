@@ -52,7 +52,7 @@ if [[ $help ]]; then
   echo 'This should make it a little easier, hopefully.'
   echo
   echo 'Parameters:'
-  echo '  ex. 7.0     switch to this php version'
+  echo '  7.0     switch to this php version'
   echo
   echo 'Options:'
   echo '  -y          auto answer yes to prompts'
@@ -71,6 +71,7 @@ comments=(
   "It WAS a wonderful day. Until it wasn't."
   "Ahhh SH*%"
   "Switching projects... AGAIN."
+  "Monkeys Monkeys MONKEYS. Get me out."
 )
 
 # If php version was not passed as an option.
@@ -142,24 +143,6 @@ echo
 echo 'Current terminal php version:'
 php -v
 echo
-
-#
-#
-# TODO:
-# Add github functionality
-# Start a hotfix or feature
-# Depending on response h/f
-# Fire off corresponding hotfix or feature start
-# 
-#
-
-#
-#
-# TODO:
-# Check if tower is used
-# If so, open hotfix in tower
-# 
-# 
 
 # Project loaders.
 
