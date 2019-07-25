@@ -1,5 +1,10 @@
 #!/bin/bash
 
+
+# TODO:
+# Allow passing of project name.
+
+
 # Check if homebrew is installed.
 # If not, stop the machinations.
 if which brew >/dev/null 2>&1; then
@@ -38,9 +43,13 @@ do
     '--help')
       help=$item
       ;;
+    '-p')
+      pantheon=1
+      ;;
     *)
       echo $item ' is not an acceptable parameter or option.'
-      echo 'Use the --help option to view available options.'
+      echo 'Using the --help option to view available options.'
+      launcher --help
       exit 0
   esac
 done
@@ -56,6 +65,7 @@ if [[ $help ]]; then
   echo
   echo 'Options:'
   echo '  -y          auto answer yes to prompts'
+  echo '  -p          This is a pantheon site'
   echo
   echo 'Help:'
   echo '  --help      View this list. Ironic.'
@@ -102,47 +112,49 @@ phpversion=${phpversion:0:3}
 if [[ $phpversion == $phpchange ]]; then
   echo
   echo "HEY!"
-  echo "Php current version and specified version are the same you lunk. We're done here."
+  echo "Php current version and specified version are the same you lunk."
+  echo "Perhaps you'd like to open a project still..."
   echo
   php -v
-  exit
+  echo
+else
+  # Update php version and reload source.
+  # Capture current user to use in paths.
+  file="$HOME/.zshrc"
+
+  # Remove any php@ references within .zshrc file.
+  awk '!/php@/' $file > temp && mv temp $file
+
+  # Export new php version to path
+  echo "export PATH=\"/usr/local/opt/php@$phpchange/bin:/usr/local/opt/php@$phpchange/sbin:\$PATH\"" >> $file
+
+  # Reload source to ensure we have current php version.
+  source '/etc/profile'
+
+  echo 'Updated your .zshrc, reloaded source.'
+  echo 'Swapping php versions.'
+
+  # Changing php version.
+  brew services stop php@$phpversion    
+  brew unlink php@$phpversion && brew link php@$phpchange --force
+  brew services start php@$phpchange
+
+  # Reload source again to ensure we have switched php version.
+  source '/etc/profile'
+
+  # Show running version of php.
+  echo
+  echo 'Current system php version:'
+  ps aux | grep php
+  echo
+
+  #Show running console version of php.
+  echo
+  echo 'Current terminal php version:'
+  php -v
+  echo
 fi
 
-# Update php version and reload source.
-# Capture current user to use in paths.
-file="$HOME/.zshrc"
-
-# Remove any php@ references within .zshrc file.
-awk '!/php@/' $file > temp && mv temp $file
-
-# Export new php version to path
-echo "export PATH=\"/usr/local/opt/php@$phpchange/bin:/usr/local/opt/php@$phpchange/sbin:\$PATH\"" >> $file
-
-# Reload source to ensure we have current php version.
-source '/etc/profile'
-
-echo 'Updated your .zshrc, reloaded source.'
-echo 'Swapping php versions.'
-
-# Changing php version.
-brew services stop php@$phpversion    
-brew unlink php@$phpversion && brew link php@$phpchange --force
-brew services start php@$phpchange
-
-# Reload source again to ensure we have switched php version.
-source '/etc/profile'
-
-# Show running version of php.
-echo
-echo 'Current system php version:'
-ps aux | grep php
-echo
-
-#Show running console version of php.
-echo
-echo 'Current terminal php version:'
-php -v
-echo
 
 # Project loaders.
 
@@ -152,7 +164,11 @@ echo
 
 # Projects location variable.
 # To be used in all below editor opening blocks.
-projects="$HOME/Projects/"
+if [[ pantheon == 1 ]]; then
+  projects="$HOME/Localdev/"
+else
+  projects="$HOME/Projects/"
+fi
 
 # If -y option is passed.
 # Skip question and set openup to true.
@@ -192,4 +208,9 @@ if [[ $openup ]]; then
   #   read project
   #   subl $projects$project
   # fi
+
+  # tower options
+  if which gittower >/dev/null 2>&1; then
+    gittower $projects$project
+  fi
 fi
