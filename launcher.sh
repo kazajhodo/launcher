@@ -40,17 +40,26 @@ do
     '-y')
       yes=$item
       ;;
-    '--help')
+    '-help | --help')
       help=$item
       ;;
     '-p')
       pantheon=1
       ;;
     *)
-      echo $item ' is not an acceptable parameter or option.'
-      echo 'Using the --help option to view available options.'
-      launcher --help
-      exit 0
+      # Do a '-' check to make sure this isn't an option.
+      # If it has a check we should return to use -help.
+
+      # Check for a number or number with decimal.
+      check="^[0-9]+([.][0-9]+)?$"
+      if [[ $item == *-* || $item =~ $check ]]; then
+        echo
+        echo "Yo, monkeypants, $item is not an option. Do a \"launcher -help\" to see whats powers you may bend towards your nefarious plotting."
+        echo
+        exit 0
+      else
+        project=$item
+      fi
   esac
 done
 
@@ -60,8 +69,10 @@ if [[ $help ]]; then
   echo 'Change your php versions alot? You are in the right place.'
   echo 'This should make it a little easier, hopefully.'
   echo
-  echo 'Parameters:'
+  echo 'Parameters [optional]:'
   echo '  7.0     switch to this php version'
+  echo '       - if your version does not exist, it can be added on line 37.'
+  echo '  [directory-name] project directory name to open'
   echo
   echo 'Options:'
   echo '  -y          auto answer yes to prompts'
@@ -71,32 +82,6 @@ if [[ $help ]]; then
   echo '  --help      View this list. Ironic.'
   echo
   exit 0
-fi
-
-comments=(
-  "A long time ago, in a galaxy far, far away. #if{{exists(spotify)}} spotify -p star wars theme"
-  "rm -rf / #This is what you get for blindly trusting code."
-  "Using the force."
-  "Don\'t forget to do your time log."
-  "It WAS a wonderful day. Until it wasn't."
-  "Ahhh SH*%"
-  "Switching projects... AGAIN."
-  "Monkeys Monkeys MONKEYS. Get me out."
-)
-
-# If php version was not passed as an option.
-if [[ ! $phpchange ]]; then
-  # Capture our fun comment and output to confuse users.
-  commentscount=${#comments[@]}
-  target=$((RANDOM%7))
-
-  echo
-  echo ${comments[target]}
-  echo
-
-  echo 'Which php version are we switching to? Version number only, ex: 5.6, 7.0, 7.1. You can use anything that exists on your system.'
-  read phpchange
-  echo 'Doing stuff...'
 fi
 
 # Capture current php version.
@@ -109,15 +94,16 @@ set -- $phpversion
 phpversion="$4"
 phpversion=${phpversion:0:3}
 
+# If: php version passed and they are equal.
+# Elif: only run if a change number was passed.
 if [[ $phpversion == $phpchange ]]; then
   echo
   echo "HEY!"
-  echo "Php current version and specified version are the same you lunk."
-  echo "Perhaps you'd like to open a project still..."
+  echo "Php current version and specified version are the same, you lunk."
   echo
   php -v
   echo
-else
+elif [[ $phpchange ]]; then
   # Update php version and reload source.
   # Capture current user to use in paths.
   file="$HOME/.zshrc"
@@ -156,61 +142,71 @@ else
 fi
 
 
-# Project loaders.
+# If php version was not passed as an option.
+if [[ ! $phpchange ]]; then
+  # Project loaders.
 
-# Checks if [ide] is installed.
-# If it is, requests project you wish to open.
-# Assumes projects path and ide commenting will be set by the dev using the script.
+  # Checks if [ide] is installed.
+  # If it is, requests project you wish to open.
+  # Assumes projects path and ide commenting will be set by the dev using the script.
 
-# Projects location variable.
-# To be used in all below editor opening blocks.
-if [[ pantheon == 1 ]]; then
-  projects="$HOME/Localdev/"
-else
-  projects="$HOME/Projects/"
-fi
+  # Projects location variable.
+  # To be used in all below editor opening blocks.
+  if [[ pantheon == 1 ]]; then
+    projects="$HOME/Localdev/"
+  else
+    projects="$HOME/Projects/"
+  fi
 
-# If -y option is passed.
-# Skip question and set openup to true.
-if [[ $yes ]]; then
-  openup=true
-else
-  # Ask user if they want to open in editor.
-  echo 'Open a project? y/n'
-  read openproject
-
-  # If -y passed or user signaled to open project.
-  if [[ $openproject ==  'yes' || $openproject == 'y' ]]; then
+  # If -y option is passed.
+  # Skip question and set openup to true.
+  if [[ $yes ]]; then
     openup=true
   else
-    echo
-    echo 'Until next time scrubanub.'
-    echo
+    if [[ ! $project ]]; then
+      # Ask user if they want to open in editor.
+      echo 'Open a project? y/n'
+      read openproject
+    else
+      openproject="y"
+    fi
+
+    # If -y passed or user signaled to open project.
+    if [[ $openproject ==  'yes' || $openproject == 'y' ]]; then
+      openup=true
+    else
+      echo
+      echo 'Until next time scrubanub.'
+      echo
+    fi
   fi
-fi
 
-# ide options
-# Uncomment the editor you wish to use.
+  # ide options
+  # Uncomment the editor you wish to use.
 
-if [[ $openup ]]; then
-  if which code >/dev/null 2>&1; then
-    echo
-    echo 'Which project are you working in? Exact directory name.'
-    read project
-    code $projects$project 
-  fi
+  if [[ $openup ]]; then
+    if [[ ! $project ]]; then
+      if which code >/dev/null 2>&1; then
+        echo
+        echo 'Which project are you working in? Exact directory name.'
+        read project
+      fi
+    else
+      code $projects$project  
+    fi
 
-  # Example ide detection block.
-  # Uses 'which' to detect if ide is installed.
-  # if which subl >/dev/null 2>&1; then
-  #   echo
-  #   echo 'Which project are you working in? Exact directory name.'
-  #   read project
-  #   subl $projects$project
-  # fi
+    # Example ide detection block.
+    # Uses 'which' to detect if ide is installed.
+    # if which subl >/dev/null 2>&1; then
+    #   echo
+    #   echo 'Which project are you working in? Exact directory name.'
+    #   read project
+    #   subl $projects$project
+    # fi
 
-  # tower options
-  if which gittower >/dev/null 2>&1; then
-    gittower $projects$project
+    # tower options
+    if which gittower >/dev/null 2>&1; then
+      gittower $projects$project
+    fi
   fi
 fi
