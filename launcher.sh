@@ -1,8 +1,14 @@
 #!/bin/bash
 
+##
+# Command Examples
+##
+# Switch php version.
+# launcher [php-version]
 
-# TODO:
-# Allow passing of project name.
+# Switch php version.
+# Use '/localDev' as path instead of '/projects'.
+# launcher [php-version] -p
 
 
 # Check if homebrew is installed.
@@ -23,6 +29,7 @@ fi
 # This is done to allow switching to php 7.3 using the 'php@7.3'.
 php73='/usr/local/Cellar/php73'
 phpat73='/usr/local/Cellar/php@7.3'
+
 # Checks if symlink exists regardless of if what it points to exists (-L).
 # Check if symlink exists and what it points to exists, regardless of type (-e).
 # If both do not exist, we create them.
@@ -40,7 +47,7 @@ do
     '-y')
       yes=$item
       ;;
-    '-help | --help')
+    '-help' | '--help')
       help=$item
       ;;
     '-p')
@@ -192,21 +199,43 @@ if [[ ! $phpchange ]]; then
         read project
       fi
     else
-      code $projects$project  
-    fi
 
-    # Example ide detection block.
-    # Uses 'which' to detect if ide is installed.
-    # if which subl >/dev/null 2>&1; then
-    #   echo
-    #   echo 'Which project are you working in? Exact directory name.'
-    #   read project
-    #   subl $projects$project
-    # fi
+      # Terminal commands need to fire first, or the program be selected and command issued.
+      # When opening multiple programs, we're dealing with specific timing.
+      # Which creates a variety of issues.
 
-    # tower options
-    if which gittower >/dev/null 2>&1; then
-      gittower $projects$project
+      cd $projects$project
+      code $projects$project
+
+      # TODO:
+      # Get 
+
+      # Currently this executes applescript properly.
+      # However there is a timeout issue.
+      # This line executes before application has finished loading its window.
+      # Not sure how to get around this yet.
+      # I think the best way is to timeout, then select the application(s), then apply the command(s).
+      # osascript -e 'tell application "System Events" to key code 124 using {control down, option down}'
+      
+      # Example ide detection block.
+      # Uses 'which' to detect if ide is installed.
+      # if which subl >/dev/null 2>&1; then
+      #   echo
+      #   echo 'Which project are you working in? Exact directory name.'
+      #   read project
+      #   subl $projects$project
+      # fi
+
+      # Opera Developer options
+      if open -Ra 'Opera Developer' >/dev/null 2>&1; then
+        open -a 'Opera Developer' "http://$project.ash"
+        open -a 'Opera Developer' "http://$project.ash/user"
+      fi
+
+      # Tower options
+      if which gittower >/dev/null 2>&1; then
+        gittower $projects$project
+      fi
     fi
   fi
 fi
