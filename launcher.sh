@@ -110,6 +110,15 @@ if [[ $phpversion == $phpchange ]]; then
   echo
   php -v
   echo
+
+  # If a project is set.
+  # We're still going to do stuff.
+  if [[ $project ]]; then
+    echo
+    echo "I'll still open a project for a lunk though."
+    echo "Opening $project."
+    echo
+  fi
 elif [[ $phpchange ]]; then
   # Update php version and reload source.
   # Capture current user to use in paths.
@@ -150,7 +159,7 @@ fi
 
 
 # If php version was not passed as an option.
-if [[ ! $phpchange ]]; then
+if [[ ! $phpchange || $phpversion == $phpchange && $project ]]; then
   # Project loaders.
 
   # Checks if [ide] is installed.
