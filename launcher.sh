@@ -159,7 +159,7 @@ fi
 
 
 # If php version was not passed as an option.
-if [[ ! $phpchange || $phpversion == $phpchange && $project ]]; then
+if [[ $project ]]; then
   # Project loaders.
 
   # Checks if [ide] is installed.
