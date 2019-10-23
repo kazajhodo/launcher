@@ -212,7 +212,19 @@ if [[ $project ]]; then
       # Terminal commands need to fire first, or the program be selected and command issued.
       # When opening multiple programs, we're dealing with specific timing.
       # Which creates a variety of issues.
+
+      cd $projects$project
       code $projects$project
+
+      # TODO:
+      # Get 
+
+      # Currently this executes applescript properly.
+      # However there is a timeout issue.
+      # This line executes before application has finished loading its window.
+      # Not sure how to get around this yet.
+      # I think the best way is to timeout, then select the application(s), then apply the command(s).
+      # osascript -e 'tell application "System Events" to key code 124 using {control down, option down}'
       
       # Example ide detection block.
       # Uses 'which' to detect if ide is installed.
@@ -241,5 +253,4 @@ if [[ $project ]]; then
       fi
     fi
   fi
-  cd $projects$project
 fi
