@@ -75,5 +75,5 @@ Start a hotfix/feature/branch after project load.
 Detect php path location.
 
 
-# Issues
+# Enhancements, Bugs, Invalid, Questions
 Add at https://github.com/kazajhodo/launcher/issues
