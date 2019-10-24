@@ -53,14 +53,12 @@ Detects if Homebrew is installed, if not exits.
 Adds symlinks for osx php version 7.3.
 This allows using launcher to swap to osx php version.
 
-Outputs a variety of hopefully amusing comments when initiated. Like, ‘Using the force’ and my favorite, 'rm -rf / #This is what you get for blindly trusting code.'.
-
 Requests php version you would like to switch to, if not passed as an option.
 
 Detects current php version, stops, unlinks.
-Removes php reference in .zshrc.
-Updates php reference in .zshrc.
-Reloads .zshrc source.
+Removes php reference.
+Updates php reference.
+Reloads php reference source.
 Links requested php version, starts.
 
 Automatically outputs current system php version after changes with ‘ps aux | grep php’.
