@@ -21,7 +21,7 @@ fi
 cd "${0%/*}" && source '.updated.sh'
 
 # Warns users to migrate settings.
-if [[ $updated ]]; then
+if [[ "$updated" = true ]]; then
   echo
   echo
   echo 'WARNING: You will only see this message once, then your settings will be overridden.'
