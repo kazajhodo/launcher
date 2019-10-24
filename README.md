@@ -7,6 +7,17 @@ Written on macOS Sierra, 10.12.6.
 
 Feel free to use/modify. Developed for personal use.
 
+
+# User Configuration File
+User settings are now placed into your.launcher.settings.sh.
+
+This file is copied to .launcher.settings.sh, which is not saved in the repo.
+
+If these settings are ever expanded/updated, a warning message will display with instructions regarding maintaining your old settings, into the new settings system.
+
+Message will only show once. Once launcher is ran again current settings will be overritten and lost.
+
+
 # Setup
 
 ## Dev controlled functionality
@@ -71,6 +82,7 @@ Automatically outputs terminal php version with ‘php -v’.
 Add github functionality.
 Start a hotfix/feature/branch after project load.
 Detect php path location.
+Break functionality into seperate files.
 
 
 # Enhancements, Bugs, Invalid, Questions

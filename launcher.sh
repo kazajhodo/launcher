@@ -6,10 +6,6 @@
 # Switch php version.
 # launcher [php-version]
 
-# Switch php version.
-# Use '/localDev' as path instead of '/projects'.
-# launcher [php-version] -p
-
 
 # Check if homebrew is installed.
 # If not, stop the machinations.
@@ -21,7 +17,48 @@ else
   exit 0
 fi
 
-# Mac default php version is 7.3
+# Check if user configuration settings have been updated.
+cd "${0%/*}" && source '.updated.sh'
+
+# Warns users to migrate settings.
+if [[ $updated ]]; then
+  echo
+  echo
+  echo 'WARNING: You will only see this message once, then your settings will be overridden.'
+  echo
+  echo '"your.launcher.settings.sh" options have been updated in this release.'
+  echo
+  echo 'Before running launcher again, compare ".launcher.settings.sh" to "your.launcher.settings.sh" below. Move your current "".launcher.settings.sh" values, into the new "your.launcher.settings.sh" file, and configure new values as desired.'
+  echo
+  echo
+  echo '# CURRENT SETTINGS: in ".launcher.settings.sh"'
+  echo
+  cd "${0%/*}" && cat .launcher.settings.sh
+  echo
+  echo
+  echo
+  echo '# NEW SETTINGS: in "your.launcher.settings.sh."'
+  cd "${0%/*}" && cat your.launcher.settings.sh
+  echo
+  echo
+  echo 'Once complete, run launcher and your new settings will be locked in.'
+  echo
+  echo
+
+  # Change updated variable to false
+  cd "${0%/*}" && sed -i '' 's/updated=true/updated=false/' '.updated.sh'
+  exit 0
+fi
+
+# Load user settings file.
+cd "${0%/*}" && cp your.launcher.settings.sh .launcher.settings.sh && source ".launcher.settings.sh"
+
+# Find PHP export path definition.
+# Set found file as exportTarget.
+phpExportTarget=$(find "$HOME" -follow -maxdepth 1 -type f -iname ".*" ! -iname ".zsh_history" | xargs grep "opt/php" -H 2>/dev/null)
+phpExportTarget=$( cut -d ':' -f 1 <<< "$phpExportTarget" )
+
+# Mac default php version is 7.3.
 # Homebrew does not contain symlinks for this version.
 # Lets add them.
 
@@ -36,6 +73,9 @@ phpat73='/usr/local/Cellar/php@7.3'
 if ! [[ -L $php73 && -e $phpat73 ]]; then
   cd /usr/local/Cellar && ln -s php@7.3 php73 && ln -s /usr/local/bin/php php@7.3 
 fi
+
+# Default to -noaai TRUE
+noaai=false
 
 # Check and set parameters and options.
 for item in $*
@@ -55,6 +95,9 @@ do
       ;;
     '-sub='*)
       sub=${item#*=}
+      ;;
+    '-noaai')
+      noaai=true
       ;;
     *)
       # Do a '-' check to make sure this isn't an option.
@@ -92,6 +135,9 @@ if [[ $help ]]; then
   echo '  -sub=sub-directory-name'
   echo '         Specify sub-directory web-root for admin route detection'
   echo '         ex: if your webroot is in "docroot", -sub=docroot'
+  echo '  -noaai      This is not an aai project'
+  echo '         Used for magento admin urls.'
+  echo '         AAI uses "manage", default is "admin"'
   echo
   echo 'Help:'
   echo '  -help, --help      View this list. Ironic.'
@@ -129,22 +175,16 @@ if [[ $phpversion == $phpchange ]]; then
   fi
 elif [[ $phpchange ]]; then
   # Update php version and reload source.
-  # Capture current user to use in paths.
-  # This value should be where php export paths are set.
-  if [[ -d "$HOME/.zshrc" ]]; then
-    file="$HOME/.zshrc"
-  fi
-
   # Remove any php@ references within .zshrc file.
-  awk '!/php@/' $file > temp && mv temp $file
+  awk '!/php@/' $phpExportTarget > temp && mv temp $phpExportTarget
 
   # Export new php version to path
-  echo "export PATH=\"/usr/local/opt/php@$phpchange/bin:/usr/local/opt/php@$phpchange/sbin:\$PATH\"" >> $file
+  echo "export PATH=\"/usr/local/opt/php@$phpchange/bin:/usr/local/opt/php@$phpchange/sbin:\$PATH\"" >> $phpExportTarget
 
   # Reload source to ensure we have current php version.
   source '/etc/profile'
 
-  echo 'Updated your .zshrc, reloaded source.'
+  echo "Updated php export definitions within $phpExportTarget, reloaded source."
   echo 'Swapping php versions.'
 
   # Changing php version.
@@ -173,16 +213,15 @@ fi
 if [[ $project ]]; then
   # Project loaders.
 
-  # Checks if [ide] is installed.
+  # Checks if settings file specified ide is installed.
   # If it is, requests project you wish to open.
-  # Assumes projects path and ide commenting will be set by the dev using the script.
 
   # Projects location variable.
   # To be used in all below editor opening blocks.
   if [[ pantheon == 1 ]]; then
     projects="$HOME/Localdev/"
   else
-    projects="$HOME/Projects/"
+    projects="$HOME/$projectsDirectory/"
   fi
 
   # If -y option is passed.
@@ -231,7 +270,7 @@ if [[ $project ]]; then
       # Terminal commands need to fire first, or the program be selected and command issued.
       # When opening multiple programs, we're dealing with specific timing.
       # Which creates a variety of issues.
-      code $projects$project
+      $ide $projects$project
 
       # If sub-directory passed, prepare to add to url.
       if [ ! -z $sub ]; then
@@ -242,7 +281,11 @@ if [[ $project ]]; then
       # With possible sub-directory modifier.
       # Magento.
       if [[ -d "$projects$project$sub/app" ]]; then
-        app='manage'
+        if [[ $noaai ]]; then
+          app='admin'
+        else
+          app='manage'
+        fi
       fi
 
       # Drupal.
@@ -271,6 +314,7 @@ if [[ $project ]]; then
       fi
     fi
   fi
+  # Move terminal to project directory.
   # This is not working yet.
   cd $projects$project
 fi
