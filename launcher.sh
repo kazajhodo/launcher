@@ -81,7 +81,7 @@ if [[ $help ]]; then
   echo
   echo 'Parameters [optional]:'
   echo '  "7.0"     switch to this php version'
-  echo '       note: if your version does not exist, it can be added on line 37.'
+  echo '       note: if your version does not exist, it can be added into the case statement above.'
   echo
   echo '  "[directory-name]"'
   echo '       project directory name to open'
