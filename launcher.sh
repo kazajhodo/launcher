@@ -41,7 +41,7 @@ fi
 for item in $*
 do
   case $item in
-    '5.6' | '7.0' | '7.1' | '7.2' | '7.3')
+    '5.4' | '5.6' | '7.0' | '7.1' | '7.2' | '7.3')
       phpchange=$item
       ;;
     '-y')
@@ -52,6 +52,9 @@ do
       ;;
     '-p')
       pantheon=1
+      ;;
+    '-sub='*)
+      sub=${item#*=}
       ;;
     *)
       # Do a '-' check to make sure this isn't an option.
@@ -77,16 +80,21 @@ if [[ $help ]]; then
   echo 'This should make it a little easier, hopefully.'
   echo
   echo 'Parameters [optional]:'
-  echo '  7.0     switch to this php version'
-  echo '       - if your version does not exist, it can be added on line 37.'
-  echo '  [directory-name] project directory name to open'
+  echo '  "7.0"     switch to this php version'
+  echo '       note: if your version does not exist, it can be added on line 37.'
+  echo
+  echo '  "[directory-name]"'
+  echo '       project directory name to open'
   echo
   echo 'Options:'
   echo '  -y          auto answer yes to prompts'
   echo '  -p          This is a pantheon site'
+  echo '  -sub=sub-directory-name'
+  echo '         Specify sub-directory web-root for admin route detection'
+  echo '         ex: if your webroot is in "docroot", -sub=docroot'
   echo
   echo 'Help:'
-  echo '  --help      View this list. Ironic.'
+  echo '  -help, --help      View this list. Ironic.'
   echo
   exit 0
 fi
@@ -122,7 +130,10 @@ if [[ $phpversion == $phpchange ]]; then
 elif [[ $phpchange ]]; then
   # Update php version and reload source.
   # Capture current user to use in paths.
-  file="$HOME/.zshrc"
+  # This value should be where php export paths are set.
+  if [[ -d "$HOME/.zshrc" ]]; then
+    file="$HOME/.zshrc"
+  fi
 
   # Remove any php@ references within .zshrc file.
   awk '!/php@/' $file > temp && mv temp $file
@@ -202,18 +213,6 @@ if [[ $project ]]; then
 
   if [[ $openup ]]; then
     if [[ ! $project ]]; then
-      if which code >/dev/null 2>&1; then
-        echo
-        echo 'Which project are you working in? Exact directory name.'
-        read project
-      fi
-    else
-
-      # Terminal commands need to fire first, or the program be selected and command issued.
-      # When opening multiple programs, we're dealing with specific timing.
-      # Which creates a variety of issues.
-      code $projects$project
-      
       # Example ide detection block.
       # Uses 'which' to detect if ide is installed.
       # if which subl >/dev/null 2>&1; then
@@ -223,23 +222,55 @@ if [[ $project ]]; then
       #   subl $projects$project
       # fi
 
-      # Opera Developer options
-      # if open -Ra 'Opera Developer' >/dev/null 2>&1; then
-      #   open -a 'Opera Developer' "http://$project.ash"
-      #   open -a 'Opera Developer' "http://$project.ash/user"
-      # fi
+      if which code >/dev/null 2>&1; then
+        echo
+        echo 'Which project are you working in? Exact directory name.'
+        read project
+      fi
+    else
+      # Terminal commands need to fire first, or the program be selected and command issued.
+      # When opening multiple programs, we're dealing with specific timing.
+      # Which creates a variety of issues.
+      code $projects$project
 
-      # Brave options
-      if open -Ra 'Brave Browser' >/dev/null 2>&1; then
-        open -a 'Brave Browser' "http://$project.ash"
-        open -a 'Brave Browser' "http://$project.ash/user"
+      # If sub-directory passed, prepare to add to url.
+      if [ ! -z $sub ]; then
+        sub="/$sub"
       fi
 
-      # Tower options
+      # Detect project framework.
+      # With possible sub-directory modifier.
+      # Magento.
+      if [[ -d "$projects$project$sub/app" ]]; then
+        app='manage'
+      fi
+
+      # Drupal.
+      if [[ -d "$projects$project$sub/sites" ]]; then
+        app='user'
+      fi
+
+      # Wordpress.
+      if [[ -d "$projects$project$sub/wp-content" ]]; then
+        app='wp-admin'
+      fi
+
+      # Open project homepage.
+      open "http://$project.ash"
+
+      # Open project framework management page.
+      if [[ $app ]]; then
+        open "http://$project.ash/$app"
+      fi
+
+      # Tower options.
+      # Tower Integration must be on.
+      # Turn on within Tower settings, 'integration', install button.
       if which gittower >/dev/null 2>&1; then
         gittower $projects$project
       fi
     fi
   fi
+  # This is not working yet.
   cd $projects$project
 fi
