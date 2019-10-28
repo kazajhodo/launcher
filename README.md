@@ -87,13 +87,11 @@ Automatically outputs terminal php version with ‘php -v’.
 
 Opens provided directory in ide editor.   
 Opens project url and admin route if defined.   
-_Depends on project directories being named the same as url base._
-> Ex. site.ash is in the site directory.
+> _Depends on project directories being named the same as url base._   
+Ex. site.ash is in the site directory.
 
 
 # Future functionality
-
-## Github branch creation
 + Add github functionality to start a hotfix/feature/branch after project load.
 + Break functionality into seperate files.
 
