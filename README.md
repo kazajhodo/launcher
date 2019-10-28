@@ -25,9 +25,7 @@ Starting at the '# Project loaders.' comment line there are additional functiona
 
 Define your local projects location in the 'projects' variable.
 
-Run a 'which [ide name]' to detect your ide installation path. Use this to add your own ide detection block.
-
-## ide detection block.
+## ide detection block
 Uses 'which' to detect if ide is installed.
 Check on command line by running ```which [ide-name]```.
 ```
@@ -87,9 +85,10 @@ Links requested php version, starts.
 Automatically outputs current system php version after changes with ‘ps aux | grep php’.
 Automatically outputs terminal php version with ‘php -v’.
 
-Opens provided directory in ide editor.
-Opens project url and admin route if defined. Depends on directories being named the same as url base.
-Ex. site.ash is in the site directory.
+Opens provided directory in ide editor.   
+Opens project url and admin route if defined.   
+_Depends on project directories being named the same as url base._
+> Ex. site.ash is in the site directory.
 
 
 # Future functionality
