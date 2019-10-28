@@ -95,8 +95,8 @@ Ex. site.ash is in the site directory.
 # Future functionality
 
 ## Github branch creation
-Add github functionality to start a hotfix/feature/branch after project load.
-Break functionality into seperate files.
++Add github functionality to start a hotfix/feature/branch after project load.
++Break functionality into seperate files.
 
 
 # Enhancements, Bugs, Invalid, Questions
