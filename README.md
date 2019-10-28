@@ -94,7 +94,8 @@ Ex. 'site.local' is in the 'site' directory.
 # Future functionality
 + Add github functionality to start a hotfix/feature/branch after project load.
 + Break functionality into seperate files.
-
++ Detect if sub-directory exists. If not, ask which directory contains site root.
++ Show help on update true.
 
 # Enhancements, Bugs, Invalid, Questions
 Add at https://github.com/kazajhodo/launcher/issues
