@@ -74,8 +74,9 @@ if ! [[ -L $php73 && -e $phpat73 ]]; then
   cd /usr/local/Cellar && ln -s php@7.3 php73 && ln -s /usr/local/bin/php php@7.3 
 fi
 
-# Default to -noaai TRUE
+# Defaults
 noaai=false
+kill=false
 
 # Check and set parameters and options.
 for item in $*
@@ -98,6 +99,9 @@ do
       ;;
     '-noaai')
       noaai=true
+      ;;
+    'kill')
+      kill=true
       ;;
     *)
       # Do a '-' check to make sure this isn't an option.
@@ -208,6 +212,32 @@ elif [[ $phpchange ]]; then
   echo
 fi
 
+# TODO: Closerbrave
+# Kill programs opened by launcher.
+# For quickly closing everything opened in order to relaunch.
+# if [[ $kill ]]; then
+#   # killall gittower
+#   # killall $ide
+
+#   # Close all browser tabs that contain a .ash url.
+# osascript <<EOD
+#   tell application "Brave Browser"
+#     try
+#       set windowCount to number of windows
+#       repeat with thiswindow from 1 to windowCount
+#           set tabCount to number of tabs in window thiswindow
+#           repeat with y from 1 to tabCount
+#               set thistab to tab y of window thiswindow
+#               set check to URL of thistab
+#               display dialog "what: " & check
+#               if check contains ".ash" then close thistab
+#           end repeat
+#       end repeat
+#     on error
+#     end
+#   end tell
+# EOD
+# fi
 
 # If php version was not passed as an option.
 if [[ $project ]]; then
