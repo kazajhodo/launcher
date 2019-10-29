@@ -215,11 +215,13 @@ fi
 # TODO: Closerbrave
 # Kill programs opened by launcher.
 # For quickly closing everything opened in order to relaunch.
-# if [[ $kill ]]; then
-#   # killall gittower
-#   # killall $ide
+if [[ $kill ]]; then
+  #osascript -e "quit appplication $ideapp"
+  #osascript -e "quit application $gitapp"
 
-#   # Close all browser tabs that contain a .ash url.
+  # Close all browser tabs that contain local domain suffix specified in .launcher.settings.sh.
+  # $suffix
+
 # osascript <<EOD
 #   tell application "Brave Browser"
 #     try
@@ -237,7 +239,7 @@ fi
 #     end
 #   end tell
 # EOD
-# fi
+fi
 
 # If php version was not passed as an option.
 if [[ $project ]]; then

@@ -55,6 +55,13 @@ You may pass your project parent folder to be opened by your ide.
 
 This assumes you have ide setup. Reference 'ide detection block' section.
 
+## Close items opened by launcher
+Ex. ```launcher kill```
+
+Closes ide set within .launcher.settings.sh.
+Closes tower application.
+TODO:: Closes browser tabs with specified local domain suffix.
+
 ## Multiple parameter passing
 Ex. ```launcher 7.2 project-name```
 
