@@ -75,8 +75,9 @@ if ! [[ -L $php73 && -e $phpat73 ]]; then
 fi
 
 # Defaults
-noaai=false
+deploy=false
 kill=false
+noaai=false
 
 # Check and set parameters and options.
 for item in $*
@@ -84,6 +85,13 @@ do
   case $item in
     '5.4' | '5.6' | '7.0' | '7.1' | '7.2' | '7.3')
       phpchange=$item
+      ;;
+    # 'deploy')
+    #   echo 'firing'
+    #   deploy=${item#*=}
+    #   ;;
+    'kill')
+      kill=true
       ;;
     '-y')
       yes=$item
@@ -99,9 +107,6 @@ do
       ;;
     '-noaai')
       noaai=true
-      ;;
-    'kill')
-      kill=true
       ;;
     *)
       # Do a '-' check to make sure this isn't an option.
@@ -132,6 +137,11 @@ if [[ $help ]]; then
   echo
   echo '  "[directory-name]"'
   echo '       project directory name to open'
+  echo
+  echo '  "kill"    Close all applications and browser tabs opened by launcher'
+  echo
+  echo '  "deploy=[pantheon-sitename].[environment]"'
+  echo '       Terminus site deployment from dev to live, or specified environment'
   echo
   echo 'Options:'
   echo '  -y          auto answer yes to prompts'
@@ -212,10 +222,10 @@ elif [[ $phpchange ]]; then
   echo
 fi
 
-# TODO: Closerbrave
+# TODO: Closer
 # Kill programs opened by launcher.
 # For quickly closing everything opened in order to relaunch.
-if [[ $kill ]]; then
+# if [[ $kill = true ]]; then
   #osascript -e "quit appplication $ideapp"
   #osascript -e "quit application $gitapp"
 
@@ -239,7 +249,7 @@ if [[ $kill ]]; then
 #     end
 #   end tell
 # EOD
-fi
+# fi
 
 # If php version was not passed as an option.
 if [[ $project ]]; then
@@ -346,7 +356,12 @@ if [[ $project ]]; then
       fi
     fi
   fi
-  # Move terminal to project directory.
-  # This is not working yet.
-  cd $projects$project
+fi
+
+# Launcher Deploy.
+# For pantheon sites.
+if [[ $deploy = true ]]; then
+  if which terminus >/dev/null 2>&1; then
+    echo $deploy
+  fi
 fi
