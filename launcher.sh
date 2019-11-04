@@ -330,7 +330,7 @@ if [[ $project ]]; then
           echo 'Attempting to open.'
 
           if [[ ! -d "$projects$project/$sub" ]]; then
-            echo "Whoa, I didn't detect that directory. Check yourself and run the command again."
+            echo "What the... I didn't detect that directory?! Check yourself and run the launcher command again."
           fi
 
           # Write to file for future automation.
