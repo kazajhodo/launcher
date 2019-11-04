@@ -310,7 +310,7 @@ if [[ $project ]]; then
       fi
     else
       # Check if a known subdirectory exists.
-      if [[ ! -d "$projects$project/app" || ! -d "$projects$project/sites" || ! -d "$projects$project/wp-content" ]]; then
+      if [[ ! -d "$projects$project/app" && ! -d "$projects$project/sites" && ! -d "$projects$project/wp-content" ]]; then
         rows=$(cat .docroots)
         for row in $rows; do
           if [[ -d "$projects$project/$row" ]]; then
