@@ -309,6 +309,35 @@ if [[ $project ]]; then
         read project
       fi
     else
+      # Check if a known subdirectory exists.
+      if [[ ! -d "$projects$project/app" || ! -d "$projects$project/sites" || ! -d "$projects$project/wp-content" ]]; then
+        rows=$(cat .docroots)
+        for row in $rows; do
+          if [[ -d "$projects$project/$row" ]]; then
+            sub="$row"
+            break
+          fi
+        done
+
+        if [[ -z $sub ]]; then
+          echo
+          echo 'No common framework subdirectory detected.'
+          echo 'What is this projects web root directory name?'
+          read sub
+          echo
+          echo "Got it, I'll remember this for future searches."
+          echo
+          echo 'Attempting to open.'
+
+          if [[ ! -d "$projects$project/$sub" ]]; then
+            echo "Whoa, I didn't detect that directory. Check yourself and run the command again."
+          fi
+
+          # Write to file for future automation.
+          echo -e "$sub" >> .docroots
+        fi
+      fi
+
       # Terminal commands need to fire first, or the program be selected and command issued.
       # When opening multiple programs, we're dealing with specific timing.
       # Which creates a variety of issues.

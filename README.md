@@ -100,7 +100,6 @@ Ex. 'site.local' is in the 'site' directory.
 
 # Future functionality
 + Break functionality into seperate files.
-+ Detect if sub-directory exists. If not, ask which directory contains site root.
 + Add github functionality to start a hotfix/feature/branch after project load.
 + Show help on update true.
 + Add terminus deploy functionality.
