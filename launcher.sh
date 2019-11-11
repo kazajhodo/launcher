@@ -138,7 +138,7 @@ if [[ $help ]]; then
   echo '  "[directory-name]"'
   echo '       project directory name to open'
   echo
-  echo '  "kill"    Close all applications and browser tabs opened by launcher'
+  echo '  "kill"    Close all applications previously opened by launcher'
   echo
   echo '  "deploy=[pantheon-sitename].[environment]"'
   echo '       Terminus site deployment from dev to live, or specified environment'
@@ -225,31 +225,35 @@ fi
 # TODO: Closer
 # Kill programs opened by launcher.
 # For quickly closing everything opened in order to relaunch.
-# if [[ $kill = true ]]; then
-  #osascript -e "quit appplication $ideapp"
-  #osascript -e "quit application $gitapp"
+if [[ $kill = true ]]; then
+  echo 'running'
 
   # Close all browser tabs that contain local domain suffix specified in .launcher.settings.sh.
   # $suffix
 
-# osascript <<EOD
-#   tell application "Brave Browser"
-#     try
-#       set windowCount to number of windows
-#       repeat with thiswindow from 1 to windowCount
-#           set tabCount to number of tabs in window thiswindow
-#           repeat with y from 1 to tabCount
-#               set thistab to tab y of window thiswindow
-#               set check to URL of thistab
-#               display dialog "what: " & check
-#               if check contains ".ash" then close thistab
-#           end repeat
-#       end repeat
-#     on error
-#     end
-#   end tell
-# EOD
-# fi
+osascript <<EOD
+  ignoring application responses
+    tell application "$ideapp" to quit
+    tell application "$gitapp" to quit
+  end ignoring
+
+  # tell application "Brave Browser"
+  #   try
+  #     set windowCount to number of windows
+  #     repeat with thiswindow from 1 to windowCount
+  #         set tabCount to number of tabs in window thiswindow
+  #         repeat with y from 1 to tabCount
+  #             set thistab to tab y of window thiswindow
+  #             set check to URL of thistab
+  #             display dialog "what: " & check
+  #             if check contains "$suffix" then close thistab
+  #         end repeat
+  #     end repeat
+  #   on error
+  #   end
+  # end tell
+EOD
+fi
 
 # If php version was not passed as an option.
 if [[ $project ]]; then

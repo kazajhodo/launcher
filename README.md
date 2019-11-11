@@ -58,8 +58,6 @@ This assumes you have ide setup. Reference 'ide detection block' section.
 ## Close items opened by launcher
 Ex. ```launcher kill```
 
-Closes ide set within .launcher.settings.sh.
-Closes tower application.
 TODO:: Closes browser tabs with specified local domain suffix.
 
 ## Multiple parameter passing
@@ -72,7 +70,7 @@ Ex. ```launcher -help```
 
 May pass options to modify behavior.
 
-_Use '--help' to view help details._
+_Use '-help | --help' to view help details._
 
 
 # Functionality walkthrough
