@@ -90,9 +90,6 @@ do
     #   echo 'firing'
     #   deploy=${item#*=}
     #   ;;
-    'kill')
-      kill=true
-      ;;
     '-y')
       yes=$item
       ;;
@@ -121,6 +118,7 @@ do
         exit 0
       else
         project=$item
+        kill=true
       fi
   esac
 done
@@ -226,10 +224,10 @@ fi
 # Kill programs opened by launcher.
 # For quickly closing everything opened in order to relaunch.
 if [[ $kill = true ]]; then
-  echo 'running'
-
   # Close all browser tabs that contain local domain suffix specified in .launcher.settings.sh.
   # $suffix
+  if [[ $suffix ]]; then
+    suffix=".$suffix"
 
 osascript <<EOD
   ignoring application responses
@@ -237,22 +235,31 @@ osascript <<EOD
     tell application "$gitapp" to quit
   end ignoring
 
-  # tell application "Brave Browser"
-  #   try
-  #     set windowCount to number of windows
-  #     repeat with thiswindow from 1 to windowCount
-  #         set tabCount to number of tabs in window thiswindow
-  #         repeat with y from 1 to tabCount
-  #             set thistab to tab y of window thiswindow
-  #             set check to URL of thistab
-  #             display dialog "what: " & check
-  #             if check contains "$suffix" then close thistab
-  #         end repeat
-  #     end repeat
-  #   on error
-  #   end
-  # end tell
+  # TODO:
+  # This gets us to one item remaining in each window
+  # Need to fix
+  tell application "Brave Browser"
+    try
+      set windowCount to number of windows
+      repeat with thiswindow from 1 to windowCount
+          set tabCount to number of tabs in window thiswindow
+          set counter to 1
+
+          # display dialog tabCount
+          repeat tabCount times
+              set thistab to tab counter of window thiswindow
+              set check to URL of thistab
+
+              if check contains "$suffix" then close thistab
+
+              set counter to (counter + 1)
+          end repeat
+      end repeat
+    on error
+    end
+  end tell
 EOD
+fi
 fi
 
 # If php version was not passed as an option.
