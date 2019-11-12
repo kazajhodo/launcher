@@ -23,6 +23,7 @@ gitapp='Tower'
 projectsDirectory='Projects'
 
 # DOMAIN SUFFIX
+# No '.'
 suffix='ash'
 
 # BROWSER
