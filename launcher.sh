@@ -216,6 +216,7 @@ elif [[ $phpchange ]]; then
   #Show running console version of php.
   echo
   echo 'Current terminal php version:'
+  echo
   php -v
   echo
 fi
@@ -230,28 +231,24 @@ if [[ $kill = true ]]; then
     suffix=".$suffix"
 
 osascript <<EOD
+  set ideapp to "$ideapp"
+  set gitapp to "$gitapp"
+
   ignoring application responses
-    tell application "$ideapp" to quit
-    tell application "$gitapp" to quit
+    tell application ideapp to quit
+    tell application gitapp to quit
   end ignoring
 
-  # TODO:
-  # This gets us to one item remaining in each window
-  # Need to fix
   tell application "Brave Browser"
     try
       set windowCount to number of windows
       repeat with thiswindow from 1 to windowCount
           set tabCount to number of tabs in window thiswindow
           set counter to 1
-
-          # display dialog tabCount
           repeat tabCount times
               set thistab to tab counter of window thiswindow
               set check to URL of thistab
-
               if check contains "$suffix" then close thistab
-
               set counter to (counter + 1)
           end repeat
       end repeat
@@ -259,7 +256,7 @@ osascript <<EOD
     end
   end tell
 EOD
-fi
+  fi
 fi
 
 # If php version was not passed as an option.
