@@ -9,7 +9,7 @@
 
 # Check if homebrew is installed.
 # If not, stop the machinations.
-if which brew >/dev/null 2>&1; then
+if type brew >/dev/null 2>&1; then
   installed=true
 else
   echo "Brew is not installed on your system, this won't work"
@@ -18,7 +18,7 @@ else
 fi
 
 # Check if user configuration settings have been updated.
-cd "${0%/*}" && source '.updated.sh'
+cd "${0%/*}" && source '.updated'
 
 # Warns users to migrate settings.
 if [[ "$updated" = true ]]; then
@@ -26,19 +26,19 @@ if [[ "$updated" = true ]]; then
   echo
   echo 'WARNING: You will only see this message once, then your settings will be overridden.'
   echo
-  echo '"your.launcher.settings.sh" options have been updated in this release.'
+  echo '"your.launcher.settings" options have been updated in this release.'
   echo
-  echo 'Before running launcher again, compare ".launcher.settings.sh" to "your.launcher.settings.sh" below. Move your current "".launcher.settings.sh" values, into the new "your.launcher.settings.sh" file, and configure new values as desired.'
-  echo
-  echo
-  echo '# CURRENT SETTINGS: in ".launcher.settings.sh"'
-  echo
-  cd "${0%/*}" && cat .launcher.settings.sh
+  echo 'Before running launcher again, compare ".launcher.settings" to "your.launcher.settings" below. Move your current "".launcher.settings" values, into the new "your.launcher.settings" file, and configure new values as desired.'
   echo
   echo
+  echo '# CURRENT SETTINGS: in ".launcher.settings"'
   echo
-  echo '# NEW SETTINGS: in "your.launcher.settings.sh."'
-  cd "${0%/*}" && cat your.launcher.settings.sh
+  cd "${0%/*}" && cat .launcher.settings
+  echo
+  echo
+  echo
+  echo '# NEW SETTINGS: in "your.launcher.settings."'
+  cd "${0%/*}" && cat your.launcher.settings
   echo
   echo
   echo 'Once complete, run launcher and your new settings will be locked in.'
@@ -46,12 +46,12 @@ if [[ "$updated" = true ]]; then
   echo
 
   # Change updated variable to false
-  cd "${0%/*}" && sed -i '' 's/updated=true/updated=false/' '.updated.sh'
+  cd "${0%/*}" && sed -i '' 's/updated=true/updated=false/' '.updated'
   exit 0
 fi
 
 # Load user settings file.
-cd "${0%/*}" && cp your.launcher.settings.sh .launcher.settings.sh && source ".launcher.settings.sh"
+cd "${0%/*}" && cp your.launcher.settings .launcher.settings && source ".launcher.settings"
 
 # Find PHP export path definition.
 # Set found file as exportTarget.
@@ -225,7 +225,7 @@ fi
 # Kill programs opened by launcher.
 # For quickly closing everything opened in order to relaunch.
 if [[ $kill = true ]]; then
-  # Close all browser tabs that contain local domain suffix specified in .launcher.settings.sh.
+  # Close all browser tabs that contain local domain suffix specified in .launcher.settings.
   # $suffix
   if [[ $suffix ]]; then
     suffix=".$suffix"
@@ -303,15 +303,15 @@ if [[ $project ]]; then
   if [[ $openup ]]; then
     if [[ ! $project ]]; then
       # Example ide detection block.
-      # Uses 'which' to detect if ide is installed.
-      # if which subl >/dev/null 2>&1; then
+      # Uses 'type' to detect if ide is installed.
+      # if type terminus >/dev/null 2>&1; then
       #   echo
       #   echo 'Which project are you working in? Exact directory name.'
       #   read project
       #   subl $projects$project
       # fi
 
-      if which code >/dev/null 2>&1; then
+      if type code >/dev/null 2>&1; then
         echo
         echo 'Which project are you working in? Exact directory name.'
         read project
@@ -388,7 +388,7 @@ if [[ $project ]]; then
       # Tower options.
       # Tower Integration must be on.
       # Turn on within Tower settings, 'integration', install button.
-      if which gittower >/dev/null 2>&1; then
+      if type gittower >/dev/null 2>&1; then
         gittower $projects$project
       fi
     fi
@@ -398,7 +398,7 @@ fi
 # Launcher Deploy.
 # For pantheon sites.
 if [[ $deploy = true ]]; then
-  if which terminus >/dev/null 2>&1; then
+  if type terminus >/dev/null 2>&1; then
     echo $deploy
   fi
 fi
