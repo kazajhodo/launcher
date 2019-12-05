@@ -9,9 +9,9 @@ Feel free to use/modify. Developed for personal use.
 
 
 # User Configuration File
-User settings are now placed into your.launcher.settings.sh.
+User settings are now placed into your.launcher.settings.
 
-This file is copied to .launcher.settings.sh, which is not saved in the repo.
+This file is copied to .launcher.settings, which is not saved in the repo.
 
 If these settings are ever expanded/updated, a warning message will display with instructions regarding maintaining your old settings, into the new settings system.
 
@@ -26,10 +26,10 @@ Starting at the '# Project loaders.' comment line there are additional functiona
 Define your local projects location in the 'projects' variable.
 
 ## ide detection block
-Uses 'which' to detect if ide is installed.
-Check on command line by running ```which [ide-name]```.
+Uses 'try' to detect if ide is installed.
+Check on command line by running ```try [ide-name]```.
 ```
-if which subl >/dev/null 2>&1; then
+if try subl >/dev/null 2>&1; then
   echo
   echo 'Which project are you working in? Exact directory name.'
   read project
@@ -56,19 +56,18 @@ You may pass your project parent folder to be opened by your ide.
 This assumes you have ide setup. Reference 'ide detection block' section.
 
 ## Close items opened by launcher
-Ex. ```launcher kill```
+Specified items that launcher opens are automatically closed before opening new items.
 
 TODO:: Closes browser tabs with specified local domain suffix.
+Currently this is working... but not completely bug free.
 
 ## Multiple parameter passing
-Ex. ```launcher 7.2 project-name```
+Ex. ```launcher 7.2 [project-name]```
 
 You may pass multiple parameters at once.
 
 ## Options
-Ex. ```launcher -help```
-
-May pass options to modify behavior.
+Ex. ```launcher [-help | --help]```
 
 _Use '-help | --help' to view help details._
 

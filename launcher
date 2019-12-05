@@ -391,6 +391,8 @@ if [[ $project ]]; then
       if type gittower >/dev/null 2>&1; then
         gittower $projects$project
       fi
+
+      cd $projects$project
     fi
   fi
 fi
