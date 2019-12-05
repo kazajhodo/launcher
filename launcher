@@ -392,7 +392,12 @@ if [[ $project ]]; then
         gittower $projects$project
       fi
 
-      cd $projects$project
+      # If sub-directory passed, append to cd.
+      if [ ! -z $sub ]; then
+        cd $projects$project$sub
+      else
+        cd $projects$project
+      fi
     fi
   fi
 fi
