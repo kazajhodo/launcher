@@ -387,13 +387,6 @@ if [[ $project ]]; then
       if type gittower >/dev/null 2>&1; then
         gittower $projects$project
       fi
-
-      # If sub-directory passed, append to cd.
-      # if [[ ! -z $sub ]]; then
-      #   cd $projects$project$sub
-      # else
-      #   cd $projects$project
-      # fi
     fi
   fi
 fi
