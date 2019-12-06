@@ -21,7 +21,7 @@ fi
 cd "${0%/*}" && source '.updated'
 
 # Warns users to migrate settings.
-if [[ "$updated" = true ]]; then
+if [[ $updated = true ]]; then
   echo
   echo
   echo 'WARNING: You will only see this message once, then your settings will be overridden.'
@@ -86,10 +86,6 @@ do
     '5.4' | '5.6' | '7.0' | '7.1' | '7.2' | '7.3')
       phpchange=$item
       ;;
-    # 'deploy')
-    #   echo 'firing'
-    #   deploy=${item#*=}
-    #   ;;
     '-y')
       yes=$item
       ;;
@@ -158,7 +154,7 @@ if [[ $help ]]; then
 fi
 
 # Capture current php version.
-phpversion=$(php -i aux | grep 'PHP Version')
+phpversion=$(php -i aux | grep 'PHP Version' | head -1)
 set -- $phpversion
 
 # PHPVERSION example output: php extension version => 7.1.18.
@@ -169,7 +165,7 @@ phpversion=${phpversion:0:3}
 
 # If: php version passed and they are equal.
 # Elif: only run if a change number was passed.
-if [[ $phpversion == $phpchange ]]; then
+if [[ $phpversion && $phpversion == $phpchange ]]; then
   echo
   echo "HEY!"
   echo "Php current version and specified version are the same, you lunk."
@@ -185,7 +181,7 @@ if [[ $phpversion == $phpchange ]]; then
     echo "Opening $project."
     echo
   fi
-elif [[ $phpchange ]]; then
+elif [[ ! -z $phpchange ]]; then
   # Update php version and reload source.
   # Remove any php@ references within .zshrc file.
   awk '!/php@/' $phpExportTarget > temp && mv temp $phpExportTarget
@@ -200,7 +196,7 @@ elif [[ $phpchange ]]; then
   echo 'Swapping php versions.'
 
   # Changing php version.
-  brew services stop php@$phpversion    
+  brew services stop php@$phpversion
   brew unlink php@$phpversion && brew link php@$phpchange --force
   brew services start php@$phpchange
 
@@ -352,7 +348,7 @@ if [[ $project ]]; then
       $ide $projects$project
 
       # If sub-directory passed, prepare to add to url.
-      if [ ! -z $sub ]; then
+      if [[ ! -z $sub ]]; then
         sub="/$sub"
       fi
 
@@ -360,7 +356,7 @@ if [[ $project ]]; then
       # With possible sub-directory modifier.
       # Magento.
       if [[ -d "$projects$project$sub/app" ]]; then
-        if [[ $noaai ]]; then
+        if [[ $noaai == true ]]; then
           app='admin'
         else
           app='manage'
@@ -393,19 +389,11 @@ if [[ $project ]]; then
       fi
 
       # If sub-directory passed, append to cd.
-      if [ ! -z $sub ]; then
-        cd $projects$project$sub
-      else
-        cd $projects$project
-      fi
+      # if [[ ! -z $sub ]]; then
+      #   cd $projects$project$sub
+      # else
+      #   cd $projects$project
+      # fi
     fi
-  fi
-fi
-
-# Launcher Deploy.
-# For pantheon sites.
-if [[ $deploy = true ]]; then
-  if type terminus >/dev/null 2>&1; then
-    echo $deploy
   fi
 fi
