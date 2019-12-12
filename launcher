@@ -338,7 +338,7 @@ if [[ $project ]]; then
           fi
 
           # Write to file for future automation.
-          echo -e "$sub" >> .docroots
+          echo "$sub" >> .docroots
         fi
       fi
 
