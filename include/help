@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Help display definition.
+if [[ $help ]]; then
+  echo
+  echo 'Change your php versions alot? You are in the right place.'
+  echo 'This should make it a little easier, hopefully.'
+  echo
+  echo 'Parameters [optional]:'
+  echo '  "7.0"     switch to this php version'
+  echo '       note: if your version does not exist, it can be added into the case statement above.'
+  echo
+  echo '  "[directory-name]"'
+  echo '       project directory name to open'
+  echo
+  echo '  "kill"    Close all applications previously opened by launcher'
+  echo
+  echo '  "deploy=[pantheon-sitename].[environment]"'
+  echo '       Terminus site deployment from dev to live, or specified environment'
+  echo
+  echo 'Options:'
+  echo '  -y          auto answer yes to prompts'
+  echo '  -p          This is a pantheon site'
+  echo '  -sub=sub-directory-name'
+  echo '         Specify sub-directory web-root for admin route detection'
+  echo '         ex: if your webroot is in "docroot", -sub=docroot'
+  echo '  -noaai      This is not an aai project'
+  echo '         Used for magento admin urls.'
+  echo '         AAI uses "manage", default is "admin"'
+  echo
+  echo 'Help:'
+  echo '  -help, --help      View this list. Ironic.'
+  echo
+  exit 0
+fi

@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# Kill programs opened by launcher.
+# For quickly closing everything opened in order to open new project.
+if [[ $kill = true ]]; then
+  # Local domain suffix specified in .launcher.settings.
+  if [[ $suffix ]]; then
+    suffix=".$suffix"
+
+# Close all browser tabs that contain local domain suffix.
+osascript <<EOD
+  set ideapp to "$ideapp"
+  set gitapp to "$gitapp"
+
+  ignoring application responses
+    tell application ideapp to quit
+    tell application gitapp to quit
+  end ignoring
+
+  tell application "$browser"
+    try
+      set windowCount to number of windows
+      repeat with thiswindow from 1 to windowCount
+          set tabCount to number of tabs in window thiswindow
+          set counter to 1
+          repeat tabCount times
+              set thistab to tab counter of window thiswindow
+              set check to URL of thistab
+              if check contains "$suffix" then close thistab
+              set counter to (counter + 1)
+          end repeat
+      end repeat
+    on error
+    end
+  end tell
+EOD
+  fi
+fi

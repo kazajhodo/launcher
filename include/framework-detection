@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Detect project framework.
+# With possible sub-directory modifier.
+# Magento.
+if [[ -d "$projects$project$sub/app" ]]; then
+  if [[ $noaai == true ]]; then
+    app='admin'
+  else
+    app='manage'
+  fi
+fi
+
+# Drupal.
+if [[ -d "$projects$project$sub/sites" ]]; then
+  app='user'
+fi
+
+# Wordpress.
+if [[ -d "$projects$project$sub/wp-content" ]]; then
+  app='wp-admin'
+fi
+
+# Open project homepage.
+open "http://$project.ash"
+
+# Open project framework management page.
+if [[ $app ]]; then
+  open "http://$project.ash/$app"
+fi

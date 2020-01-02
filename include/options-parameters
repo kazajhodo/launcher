@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Check and set parameters and options.
+for item in $*
+do
+  case $item in
+    '5.4' | '5.6' | '7.0' | '7.1' | '7.2' | '7.3')
+      phpchange=$item
+      ;;
+    '-y')
+      yes=$item
+      ;;
+    '-help' | '--help')
+      help=$item
+      ;;
+    '-p')
+      pantheon=1
+      ;;
+    '-sub='*)
+      sub=${item#*=}
+      ;;
+    '-noaai')
+      noaai=true
+      ;;
+    *)
+      # Do a '-' check to make sure this isn't an option.
+      # If it has a check we should return to use -help.
+
+      # Check for a number or number with decimal.
+      check="^[0-9]+([.][0-9]+)?$"
+      if [[ $item == *-* || $item =~ $check ]]; then
+        echo
+        echo "Yo, monkeypants, $item is not an option. Do a \"launcher -help\" to see whats powers you may bend towards your nefarious plotting."
+        echo
+        exit 0
+      else
+        project=$item
+        kill=true
+      fi
+  esac
+done

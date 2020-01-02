@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Warns users to migrate settings.
+if [[ $updated = true ]]; then
+  echo
+  echo
+  echo 'WARNING: You will only see this message once, then your settings will be overridden.'
+  echo
+  echo '"your.launcher.settings" options have been updated in this release.'
+  echo
+  echo 'Before running launcher again, compare ".launcher.settings" to "your.launcher.settings" below. Move your current "".launcher.settings" values, into the new "your.launcher.settings" file, and configure new values as desired.'
+  echo
+  echo
+  echo '# CURRENT SETTINGS: in ".launcher.settings"'
+  echo
+  cd "${0%/*}" && cat .launcher.settings
+  echo
+  echo
+  echo
+  echo '# NEW SETTINGS: in "your.launcher.settings."'
+  cd "${0%/*}" && cat your.launcher.settings
+  echo
+  echo
+  echo 'Once complete, run launcher and your new settings will be locked in.'
+  echo
+  echo
+
+  # Change updated variable to false
+  cd "${0%/*}" && sed -i '' 's/updated=true/updated=false/' '.updated'
+  exit 0
+fi

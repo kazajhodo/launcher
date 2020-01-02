@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Tower options.
+# Tower Integration must be on.
+# Turn on within Tower settings, 'integration', install button.
+if type gittower >/dev/null 2>&1; then
+  gittower $projects$project
+fi

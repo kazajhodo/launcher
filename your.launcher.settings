@@ -27,4 +27,9 @@ projectsDirectory='Projects'
 suffix='ash'
 
 # BROWSER
-# Now uses default browser.
+# Nothing for IE. I refuse.
+# 'Brave Browser'
+# 'Firefox Developer Edition'
+# 'Google Chrome'
+# 'Safari'
+browser='Brave Browser'

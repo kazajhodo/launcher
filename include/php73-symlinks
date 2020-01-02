@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Find PHP export path definition.
+# Set found file as exportTarget.
+phpExportTarget=$(find "$HOME" -follow -maxdepth 1 -type f -iname ".*" ! -iname ".zsh_history" | xargs grep "opt/php" -H 2>/dev/null)
+phpExportTarget=$( cut -d ':' -f 1 <<< "$phpExportTarget" )
+
+# Mac default php version is 7.3.
+# Homebrew does not contain symlinks for this version.
+# Lets add them.
+
+# Check if php symlinks are installed for 7.3.
+# This is done to allow switching to php 7.3 using the 'php@7.3'.
+php73='/usr/local/Cellar/php73'
+php_path73='/usr/local/Cellar/php@7.3'
+
+# Checks if symlink exists regardless of if what it points to exists (-L).
+# Check if symlink exists and what it points to exists, regardless of type (-e).
+# If both do not exist, we create them.
+if ! [[ -L $php73 && -L $php_path73 ]]; then
+  cd /usr/local/Cellar && ln -s php@7.3 php73 && ln -s /usr/local/bin/php php@7.3 
+fi

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cp your.launcher.settings .launcher.settings && source ".launcher.settings"

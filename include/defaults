@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Defaults
+deploy=false
+kill=false
+noaai=false

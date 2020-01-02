@@ -1,0 +1,107 @@
+#!/bin/bash
+
+# If php version was not passed as an option.
+if [[ $project ]]; then
+  # Project loaders.
+
+  # Checks if settings file specified ide is installed.
+  # If it is, requests project you wish to open.
+
+  # Projects location variable.
+  # To be used in all below editor opening blocks.
+  if [[ pantheon == 1 ]]; then
+    projects="$HOME/Localdev/"
+  else
+    projects="$HOME/$projectsDirectory/"
+  fi
+
+  # If -y option is passed.
+  # Skip question and set openup to true.
+  if [[ $yes ]]; then
+    openup=true
+  else
+    if [[ ! $project ]]; then
+      # Ask user if they want to open in editor.
+      echo 'Open a project? y/n'
+      read openproject
+    else
+      openproject="y"
+    fi
+
+    # If -y passed or user signaled to open project.
+    if [[ $openproject ==  'yes' || $openproject == 'y' ]]; then
+      openup=true
+    else
+      echo
+      echo 'Until next time scrubanub.'
+      echo
+    fi
+  fi
+
+  # ide options
+  # Uncomment the editor you wish to use.
+
+  if [[ $openup ]]; then
+    if [[ ! $project ]]; then
+      # Example ide detection block.
+      # Uses 'type' to detect if ide is installed.
+      # if type terminus >/dev/null 2>&1; then
+      #   echo
+      #   echo 'Which project are you working in? Exact directory name.'
+      #   read project
+      #   subl $projects$project
+      # fi
+
+      if type code >/dev/null 2>&1; then
+        echo
+        echo 'Which project are you working in? Exact directory name.'
+        read project
+      fi
+    else
+      # Check if a known subdirectory exists.
+      if [[ ! -d "$projects$project/app" && ! -d "$projects$project/sites" && ! -d "$projects$project/wp-content" ]]; then
+        rows=$(cat .docroots)
+        for row in $rows; do
+          if [[ -d "$projects$project/$row" ]]; then
+            sub="$row"
+            break
+          fi
+        done
+
+        if [[ -z $sub ]]; then
+          echo
+          echo 'No common framework subdirectory detected.'
+          echo 'What is this projects web root directory name?'
+          read sub
+          echo
+          echo "Got it, I'll remember this for future searches."
+          echo
+          echo 'Attempting to open.'
+
+          if [[ ! -d "$projects$project/$sub" ]]; then
+            echo "What the... I didn't detect that directory?! Check yourself and run the launcher command again."
+          fi
+
+          # Write to file for future automation.
+          echo "$sub" >> .docroots
+        fi
+      fi
+
+      # Terminal commands need to fire first, or the program be selected and command issued.
+      # When opening multiple programs, we're dealing with specific timing.
+      # Which creates a variety of issues.
+      $ide $projects$project
+
+      # If sub-directory passed, prepare to add to url.
+      if [[ ! -z $sub ]]; then
+        sub="/$sub"
+      fi
+
+      # Open admin of detected framework.
+      cd "${0%/*}" && source 'include/framework-detection'
+
+      # Open project in tower.
+      cd "${0%/*}" && source 'include/tower'
+    fi
+  fi
+fi
