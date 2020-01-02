@@ -73,32 +73,59 @@ _Use '-help | --help' to view help details._
 
 
 # Functionality walkthrough
+# Above each section is the corresponding filename.
+
+# defaults
+Default variable definitions.
+
+# help
+Shows help if parameter passed.
+
+# homebrew-check
 Detects if Homebrew is installed, if not exits.
 
+# migrate
+Warns if settings options have changed within your.launcher.settings.
+
+# overwrite
+Actually overwrites/creates '.launcher.settings'file from user defined 'your.launcher.settings' file.
+
+# options-parameters
+Options and parameters handling definitions.
+
+# php73-symlinks
 Adds symlinks for osx php version 7.3.
-This allows using launcher to swap to 'php' named php version.
 
+# phpchange
 Requests php version you would like to switch to, if not passed as an option.
-
 Detects current php version, stops, unlinks.
 Removes php reference.
 Updates php reference.
 Reloads php reference source.
-Links requested php version, starts.
-
+Links requested php version, starts php.
 Automatically outputs current system php version after changes with ‘ps aux | grep php’.
 Automatically outputs terminal php version with ‘php -v’.
 
-Opens provided directory in ide editor.   
-Opens project url and admin route if defined.   
-> _Depends on project directories being named the same as url base._   
+# kill
+Closes open ide windows.
+Closes open browser tabs with urls containing defined project suffix. Suffix defined within your.launcher.settings file.
+Closes open tower windows.
+
+# open-project
+Opens project in ide editor.
+
+# framework-detection
+Opens project url and admin route url if defined.
+
+# tower
+Opens project in tower.
+
+> _Functionality depends on project directories being named the same as url base._   
 Ex. 'site.local' is in the 'site' directory.
 
 
 # Future functionality
-+ Break functionality into seperate files.
 + Add github functionality to start a hotfix/feature/branch after project load.
-+ Show help on update true.
 + Add terminus deploy functionality.
 
 # Enhancements, Bugs, Invalid, Questions
