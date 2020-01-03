@@ -75,28 +75,28 @@ _Use '-help | --help' to view help details._
 # Functionality walkthrough
 # Above each section is the corresponding filename.
 
-# defaults
+### defaults
 Default variable definitions.
 
-# help
+### help
 Shows help if parameter passed.
 
-# homebrew-check
+### homebrew-check
 Detects if Homebrew is installed, if not exits.
 
-# migrate
+### migrate
 Warns if settings options have changed within your.launcher.settings.
 
-# overwrite
+### overwrite
 Actually overwrites/creates '.launcher.settings'file from user defined 'your.launcher.settings' file.
 
-# options-parameters
+### options-parameters
 Options and parameters handling definitions.
 
-# php73-symlinks
+### php73-symlinks
 Adds symlinks for osx php version 7.3.
 
-# phpchange
+### phpchange
 Requests php version you would like to switch to, if not passed as an option.
 Detects current php version, stops, unlinks.
 Removes php reference.
@@ -106,18 +106,18 @@ Links requested php version, starts php.
 Automatically outputs current system php version after changes with ‘ps aux | grep php’.
 Automatically outputs terminal php version with ‘php -v’.
 
-# kill
+### kill
 Closes open ide windows.
 Closes open browser tabs with urls containing defined project suffix. Suffix defined within your.launcher.settings file.
 Closes open tower windows.
 
-# open-project
+### open-project
 Opens project in ide editor.
 
-# framework-detection
+### framework-detection
 Opens project url and admin route url if defined.
 
-# tower
+### tower
 Opens project in tower.
 
 > _Functionality depends on project directories being named the same as url base._   
