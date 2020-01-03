@@ -7,19 +7,22 @@ ide='code'
 # IDE APPLICATION NAME
 # Actual application name. Found within ~/.Applications.
 # Without .app.
+
 # CASE SENSITIVE
 ideapp='Visual Studio Code'
 
 # GIT APPLICATION
 # Actual application name. Found within ~/.Applications.
 # Without .app.
+
 # CASE SENSITIVE
 gitapp='Tower'
 
 # PROJECTS DIRECTORY
-# This is where all of your local sites are location.
+# This is where all of your local sites are located.
 # Usually user root 'sites', or 'projects'
-# !! Case sensitive !!
+
+# CASE SENSITIVE
 projectsDirectory='Projects'
 
 # DOMAIN SUFFIX
@@ -28,6 +31,8 @@ suffix='ash'
 
 # BROWSER
 # Nothing for IE. I refuse.
+
+# Examples:
 # 'Brave Browser'
 # 'Firefox Developer Edition'
 # 'Google Chrome'

@@ -8,7 +8,7 @@ if [[ $updated = true ]]; then
   echo
   echo '"your.launcher.settings" options have been updated in this release.'
   echo
-  echo 'Before running launcher again, compare ".launcher.settings" to "your.launcher.settings" below. Move your current "".launcher.settings" values, into the new "your.launcher.settings" file, and configure new values as desired.'
+  echo 'Before running launcher again, compare ".launcher.settings" to "your.launcher.settings" below. Move your current ".launcher.settings" values, into the new "your.launcher.settings" file, and configure new values as desired.'
   echo
   echo
   echo '# CURRENT SETTINGS: in ".launcher.settings"'
