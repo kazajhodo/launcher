@@ -17,8 +17,8 @@ if [[ $help ]]; then
   echo
   echo '  "terminus.[pantheon-sitename].[environment]"'
   echo '       Terminus site deployment.'
-  echo '       Runs updb, cim, cr commands in that order, to the specified environment.'
-  echo '       Meaning if environment=test, will deploy to dev and test, and run commands against dev and test.'
+  echo '       Runs updb, cim, cr, commands- in that order, to the specified environment.'
+  echo '       Meaning if environment=test, will deploy to dev and test, running commands against dev and test.'
   echo
   echo 'Options:'
   echo '  -y          auto answer yes to prompts'
