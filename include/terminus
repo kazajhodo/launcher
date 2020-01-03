@@ -1,0 +1,35 @@
+#!/bin/bash
+
+if [[ $terminus ]]; then
+  declare steps=('dev' 'test' 'live')
+  site=${terminus%.*}
+  env=${terminus#*.}
+
+  if [[ $site && $env ]]; then
+    case $env in
+      'dev')
+        count=0
+        ;;
+      'test')
+        count=1
+        ;;
+      'live')
+        count=2
+        ;;
+      *)
+        echo
+        echo 'Environment does not exist.'
+        echo 'Make sure to specify dev, test or live.'
+        echo
+        exit 0
+    esac
+
+    i=0
+    while [[ $i -le $count ]]
+    do
+      terminus env:deploy "$site.${steps[$i]}" && terminus drush "$site.${steps[$i]}" updb && terminus drush "$site.${steps[$i]}" -- cim -y && terminus drush "$site.${steps[$i]}" cr
+
+      ((i++))
+    done
+  fi
+fi

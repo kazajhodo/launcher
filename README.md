@@ -81,6 +81,9 @@ Default variable definitions.
 ### help
 Shows help if parameter passed.
 
+### terminus
+Automates deployment through pantheon environments.
+
 ### homebrew-check
 Detects if Homebrew is installed, if not exits.
 
@@ -126,7 +129,6 @@ Ex. 'site.local' is in the 'site' directory.
 
 # Future functionality
 + Add github functionality to start a hotfix/feature/branch after project load.
-+ Add terminus deploy functionality.
 
 # Enhancements, Bugs, Invalid, Questions
 Add at https://github.com/kazajhodo/launcher/issues

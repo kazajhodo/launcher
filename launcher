@@ -30,6 +30,9 @@ cd "${0%/*}" && source 'include/options-parameters'
 # Help.
 cd "${0%/*}" && source 'include/help'
 
+# Run terminus deployment.
+cd "${0%/*}" && source 'include/terminus'
+
 # Php change.
 cd "${0%/*}" && source 'include/phpchange'
 
