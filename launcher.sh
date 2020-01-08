@@ -6,6 +6,17 @@
 # Switch php version.
 # launcher [php-version]
 
+# Open a project.
+# launcher [project-directory]
+
+# Change php and open a project.
+# Order of commands do not matter.
+# launcher [project-directory] ['php-verion']
+
+# Deploy a site with terminus on pantheon.
+# Will deploy, updb, cim, cr per environment.
+# launcher terminus.[site-name].[site-env]
+
 # Check that homebrew is installed.
 cd "${0%/*}" && source 'include/homebrew-check'
 
