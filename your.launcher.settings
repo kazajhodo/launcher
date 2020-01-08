@@ -16,6 +16,7 @@ ideapp='Visual Studio Code'
 # Without .app.
 
 # CASE SENSITIVE
+git='gittower'
 gitapp='Tower'
 
 # PROJECTS DIRECTORY
@@ -38,3 +39,8 @@ suffix='ash'
 # 'Google Chrome'
 # 'Safari'
 browser='Brave Browser'
+
+# TERMINUS COMMAND
+# There are going to be devs who have 'terminus' aliased to 't' or something.
+# This allows the terminus command launcher uses to be customized.
+terminus='terminus'

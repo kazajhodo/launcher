@@ -45,14 +45,14 @@ if [[ $project ]]; then
     if [[ ! $project ]]; then
       # Example ide detection block.
       # Uses 'type' to detect if ide is installed.
-      # if type terminus >/dev/null 2>&1; then
+      # if type $ide >/dev/null 2>&1; then
       #   echo
       #   echo 'Which project are you working in? Exact directory name.'
       #   read project
-      #   subl $projects$project
+      #   $ide $projects$project
       # fi
 
-      if type code >/dev/null 2>&1; then
+      if type $ide >/dev/null 2>&1; then
         echo
         echo 'Which project are you working in? Exact directory name.'
         read project

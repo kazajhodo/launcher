@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Check that terminus command exists.
-if type terminus >/dev/null 2>&1; then
-  if [[ $terminus ]]; then
+if type $terminus >/dev/null 2>&1; then
+  if [[ $terminusValue ]]; then
     declare steps=('dev' 'test' 'live')
-    site=${terminus%.*}
-    env=${terminus#*.}
+    site=${terminusValue%.*}
+    env=${terminusValue#*.}
 
     if [[ $site && $env ]]; then
       case $env in
@@ -30,9 +30,9 @@ if type terminus >/dev/null 2>&1; then
       while [[ $i -le $count ]]
       do
         if [[ $env == 'dev' ]]; then
-          terminus drush "$site.${steps[$i]}" updb && terminus drush "$site.${steps[$i]}" -- cim -y && terminus drush "$site.${steps[$i]}" cr
+          $terminus drush "$site.${steps[$i]}" updb && $terminus drush "$site.${steps[$i]}" -- cim -y && $terminus drush "$site.${steps[$i]}" cr
         else
-          terminus env:deploy "$site.${steps[$i]}" && terminus drush "$site.${steps[$i]}" updb && terminus drush "$site.${steps[$i]}" -- cim -y && terminus drush "$site.${steps[$i]}" cr
+          $terminus env:deploy "$site.${steps[$i]}" && $terminus drush "$site.${steps[$i]}" updb && $terminus drush "$site.${steps[$i]}" -- cim -y && $terminus drush "$site.${steps[$i]}" cr
         fi
         ((i++))
       done

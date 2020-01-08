@@ -8,7 +8,7 @@ do
       phpchange=$item
       ;;
     'terminus.'*)
-      terminus=${item#*.}
+      terminusValue=${item#*.}
       ;;
     '-y')
       yes=$item
@@ -24,6 +24,9 @@ do
       ;;
     '-noaai')
       noaai=true
+      ;;
+    'kill')
+      kill=true
       ;;
     *)
       # Do a '-' check to make sure this isn't an option.
