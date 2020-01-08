@@ -29,8 +29,11 @@ if type terminus >/dev/null 2>&1; then
       i=0
       while [[ $i -le $count ]]
       do
-        terminus env:deploy "$site.${steps[$i]}" && terminus drush "$site.${steps[$i]}" updb && terminus drush "$site.${steps[$i]}" -- cim -y && terminus drush "$site.${steps[$i]}" cr
-
+        if [[ $env == 'dev' ]]; then
+          terminus drush "$site.${steps[$i]}" updb && terminus drush "$site.${steps[$i]}" -- cim -y && terminus drush "$site.${steps[$i]}" cr
+        else
+          terminus env:deploy "$site.${steps[$i]}" && terminus drush "$site.${steps[$i]}" updb && terminus drush "$site.${steps[$i]}" -- cim -y && terminus drush "$site.${steps[$i]}" cr
+        fi
         ((i++))
       done
     fi
