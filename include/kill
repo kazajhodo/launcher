@@ -2,13 +2,13 @@
 
 # Kill programs opened by launcher.
 # For quickly closing everything opened in order to open new project.
-if [[ $kill = true ]]; then
+if [[ $kill == true ]]; then
   # Local domain suffix specified in .launcher.settings.
   if [[ $suffix ]]; then
     suffix=".$suffix"
 
 # Close all browser tabs that contain local domain suffix.
-osascript <<EOD
+osascript >/dev/null 2>&1 <<EOD
   set ideapp to "$ideapp"
   set gitapp to "$gitapp"
 
@@ -17,7 +17,7 @@ osascript <<EOD
     tell application gitapp to quit
   end ignoring
 
-  tell application "$browser"
+  tell application "$browserapp"
     try
       set windowCount to number of windows
       repeat with thiswindow from 1 to windowCount
@@ -31,6 +31,7 @@ osascript <<EOD
           end repeat
       end repeat
     on error
+      display dialog error
     end
   end tell
 EOD
