@@ -8,7 +8,7 @@ if [[ $kill == true ]]; then
     suffix=".$suffix"
 
 # Close all browser tabs that contain local domain suffix.
-osascript >/dev/null 2>&1 <<EOD
+osascript <<EOD
   set ideapp to "$ideapp"
   set gitapp to "$gitapp"
 
@@ -31,7 +31,7 @@ osascript >/dev/null 2>&1 <<EOD
           end repeat
       end repeat
     on error
-      display dialog error
+      display dialog errMsg as text
     end
   end tell
 EOD

@@ -30,9 +30,9 @@ if type $terminus >/dev/null 2>&1; then
       while [[ $i -le $count ]]
       do
         if [[ $env == 'dev' ]]; then
-          $terminus drush "$site.${steps[$i]}" updb && $terminus drush "$site.${steps[$i]}" -- cim -y && $terminus drush "$site.${steps[$i]}" cr
+          $terminus drush "$site.${steps[$i]}" updb && $terminus drush "$site.${steps[$i]}" cr && $terminus drush "$site.${steps[$i]}" -- cim -y
         else
-          $terminus env:deploy "$site.${steps[$i]}" && $terminus drush "$site.${steps[$i]}" updb && $terminus drush "$site.${steps[$i]}" -- cim -y && $terminus drush "$site.${steps[$i]}" cr
+          $terminus env:deploy "$site.${steps[$i]}" && $terminus drush "$site.${steps[$i]}" updb && $terminus drush "$site.${steps[$i]}" cr && $terminus drush "$site.${steps[$i]}" -- cim -y
         fi
         ((i++))
       done
