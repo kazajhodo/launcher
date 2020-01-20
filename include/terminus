@@ -29,7 +29,8 @@ if type $terminus >/dev/null 2>&1; then
       i=0
       while [[ $i -le $count ]]
       do
-        if [[ $env == 'dev' ]]; then
+        # 0 is always dev, on dev never attempt to deploy.
+        if [[ $i == 0 ]]; then
           $terminus drush "$site.${steps[$i]}" updb && $terminus drush "$site.${steps[$i]}" cr && $terminus drush "$site.${steps[$i]}" -- cim -y
         else
           $terminus env:deploy "$site.${steps[$i]}" && $terminus drush "$site.${steps[$i]}" updb && $terminus drush "$site.${steps[$i]}" cr && $terminus drush "$site.${steps[$i]}" -- cim -y
