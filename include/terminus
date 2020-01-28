@@ -1,5 +1,14 @@
 #!/bin/bash
 
+terminus_loop () {
+  # 0 is always dev, on dev never attempt to deploy.
+  if (( $1 == 0 )); then
+    $terminus -y drush "$site.$2" -- updb -y && $terminus drush "$site.$2" cr && $terminus drush "$site.$2" -- cim -y
+  else
+    $terminus -y env:deploy "$site.$2" && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" cr && $terminus drush "$site.$2" -- cim -y
+  fi
+}
+
 # Check that terminus command exists.
 if type $terminus >/dev/null 2>&1; then
   if [[ $terminusValue ]]; then
@@ -20,23 +29,23 @@ if type $terminus >/dev/null 2>&1; then
           ;;
         *)
           echo
-          echo 'Environment does not exist.'
-          echo 'Make sure to specify dev, test or live.'
+          echo 'Atempting to run against multidev environment.'
           echo
-          exit 0
+          echo 'If this was not intended, make sure to specify dev, test or live.'
+          echo
+          multidev=$env
       esac
 
       i=0
-      while [[ $i -le $count ]]
-      do
-        # 0 is always dev, on dev never attempt to deploy.
-        if [[ $i == 0 ]]; then
-          $terminus drush "$site.${steps[$i]}" updb && $terminus drush "$site.${steps[$i]}" cr && $terminus drush "$site.${steps[$i]}" -- cim -y
-        else
-          $terminus env:deploy "$site.${steps[$i]}" && $terminus drush "$site.${steps[$i]}" updb && $terminus drush "$site.${steps[$i]}" cr && $terminus drush "$site.${steps[$i]}" -- cim -y
-        fi
-        ((i++))
-      done
+      if [[ $count ]]; then
+        while [[ $i -le $count ]]
+        do
+          terminus_loop "$i" "${steps[$i]}"
+          ((i++))
+        done
+      else
+        terminus_loop "$i" "$multidev"
+      fi
     fi
   fi
 fi
