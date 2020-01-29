@@ -38,7 +38,7 @@ suffix='ash'
 # 'Firefox Developer Edition'
 # 'Google Chrome'
 # 'Safari'
-browserapp='Brave Browser'
+browserapp='Firefox Developer Edition'
 
 # TERMINUS COMMAND
 # There are going to be devs who have 'terminus' aliased to 't' or something.
