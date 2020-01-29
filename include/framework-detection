@@ -2,6 +2,7 @@
 
 # Detect project framework.
 # With possible sub-directory modifier.
+
 # Magento.
 if [[ -d "$projects$project$sub/app" ]]; then
   if [[ $noaai == true ]]; then
@@ -21,10 +22,31 @@ if [[ -d "$projects$project$sub/wp-content" ]]; then
   app='wp-admin'
 fi
 
+
 # Open project homepage.
 open "http://$project.ash"
 
 # Open project framework management page.
 if [[ $app ]]; then
   open "http://$project.ash/$app"
+fi
+
+
+# Open Pantheon dashboard
+if type $terminus >/dev/null 2>&1; then
+  $terminus -q dashboard $project
+
+  if [[ $? -eq 1 ]]; then
+    echo 'Your project name does not match a sites name in Pantheon.'
+    echo
+    echo 'What is the name of this project in Pantheon?'
+    read pantheonName
+    echo
+    echo 'Thanks, opening.'
+    $terminus -q dashboard $pantheonName
+
+    if [[ $? -eq 1 ]]; then
+      echo 'That still threw an error, check the site name and try again.'
+    fi
+  fi    
 fi
