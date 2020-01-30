@@ -47,6 +47,9 @@ if type $terminus >/dev/null 2>&1; then
     if [[ $pantheonPrefix ]]; then
       echo "Trying with '$pantheonPrefix' prefix"
       dashboard_check "$pantheonPrefix$project"
+      if [[ $? -eq 1 ]]; then
+        echo 'Prefix successful, dashboard opened.'
+      fi
     fi
 
     if [[ $? -eq 1 ]]; then
