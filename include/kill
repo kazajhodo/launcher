@@ -17,7 +17,8 @@ osascript <<EOD
     tell application gitapp to quit
   end ignoring
 
-  tell application "$browserapp"
+  set browserapp to "$browserapp"
+  tell application browserapp
     try
       set windowCount to number of windows
       repeat with thiswindow from 1 to windowCount
