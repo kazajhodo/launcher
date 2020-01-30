@@ -44,3 +44,9 @@ browserapp='Firefox Developer Edition'
 # There are going to be devs who have 'terminus' aliased to 't' or something.
 # This allows the terminus command launcher uses to be customized.
 terminus='terminus'
+
+# PREFIX CHECK
+# This is for Pantheon.io sites only.
+# Appends prefix for dashboard open attempt.
+# Many companies add some sort of prefix to their sitenames.
+pantheonPrefix='aai'

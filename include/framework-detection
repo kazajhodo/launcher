@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Run dashboard command.
+# Placed into function as its ran multiple times.
+dashboard_check () {
+  $terminus -q dashboard $1
+}
+
 # Detect project framework.
 # With possible sub-directory modifier.
 
@@ -34,19 +40,27 @@ fi
 
 # Open Pantheon dashboard
 if type $terminus >/dev/null 2>&1; then
-  $terminus -q dashboard $project
+  dashboard_check "$project"
 
+  # If command failed.
   if [[ $? -eq 1 ]]; then
-    echo 'Your project name does not match a sites name in Pantheon.'
-    echo
-    echo 'What is the name of this project in Pantheon?'
-    read pantheonName
-    echo
-    echo 'Thanks, opening.'
-    $terminus -q dashboard $pantheonName
+    if [[ $pantheonPrefix ]]; then
+      echo "Trying with '$pantheonPrefix' prefix"
+      dashboard_check "$pantheonPrefix$project"
+    fi
 
     if [[ $? -eq 1 ]]; then
-      echo 'That still threw an error, check the site name and try again.'
+      echo 'Your project name does not match a sites name in Pantheon.'
+      echo
+      echo 'What is the name of this project in Pantheon?'
+      read pantheonName
+      echo
+      echo 'Thanks, opening.'
+      dashboard_check "$pantheonName"
+
+      if [[ $? -eq 1 ]]; then
+        echo 'That still threw an error, check the site name and try again.'
+      fi
     fi
   fi    
 fi
