@@ -3,9 +3,9 @@
 terminus_loop () {
   # 0 is always dev, on dev never attempt to deploy.
   if (( $1 == 0 )); then
-    $terminus -y drush "$site.$2" -- updb -y && $terminus drush "$site.$2" cr && $terminus drush "$site.$2" -- cim -y
+    $terminus drush "$site.$2" cr && $terminus -y drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
   else
-    $terminus -y env:deploy "$site.$2" && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" cr && $terminus drush "$site.$2" -- cim -y
+    $terminus -y env:deploy "$site.$2" && $terminus drush "$site.$2" cr && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
   fi
 }
 
