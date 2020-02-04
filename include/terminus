@@ -27,6 +27,9 @@ if type $terminus >/dev/null 2>&1; then
         'live')
           count=2
           ;;
+        'php')
+          $terminus env:info $site.live | grep 'PHP Version'
+          ;;
         *)
           echo
           echo 'Atempting to run against multidev environment.'
