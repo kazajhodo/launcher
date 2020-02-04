@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # If php version was not passed as an option.
 if [[ $project ]]; then

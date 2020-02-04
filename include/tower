@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # Tower options.
 # Tower Integration must be on.

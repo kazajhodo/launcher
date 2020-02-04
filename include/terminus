@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 terminus_loop () {
   # 0 is always dev, on dev never attempt to deploy.

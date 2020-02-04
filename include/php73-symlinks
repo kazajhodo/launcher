@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # Mac default php version is 7.3.
 # Homebrew does not contain symlinks for this version.

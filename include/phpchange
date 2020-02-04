@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # Capture current php version.
 phpversion=$(php -i aux | grep 'PHP Version' | head -1)

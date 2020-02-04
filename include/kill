@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # Kill programs opened by launcher.
 # For quickly closing everything opened in order to open new project.

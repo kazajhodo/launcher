@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # Run dashboard command.
 # Placed into function as its ran multiple times.

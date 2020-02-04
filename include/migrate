@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # Warns users to migrate settings.
 if [[ $updated = true ]]; then

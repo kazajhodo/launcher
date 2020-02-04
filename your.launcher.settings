@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # IDE TERMINAL COMMAND
 # The value should be what you enter to open a file in your ide via commandline.
