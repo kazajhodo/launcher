@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# Find PHP export path definition.
-# Set found file as exportTarget.
-phpExportTarget=$(find "$HOME" -follow -maxdepth 1 -type f -iname ".*" ! -iname ".zsh_history" | xargs grep "opt/php" -H 2>/dev/null)
-phpExportTarget=$( cut -d ':' -f 1 <<< "$phpExportTarget" )
-
 # Mac default php version is 7.3.
 # Homebrew does not contain symlinks for this version.
 # Lets add them.

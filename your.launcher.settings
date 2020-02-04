@@ -50,3 +50,8 @@ terminus='terminus'
 # Appends prefix for dashboard open attempt.
 # Many companies add some sort of prefix to their sitenames.
 pantheonPrefix='aai'
+
+# You use bash or zsh?
+# .bashrc
+# .zshrc
+phpExportTarget="$HOME/.zshrc"

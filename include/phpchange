@@ -37,7 +37,7 @@ elif [[ ! -z $phpchange ]]; then
   echo "export PATH=\"/usr/local/opt/php@$phpchange/bin:/usr/local/opt/php@$phpchange/sbin:\$PATH\"" >> $phpExportTarget
 
   # Reload source to ensure we have current php version.
-  source '~/.zshrc'
+  source $phpExportTarget
 
   echo 'Swapping...'
 
@@ -47,7 +47,7 @@ elif [[ ! -z $phpchange ]]; then
   brew services start php@$phpchange
 
   # Reload source again to ensure we have switched php version.
-  source '~/.zshrc'
+  source $phpExportTarget
 
   # Show running version of php.
   echo
