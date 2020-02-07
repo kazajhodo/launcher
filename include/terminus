@@ -32,9 +32,7 @@ if type $terminus >/dev/null 2>&1; then
           ;;
         *)
           echo
-          echo 'Atempting to run against multidev environment.'
-          echo
-          echo 'If this was not intended, make sure to specify dev, test or live.'
+          echo 'Attempting to run against multidev.'
           echo
           multidev=$env
       esac
