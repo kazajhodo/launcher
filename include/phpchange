@@ -4,10 +4,10 @@
 phpversion=$(php -i aux | grep 'PHP Version' | head -1)
 set -- $phpversion
 
-# PHPVERSION example output: php extension version => 7.1.18.
-# $5 = 7.1.18.
-# Shortens to first 3 ex: 7.1.
-phpversion="$4"
+# PHPVERSION
+# Limit to numbers and periods only.
+phpversion=${phpversion//[!0-9.]/}
+# Limit to major and minor version numbers only.
 phpversion=${phpversion:0:3}
 
 # If: php version passed and they are equal.
