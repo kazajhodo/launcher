@@ -98,10 +98,10 @@ if [[ $project ]]; then
       fi
 
       # Open admin of detected framework.
-      cd "${0%/*}" && source 'include/framework-detection'
+      cd "${0%/*}" && source 'framework-detection'
 
       # Open project in tower.
-      cd "${0%/*}" && source 'include/tower'
+      cd "${0%/*}" && source 'tower'
     fi
   fi
 fi
