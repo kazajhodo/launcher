@@ -29,6 +29,7 @@ if type $terminus >/dev/null 2>&1; then
           ;;
         'php')
           $terminus env:info $site.live | grep 'PHP Version'
+          exit 0
           ;;
         *)
           echo
