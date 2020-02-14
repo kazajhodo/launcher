@@ -1,6 +1,10 @@
 #!/bin/zsh
 
 # Check and set parameters and options.
+if [[ ! $item ]]; then
+  help=true
+fi
+
 for item in $*
 do
   case $item in
