@@ -101,7 +101,9 @@ if [[ $project ]]; then
       cd "${0%/*}" && source 'framework-detection'
 
       # Open project in tower.
-      cd "${0%/*}" && source 'tower'
+      # Not sure why I need to '../'.
+      # I think it has something to do with the open command moving to a different application.
+      cd "../${0%/*}" && source 'tower'
     fi
   fi
 fi
