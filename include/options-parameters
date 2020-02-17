@@ -45,7 +45,7 @@ do
         exit 0
       else
         project=$item
-        kill=true
+        kill=$kill
       fi
   esac
 done

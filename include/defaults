@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-# Defaults
+# Execution level defaults.
 deploy=false
-kill=false
+kill=true
 noaai=false

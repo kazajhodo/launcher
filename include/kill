@@ -2,7 +2,7 @@
 
 # Kill programs opened by launcher.
 # For quickly closing everything opened in order to open new project.
-if [[ $kill == true ]]; then
+if [[ $kill == true && $project ]]; then
   # Local domain suffix specified in .launcher.settings.
   if [[ $suffix ]]; then
     suffix=".$suffix"
