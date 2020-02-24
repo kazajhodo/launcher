@@ -2,7 +2,7 @@
 
 terminus_loop () {
   # 0 is always dev, on dev never attempt to deploy.
-  if [[ $2 == 'dev' ]]; then
+  if [[ $2 == 'dev' || $3 == true ]]; then
     $terminus drush "$site.$2" cr && $terminus -y drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
   else
     $terminus -y env:deploy "$site.$2" && $terminus drush "$site.$2" cr && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
@@ -15,6 +15,7 @@ if type $terminus >/dev/null 2>&1; then
     declare steps=('dev' 'test' 'live')
     site=${terminusValue%.*}
     env=${terminusValue#*.}
+    multi=false
 
     if [[ $site && $env ]]; then
       case $env in
@@ -36,6 +37,7 @@ if type $terminus >/dev/null 2>&1; then
           echo 'Attempting to run against multidev.'
           echo
           multidev=$env
+          multi=true
       esac
 
       i=1
@@ -46,7 +48,7 @@ if type $terminus >/dev/null 2>&1; then
           ((i++))
         done
       else
-        terminus_loop "$i" "$multidev"
+        terminus_loop "$i" "$multidev" "$multi"
       fi
     fi
   fi
