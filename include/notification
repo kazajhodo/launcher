@@ -1,0 +1,33 @@
+#!/bin/zsh
+
+# Used to notify user.
+if [[ $notification = true ]]; then
+  echo
+  echo
+  echo 'Warning: Brew will attempt to remove old php versions from your system when upgrading.'
+  echo
+  echo 'When it does this, it will ask you to delete the old php versions.'
+  echo 'If you still need them, simply move them somewhere else, then move them back when complete.'
+  echo
+  echo
+  echo 'Warning: If you update to the latest version of apple operating system, your php base version may change.'
+  echo
+  echo 'For instance, Mojave is php 7.4 base. Brew will remove 7.3 on upgrade.'
+  echo 'This script creates symlinks within /usr/local/Cellar for your base php versions.'
+  echo
+  echo 'Meaning if you moved from 7.3 to 7.4, and used Launcher previously, you may have a symlink of php73 and php@7.3, now pointing at 7.4.'
+  echo
+  echo 'Go into /usr/local/Cellar, or whatever your Cellar location is, and run: rm -rf php73 && rm -rf php@7.3'
+  echo
+  echo 'Afterwards you may then run: brew install php@7.3 without issue.'
+  echo 'Your base php version will still be properly symlinked for Launcher to work with your base php version.'
+  echo
+  echo 'The end, tootles.'
+  echo
+  echo
+  echo 'This has been a message brought you by your friendly neighborhood developer.'
+
+  # Change updated variable to false
+  cd "${0%/*}" && sed -i '' 's/notification=true/notification=false/' '.updated'
+  exit 0
+fi
