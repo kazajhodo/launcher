@@ -30,7 +30,7 @@ cd "${0%/*}" && source 'include/migrate'
 cd "${0%/*}" && source 'include/overwrite'
 
 # Setup php73 symlinks to work with launcher.
-cd "${0%/*}" && source 'include/php73-symlinks'
+cd "${0%/*}" && source 'include/php-symlinks'
 
 # Include variable defaults.
 cd "${0%/*}" && source 'include/defaults'

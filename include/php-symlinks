@@ -1,0 +1,26 @@
+#!/bin/zsh
+
+# Mac default php version always the latest version.
+# Located at /usr/local/bin/php.
+
+# Homebrew does not contain symlinks for this version.
+# Lets add them.
+
+# Check if php symlinks are installed.
+# This is done to allow switching to php [version] using the 'php@[version]'.
+
+# Get current php base version.
+# Output is always 'php x.x.x'.
+# Cut down to [x.x].
+basePhpVersion=$(brew list --versions php | grep -o --regexp='.....$' | cut -c1-3)
+basePhpVersionNoDot=${basePhpVersion//.}
+
+php="/usr/local/Cellar/php$basePhpVersionNoDot"
+php_path="/usr/local/Cellar/php@$basePhpVersion"
+
+# Checks if symlink exists regardless of if what it points to exists (-L).
+# Check if symlink exists and what it points to exists, regardless of type (-e).
+# If both do not exist, we create them.
+if ! [[ -L $php && -L $php_path ]]; then
+  cd /usr/local/Cellar && ln -s php@$basePhpVersion php$basePhpVersionNoDot && ln -s /usr/local/bin/php php@$basePhpVersion 
+fi
