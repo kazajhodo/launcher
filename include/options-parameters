@@ -14,6 +14,9 @@ do
     'terminus.'*)
       terminusValue=${item#*.}
       ;;
+    'local.'*)
+      localValue=${item#*.}
+      ;;
     '-y')
       yes=$item
       ;;
