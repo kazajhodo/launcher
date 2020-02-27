@@ -17,6 +17,9 @@
 # Will deploy, updb, cim, cr per environment.
 # launcher terminus.[site-name].[site-env]
 
+# Build a site locally from Pantheon.
+# launcher local.[site-name]
+
 # Check that homebrew is installed.
 cd "${0%/*}" && source 'include/homebrew-check'
 
@@ -52,3 +55,7 @@ cd "${0%/*}" && source 'include/kill'
 
 # Open.
 cd "${0%/*}" && source 'include/open-project'
+
+# Local.
+# Kill.
+cd "${0%/*}" && source 'include/local'

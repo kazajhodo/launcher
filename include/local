@@ -1,0 +1,88 @@
+#!/bin/zsh
+
+# Fetch database and files from Pantheon.
+# Expects Pantheon sitename passed, uses live environment.
+if type $terminus >/dev/null 2>&1; then
+  if type terminus rsync >/dev/null 2>&1; then
+    if [[ $localValue ]]; then
+      # Check if provided directory exists locally.
+      # Check without prefix first, as this is most likely.
+      if [[ -d $HOME/$projectsDirectory/${localValue//$pantheonPrefix/} ]]; then
+        directory=${localValue//$pantheonPrefix/}
+      else
+        # Check with prefix.
+        if [[ ! -d "$HOME/$projectsDirectory/$localValue" ]]; then
+          echo
+          echo 'What project are we putting these files into? Parent directory name.'
+          read directory
+        fi
+      fi
+
+      # Get local mysql execution.
+      if type mysqldump >/dev/null 2>&1; then
+        mysql=$(where mysqldump)
+      fi
+
+      # Get database.
+      connection=$(terminus connection:info --field='MySQL Command' $localValue.live)
+      connection=${connection/'mysql'/''}
+
+      echo
+      echo 'Downloading database...'
+      $mysql $connection > $HOME/$projectsDirectory/$directory/$directory.sql
+
+      exit 0
+
+      echo 'Downloaded.'
+      echo
+      echo "Creating new database $directory on your local..."
+      mysql -u $sqlUser -p -e 'create database $directory'
+      echo 'Done.'
+      echo
+      echo 'Importing downloaded database into local database...'
+      mysql -u $sqlUser -p $directory > $directory.sql
+      echo 'Done.'
+      echo
+
+      # Get files.
+      if [[ $localValue ]]; then
+        get_subdirectory "$HOME/$projectsDirectory/" "$directory"
+
+        echo 'Fetching files...'
+
+        # If no subdirectory is set, we know we are in the webroot.
+        if [[ -z $sub ]]; then
+          terminus rsync -- -i $localValue.live:files $HOME/$projectsDirectory/$directory/sites/default/files
+        else
+          terminus rsync -- -i $localValue.live:files $HOME/$projectsDirectory/$directory/web/sites/default/files
+        fi
+        echo 'Files retreived'
+      fi
+    fi
+  else
+    echo
+    echo 'You need to install the awesomeness of terminus rsync, its a terminus plugin.'
+    echo 'Mind if I install it? Respond y or n.'
+    read response
+
+    if [[ $response == 'y' || $response == 'yes' ]]; then
+      if [[ ! -d $HOME/.terminus/plugins ]]; then
+        echo 'Creating terminus plugins directory.'
+        mkdir -p $HOME/.terminus/plugins
+        echo 'Created.'
+      else
+        echo
+        echo 'Terminus plugins directory already exists, moving along...'
+      fi
+
+      if [[ ! -d $HOME/.terminus/plugins/terminus-rsync-plugin ]]; then
+        echo 'Installing Terminus Rsync Plugin...'
+        composer create-project --no-dev -d $HOME/.terminus/plugins pantheon-systems/terminus-rsync-plugin:~1
+        echo 'Plugin installed.'
+      else
+        echo 'Terminus Rsync Plugin is already installed... not sure how you got here, this is a bug. Add it to the issues queue: https://github.com/kazajhodo/launcher/issues'
+        echo
+      fi
+    fi
+  fi
+fi
