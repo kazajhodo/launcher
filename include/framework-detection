@@ -6,27 +6,30 @@ dashboard_check () {
   $terminus -q dashboard $1
 }
 
+set_subdirectory () {
+  # Magento.
+  if [[ -d "$1$2$3/app" ]]; then
+    if [[ $noaai == true ]]; then
+      app='admin'
+    else
+      app='manage'
+    fi
+  fi
+
+  # Drupal.
+  if [[ -d "$1$2$3/sites" ]]; then
+    app='user'
+  fi
+
+  # Wordpress.
+  if [[ -d "$1$2$3/wp-content" ]]; then
+    app='wp-admin'
+  fi
+}
+
 # Detect project framework.
 # With possible sub-directory modifier.
-
-# Magento.
-if [[ -d "$projects$project$sub/app" ]]; then
-  if [[ $noaai == true ]]; then
-    app='admin'
-  else
-    app='manage'
-  fi
-fi
-
-# Drupal.
-if [[ -d "$projects$project$sub/sites" ]]; then
-  app='user'
-fi
-
-# Wordpress.
-if [[ -d "$projects$project$sub/wp-content" ]]; then
-  app='wp-admin'
-fi
+set_subdirectory "$projects" "$project" "$sub"
 
 
 # Open project homepage.

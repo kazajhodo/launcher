@@ -1,5 +1,37 @@
 #!/bin/zsh
 
+# Get subdirectory.
+get_subdirectory() {
+  # Check if a known subdirectory exists.
+  if [[ ! -d "$1$2/app" && ! -d "$1$2/sites" && ! -d "$1$2/wp-content" ]]; then
+    rows=$(cat .docroots)
+    for row in $rows; do
+      if [[ -d "$1$2/$row" ]]; then
+        sub="$row"
+        break
+      fi
+    done
+
+    if [[ -z $sub ]]; then
+      echo
+      echo 'No common framework subdirectory detected.'
+      echo 'What is this projects web root directory name?'
+      read sub
+      echo
+      echo "Got it, I'll remember this for future searches."
+      echo
+      echo 'Attempting to open.'
+
+      if [[ ! -d "$1$2/$sub" ]]; then
+        echo "What the... I didn't detect that directory?! Check yourself and run the launcher command again."
+      fi
+
+      # Write to file for future automation.
+      echo "$sub" >> .docroots
+    fi
+  fi
+}
+
 # If php version was not passed as an option.
 if [[ $project ]]; then
   # Project loaders.
@@ -58,34 +90,7 @@ if [[ $project ]]; then
         read project
       fi
     else
-      # Check if a known subdirectory exists.
-      if [[ ! -d "$projects$project/app" && ! -d "$projects$project/sites" && ! -d "$projects$project/wp-content" ]]; then
-        rows=$(cat .docroots)
-        for row in $rows; do
-          if [[ -d "$projects$project/$row" ]]; then
-            sub="$row"
-            break
-          fi
-        done
-
-        if [[ -z $sub ]]; then
-          echo
-          echo 'No common framework subdirectory detected.'
-          echo 'What is this projects web root directory name?'
-          read sub
-          echo
-          echo "Got it, I'll remember this for future searches."
-          echo
-          echo 'Attempting to open.'
-
-          if [[ ! -d "$projects$project/$sub" ]]; then
-            echo "What the... I didn't detect that directory?! Check yourself and run the launcher command again."
-          fi
-
-          # Write to file for future automation.
-          echo "$sub" >> .docroots
-        fi
-      fi
+      get_subdirectory "$projects" "$project"
 
       # Terminal commands need to fire first, or the program be selected and command issued.
       # When opening multiple programs, we're dealing with specific timing.
