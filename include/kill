@@ -7,27 +7,20 @@ if [[ $kill == true && $project ]]; then
   if [[ $suffix ]]; then
     suffix=".$suffix"
 
+    # Close all browser tabs that contain local domain suffix.
 
+    # Firefox seems to have limited applescript support, will have to investigate other methods.
+    # Firefox may be ran via commandline.
 
-# Close all browser tabs that contain local domain suffix.
+    # There is an addon called mozrepl/wiki that will allow us to interacti with windows and create our own custom commands.
 
-# Firefox seems to have limited applescript support, will have to investigate other methods.
-# Firefox may be ran via commandline.
+    # We can install an addon from the commandline.
+    # We should ask to install the addon, install it, then we can use it to close specific tabs.
 
-# There is an addon called mozrepl/wiki that will allow us to interacti with windows and create our own custom commands.
+    # Can't get visual studio code close to work.
+    # osascript -e "ignoring application responses" -e "tell application \"$ideapp\" to quit without saving" -e "end ignoring"
 
-# We can install an addon from the commandline.
-# We should ask to install the addon, install it, then we can use it to close specific tabs.
-
-
-
-osascript <<EOD
-  set ideapp to "$ideapp"
-  set gitapp to "$gitapp"
-
-  tell application ideapp to quit
-  tell application gitapp to quit
-EOD
+    osascript -e "ignoring application responses" -e "tell application \"$gitapp\" to quit without saving" -e "end ignoring"
 
   fi
 fi
