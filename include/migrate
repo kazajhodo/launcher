@@ -13,12 +13,12 @@ if [[ $updated = true ]]; then
   echo
   echo '# CURRENT SETTINGS: in ".launcher.settings"'
   echo
-  cd "${0%/*}" && cat .launcher.settings
+  cat .launcher.settings
   echo
   echo
   echo
   echo '# NEW SETTINGS: in "your.launcher.settings."'
-  cd "${0%/*}" && cat your.launcher.settings
+  cat your.launcher.settings
   echo
   echo
   echo 'Once complete, run launcher and your new settings will be locked in.'
@@ -26,6 +26,6 @@ if [[ $updated = true ]]; then
   echo
 
   # Change updated variable to false
-  cd "${0%/*}" && sed -i '' 's/updated=true/updated=false/' '.updated'
+  sed -i '' 's/updated=true/updated=false/' '.updated'
   exit 0
 fi

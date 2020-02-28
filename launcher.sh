@@ -29,6 +29,9 @@ cd "${0%/*}" && source '.updated'
 # Warn user to migrate settings file if updated, before overwrite.
 cd "${0%/*}" && source 'include/migrate'
 
+# Warn user to migrate settings file if updated, before overwrite.
+cd "${0%/*}" && source 'include/notification'
+
 # Update user settings file.
 cd "${0%/*}" && source 'include/overwrite'
 

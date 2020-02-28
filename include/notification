@@ -27,7 +27,7 @@ if [[ $notification = true ]]; then
   echo
   echo 'This has been a message brought you by your friendly neighborhood developer.'
 
-  # Change updated variable to false
-  cd "${0%/*}" && sed -i '' 's/notification=true/notification=false/' '.updated'
+  # Change notification variable to false
+  sed -i '' 's/notification=true/notification=false/' '.updated'
   exit 0
 fi
