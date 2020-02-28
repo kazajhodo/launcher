@@ -4,6 +4,22 @@
 # Expects Pantheon sitename passed, uses live environment.
 if type $terminus >/dev/null 2>&1; then
   if type terminus rsync >/dev/null 2>&1; then
+
+    create_nginx () {
+      replace=''
+      nginxDir=${nginx/'default'/$replace}
+
+      if [[ ! -f "$nginxDir/$directory.conf" ]]; then
+        cp "$nginx $nginxDir$1.conf"
+        
+        # Run again to edit file.
+        create_nginx "$1"
+      else
+        sed -i '' "s/localhost/$directory/g" "$nginxDir$directory.conf"
+        sed -i '' 's/#include \/usr\/local\/etc\/nginx\/conf.d\/drupal8.conf;/include \/usr\/local\/etc\/nginx\/conf.d\/drupal8.conf;/' "$nginxDir/$directory.conf"
+      fi
+    }
+
     if [[ $localValue ]]; then
       # Check if provided directory exists locally.
       # Check without prefix first, as this is most likely.
@@ -18,46 +34,73 @@ if type $terminus >/dev/null 2>&1; then
         fi
       fi
 
-      # Get local mysql execution.
-      if type mysqldump >/dev/null 2>&1; then
-        mysql=$(where mysqldump)
+
+
+      # Get code.
+      if [[ ! -d "$HOME/$projectsDirectory/$directory" ]]; then
+        gitConnection=$(terminus connection:info $localValue.dev --fields='Git Command' --format=string)
+        gitConnection=${gitConnection/'aai'/"$HOME/$projectsDirectory/"}
+
+        echo 'Grabbing code...'      
+        eval $gitConnection
+        echo 'Code complete.'
       fi
 
       # Get database.
-      connection=$(terminus connection:info --field='MySQL Command' $localValue.live)
-      connection=${connection/'mysql'/''}
+      sqlFile="$HOME/$projectsDirectory/$directory/$directory.sql"
+      connection=$(terminus connection:info $localValue.live --field='MySQL Command')
+      connection=${connection/'mysql'/'mysqldump -v'}
+      connection="$connection > $sqlFile"
 
       echo
       echo 'Downloading database...'
-      $mysql $connection > $HOME/$projectsDirectory/$directory/$directory.sql
+      eval $connection
+      echo 'Database download complete.'
 
-      exit 0
-
-      echo 'Downloaded.'
+      # Create local database.
       echo
-      echo "Creating new database $directory on your local..."
-      mysql -u $sqlUser -p -e 'create database $directory'
+      echo "Creating/updating $directory database..."
+      create="mysql -u $sqlUser -p -e 'create database if not exists $directory'"
+      eval $create
       echo 'Done.'
+
+      # Import local database.
       echo
       echo 'Importing downloaded database into local database...'
-      mysql -u $sqlUser -p $directory > $directory.sql
+      import="mysql -u $sqlUser -p $directory < $sqlFile"
+      eval $import
       echo 'Done.'
       echo
+      
 
       # Get files.
-      if [[ $localValue ]]; then
+      if [[ -d "$HOME/$projectsDirectory/$directory" ]]; then
         get_subdirectory "$HOME/$projectsDirectory/" "$directory"
 
         echo 'Fetching files...'
 
         # If no subdirectory is set, we know we are in the webroot.
         if [[ -z $sub ]]; then
-          terminus rsync -- -i $localValue.live:files $HOME/$projectsDirectory/$directory/sites/default/files
+          if [[ ! -d "$HOME/$projectsDirectory/$directory/sites/default/files" ]]; then
+            mkdir "$HOME/$projectsDirectory/$directory/sites/default/files"
+          fi
+
+          sync="terminus rsync $localValue.live:files/ $HOME/$projectsDirectory/$directory/sites/default/files -- --progress"
+          eval $sync
         else
-          terminus rsync -- -i $localValue.live:files $HOME/$projectsDirectory/$directory/web/sites/default/files
+          if [[ ! -d "$HOME/$projectsDirectory/$directory/web/sites/default/files" ]]; then
+            mkdir "$HOME/$projectsDirectory/$directory/web/sites/default/files"
+          fi
+
+          sync="terminus rsync $localValue.live:files/ $HOME/$projectsDirectory/$directory/web/sites/default/files -- --progress"
+          eval $sync
         fi
+
         echo 'Files retreived'
       fi
+
+      # Create nginx configuration.
+      create_nginx "$directory"
     fi
   else
     echo

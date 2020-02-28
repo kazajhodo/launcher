@@ -58,3 +58,6 @@ phpExportTarget="$HOME/.zshrc"
 
 # Local mysql user and password
 sqlUser=root
+
+# Nginx default configuration location.
+nginx='/usr/local/etc/nginx/sites-enabled/default'
