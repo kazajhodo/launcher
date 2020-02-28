@@ -83,6 +83,8 @@ Shows help if parameter passed.
 ### terminus
 Automates deployment through pantheon environments.
 
+Retreive site php version: launcher.terminus.[site-name].php
+
 ### homebrew-check
 Detects if Homebrew is installed, if not exits.
 
