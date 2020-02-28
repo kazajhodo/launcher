@@ -100,12 +100,18 @@ if type $terminus >/dev/null 2>&1; then
       fi
 
       # Create nginx configuration.
+      echo 'Creating nginx configuration file...'
       create_nginx "$directory"
+      echo 'Nginx configuration file added.'
+      echo 'Restarting nginx, enter computer password when requested...'
       sudo brew services restart nginx
+      echo 'Nginx resetarted.'
 
       # Add Drupal settings file
+      echo 'Coping over settings.local.php file...'
       cp base/settings.local.php "$HOME/$projectsDirectory/$directory/sites/default"
       sed -i '' "s/[database-name]/$directory/" "$HOME/$projectsDirectory/$directory/sites/default/settings.local.php"
+      echo 'Settings file created.'
     fi
   else
     echo
