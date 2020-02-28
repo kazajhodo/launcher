@@ -57,5 +57,4 @@ cd "${0%/*}" && source 'include/kill'
 cd "${0%/*}" && source 'include/open-project'
 
 # Local.
-# Kill.
 cd "${0%/*}" && source 'include/local'

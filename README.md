@@ -122,12 +122,8 @@ Opens project url and admin route url if defined.
 ### tower
 Opens project in tower.
 
-> _Functionality depends on project directories being named the same as url base._   
-Ex. 'site.local' is in the 'site' directory.
-
-
-# Future functionality
-+ Add github functionality to start a hotfix/feature/branch after project load.
+### local
+Creates local build from Pantheon site.
 
 # Enhancements, Bugs, Invalid, Questions
 Add at https://github.com/kazajhodo/launcher/issues
