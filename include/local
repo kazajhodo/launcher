@@ -102,6 +102,10 @@ if type $terminus >/dev/null 2>&1; then
       # Create nginx configuration.
       create_nginx "$directory"
       sudo brew services restart nginx
+
+      # Add Drupal settings file
+      cp base/settings.local.php "$HOME/$projectsDirectory/$directory/sites/default"
+      sed -i '' "s/[database-name]/$directory/" "$HOME/$projectsDirectory/$directory/sites/default/settings.local.php"
     fi
   else
     echo
