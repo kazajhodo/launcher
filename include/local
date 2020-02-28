@@ -101,6 +101,7 @@ if type $terminus >/dev/null 2>&1; then
 
       # Create nginx configuration.
       create_nginx "$directory"
+      sudo brew services restart nginx
     fi
   else
     echo
