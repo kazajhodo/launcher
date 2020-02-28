@@ -34,8 +34,6 @@ if type $terminus >/dev/null 2>&1; then
         fi
       fi
 
-
-
       # Get code.
       if [[ ! -d "$HOME/$projectsDirectory/$directory" ]]; then
         gitConnection=$(terminus connection:info $localValue.dev --fields='Git Command' --format=string)
@@ -110,7 +108,7 @@ if type $terminus >/dev/null 2>&1; then
       # Add Drupal settings file
       echo 'Coping over settings.local.php file...'
       cp base/settings.local.php "$HOME/$projectsDirectory/$directory/sites/default"
-      sed -i '' "s/[database-name]/$directory/" "$HOME/$projectsDirectory/$directory/sites/default/settings.local.php"
+      sed -i '' "s/\[database-name\]/$directory/" "$HOME/$projectsDirectory/$directory/sites/default/settings.local.php"
       echo 'Settings file created.'
     fi
   else
