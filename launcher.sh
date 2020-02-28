@@ -27,10 +27,10 @@ cd "${0%/*}" && source 'include/homebrew-check'
 cd "${0%/*}" && source '.updated'
 
 # Warn user to migrate settings file if updated, before overwrite.
-cd "${0%/*}" && source 'include/migrate'
+cd "${0%/*}" && source 'include/notification'
 
 # Warn user to migrate settings file if updated, before overwrite.
-cd "${0%/*}" && source 'include/notification'
+cd "${0%/*}" && source 'include/migrate'
 
 # Update user settings file.
 cd "${0%/*}" && source 'include/overwrite'
