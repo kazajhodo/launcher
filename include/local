@@ -15,8 +15,8 @@ if type $terminus >/dev/null 2>&1; then
         # Run again to edit file.
         create_nginx "$1"
       else
-        sed -i '' "s/localhost/$directory/g" "$nginxDir$directory.conf"
-        sed -i '' 's/#include \/usr\/local\/etc\/nginx\/conf.d\/drupal8.conf;/include \/usr\/local\/etc\/nginx\/conf.d\/drupal8.conf;/' "$nginxDir/$directory.conf"
+        sed -i '' "s/localhost/$directory/g" "$nginxDir$1.conf"
+        sed -i '' 's/#include \/usr\/local\/etc\/nginx\/conf.d\/drupal8.conf;/include \/usr\/local\/etc\/nginx\/conf.d\/drupal8.conf;/' "$nginxDir$1.conf"
       fi
     }
 
@@ -29,7 +29,7 @@ if type $terminus >/dev/null 2>&1; then
         # Check with prefix.
         if [[ ! -d "$HOME/$projectsDirectory/$localValue" ]]; then
           echo
-          echo 'What project are we putting these files into? Parent directory name.'
+          echo 'What project are we building? Name of directory.'
           read directory
         fi
       fi
@@ -91,8 +91,13 @@ if type $terminus >/dev/null 2>&1; then
 
       # Add Drupal settings file
       echo 'Coping over settings.local.php file...'
-      cp base/settings.local.php "$HOME/$projectsDirectory/$directory/sites/default"
-      sed -i '' "s/\[database-name\]/$directory/" "$HOME/$projectsDirectory/$directory/sites/default/settings.local.php"
+      if [[ -d "$HOME/$projectsDirectory/$directory/sites/default" ]]; then
+        cp base/settings.local.php "$HOME/$projectsDirectory/$directory/sites/default"
+        sed -i '' "s/\[database-name\]/$directory/" "$HOME/$projectsDirectory/$directory/sites/default/settings.local.php"
+      else
+        cp base/settings.local.php "$HOME/$projectsDirectory/$directory/web/sites/default"
+        sed -i '' "s/\[database-name\]/$directory/" "$HOME/$projectsDirectory/$directory/web/sites/default/settings.local.php"
+      fi
       echo 'Settings file created.'
 
       # Get files.
