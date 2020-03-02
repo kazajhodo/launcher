@@ -9,8 +9,8 @@ if type $terminus >/dev/null 2>&1; then
       replace=''
       nginxDir=${nginx/'default'/$replace}
 
-      if [[ ! -f "$nginxDir/$directory.conf" ]]; then
-        cp "$nginx $nginxDir$1.conf"
+      if [[ ! -f "$nginxDir$1.conf" ]]; then
+        eval cp "$nginx $nginxDir$1.conf"
         
         # Run again to edit file.
         create_nginx "$1"
@@ -65,11 +65,35 @@ if type $terminus >/dev/null 2>&1; then
       # Import local database.
       echo
       echo 'Importing downloaded database into local database...'
-      import="mysql -u $sqlUser -p $directory < $sqlFile"
+      import="mysql -v -u $sqlUser -p $directory < $sqlFile"
       eval $import
       echo 'Done.'
       echo
+
+      # Cleanup downloaded database file.
+      if [[ -f $sqlFile ]]; then
+        echo
+        echo 'Cleaning up imported database file...'
+        rm -rf $sqlFile
+        echo 'Done.'
+        echo
+      fi
       
+      # Create nginx configuration.
+      if type 'nginx' >/dev/null 2>&1; then
+        echo 'Creating nginx configuration file...'
+        create_nginx "$directory"
+        echo 'Nginx configuration file added.'
+        echo 'Restarting nginx, enter computer password when requested...'
+        sudo brew services restart nginx
+        echo 'Nginx resetarted.'
+      fi
+
+      # Add Drupal settings file
+      echo 'Coping over settings.local.php file...'
+      cp base/settings.local.php "$HOME/$projectsDirectory/$directory/sites/default"
+      sed -i '' "s/\[database-name\]/$directory/" "$HOME/$projectsDirectory/$directory/sites/default/settings.local.php"
+      echo 'Settings file created.'
 
       # Get files.
       if [[ -d "$HOME/$projectsDirectory/$directory" ]]; then
@@ -96,20 +120,6 @@ if type $terminus >/dev/null 2>&1; then
 
         echo 'Files retreived'
       fi
-
-      # Create nginx configuration.
-      echo 'Creating nginx configuration file...'
-      create_nginx "$directory"
-      echo 'Nginx configuration file added.'
-      echo 'Restarting nginx, enter computer password when requested...'
-      sudo brew services restart nginx
-      echo 'Nginx resetarted.'
-
-      # Add Drupal settings file
-      echo 'Coping over settings.local.php file...'
-      cp base/settings.local.php "$HOME/$projectsDirectory/$directory/sites/default"
-      sed -i '' "s/\[database-name\]/$directory/" "$HOME/$projectsDirectory/$directory/sites/default/settings.local.php"
-      echo 'Settings file created.'
     fi
   else
     echo
