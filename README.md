@@ -127,5 +127,8 @@ Opens project in tower.
 ### local
 Creates local build from Pantheon site.
 
+### aliases
+Search Pantheon aliases for a site. For instance searching by client code.
+
 # Enhancements, Bugs, Invalid, Questions
 Add at https://github.com/kazajhodo/launcher/issues

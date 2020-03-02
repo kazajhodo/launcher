@@ -22,6 +22,9 @@ if [[ $help ]]; then
   echo ' "terminus.[pantheon-sitename].php"'
   echo '       Retreive environment site php version.'
   echo
+  echo ' "aliases.[search]" Search for a pantheon alias.'
+  echo '       Unsure the Pantheon site name? Search for it.'
+  echo
   echo 'Options:'
   echo '  -y          auto answer yes to prompts'
   echo '  -p          This is a pantheon site'
