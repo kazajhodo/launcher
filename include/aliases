@@ -1,0 +1,7 @@
+#!/bin/zsh
+
+if [[ $aliasValue ]]; then
+  file="$HOME/.drush/pantheon.aliases.drushrc.php"
+
+  grep $aliasValue $file
+fi

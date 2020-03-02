@@ -17,6 +17,9 @@ do
     'local.'*)
       localValue=${item#*.}
       ;;
+    'aliases.'*)
+      aliasValue=${item#*.}
+      ;;
     '-y')
       yes=$item
       ;;
