@@ -50,8 +50,13 @@ if type $terminus >/dev/null 2>&1; then
     if [[ $pantheonPrefix ]]; then
       echo "Trying with '$pantheonPrefix' prefix"
       dashboard_check "$pantheonPrefix$project"
+
       if [[ $? -eq 0 ]]; then
         echo 'Prefix successful, dashboard opened.'
+      else
+        echo 'Not found, weird one.'
+        echo 'Here, maybe we can find it with our alias search...'
+        launcher aliases.$project
       fi
     fi
 
