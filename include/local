@@ -40,12 +40,13 @@ if type $terminus >/dev/null 2>&1; then
 
         sqlFile="$HOME/$projectsDirectory/$2/$2.sql"
         connection=$(terminus connection:info $1.dev --field='MySQL Command')
+        response=$(terminus env:wake $localValue.dev)
 
-        # Make sure database is awake
-        testConnection=$(terminus env:wake "$localValue.dev")
+        # read < <(echo 'foo')
 
-        message=''
-        eval $testConnection
+        # echo ${REPLY}
+
+
         
         # if [[ $(terminus env:wake "$localValue.dev") =~ "OK" ]]; then
         #   echo 'FINALLY'
