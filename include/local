@@ -38,28 +38,25 @@ if type $terminus >/dev/null 2>&1; then
         # If no $3, defaults to 'live'.
         env=${3:-'live'}
 
-        sqlFile="$HOME/$projectsDirectory/$2/$2.sql"
-        connection=$(terminus connection:info $1.dev --field='MySQL Command')
-        response=$(terminus env:wake $localValue.dev)
+        # Use Terminus wake command to check existence of database.
+        test=$(terminus env:wake $localValue.$env 2>&1)
 
-        # read < <(echo 'foo')
+        if [[ $test == *'OK'* ]]; then
+          sqlFile="$HOME/$projectsDirectory/$2/$2.sql"
+          connection=$(terminus connection:info $1.$env --field='MySQL Command')
+          connection=${connection/'mysql'/'mysqldump -v'}
+          connection="$connection > $sqlFile"
 
-        # echo ${REPLY}
+          eval $connection
+        else
+          echo
+          echo 'Could not connect to live db, would you like another environments db? Which one? (dev, test, live)'
+          read env
 
-
-        
-        # if [[ $(terminus env:wake "$localValue.dev") =~ "OK" ]]; then
-        #   echo 'FINALLY'
-        # else
-        #   echo 'ok was not in there'
-        # fi
-
-        exit 0
-
-
-
-        connection=${connection/'mysql'/'mysqldump -v'}
-        connection="$connection > $sqlFile"
+          if [[ $env ]]; then
+            get_connection "$localValue" "$directory" "$env"
+          fi
+        fi
       }
 
       # Get code.
@@ -74,21 +71,6 @@ if type $terminus >/dev/null 2>&1; then
 
       # Get database.
       get_connection "$localValue" "$directory"
-
-      if [[ $connection != *'trying to connect'*  ]]; then
-        echo
-        echo 'Downloading database...'
-        eval $connection
-        echo 'Database download complete.'
-      else
-        echo
-        echo 'Could not connect to live db, would you like another environments db? Which one? (dev, test, live)'
-        read env
-
-        if [[ $env ]]; then
-          get_connection "$localValue" "$directory" "$env"
-        fi
-      fi
 
       # Create local database.
       echo
@@ -147,14 +129,14 @@ if type $terminus >/dev/null 2>&1; then
             mkdir "$HOME/$projectsDirectory/$directory/sites/default/files"
           fi
 
-          sync="terminus rsync $localValue.live:files/ $HOME/$projectsDirectory/$directory/sites/default/files -- --progress"
+          sync="terminus rsync $localValue.$env:files/ $HOME/$projectsDirectory/$directory/sites/default/files -- --progress"
           eval $sync
         else
           if [[ ! -d "$HOME/$projectsDirectory/$directory/web/sites/default/files" ]]; then
             mkdir "$HOME/$projectsDirectory/$directory/web/sites/default/files"
           fi
 
-          sync="terminus rsync $localValue.live:files/ $HOME/$projectsDirectory/$directory/web/sites/default/files -- --progress"
+          sync="terminus rsync $localValue.$env:files/ $HOME/$projectsDirectory/$directory/web/sites/default/files -- --progress"
           eval $sync
         fi
 
