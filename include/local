@@ -9,9 +9,9 @@ if type $terminus >/dev/null 2>&1; then
       restart=false
       if [[ ! -f "$nginx$1.conf" ]]; then
         echo 'Creating nginx configuration file...'
-        eval cp "$nginxDefault $nginx$1.conf"
+        eval cp base/default "$nginx$1.conf"
         echo 'Nginx configuration file added.'
-        
+
         restart=true
         
         # Run again to edit file.
@@ -19,11 +19,11 @@ if type $terminus >/dev/null 2>&1; then
       else
         echo 'Checking that nginx configuration is correct...'
         sed -i '' "s/localhost/$directory/g" "$nginx$1.conf"
-        sed -i '' 's/#include \/usr\/local\/etc\/nginx\/conf.d\/drupal8.conf;/include \/usr\/local\/etc\/nginx\/conf.d\/drupal8.conf;/' "$nginx$1.conf"
+        sed -i '' 's/# include \/usr\/local\/etc\/nginx\/conf.d\/drupal8.conf;/include \/usr\/local\/etc\/nginx\/conf.d\/drupal8.conf;/' "$nginx$1.conf"
         echo 'Nginx configuration complete.'
 
         if [[ $restart == true ]]; then
-          echo 'Restarting nginx, enter computer password when requested...'
+          echo "Restarting nginx, enter $USER's password when requested..."
           sudo brew services restart nginx
           echo 'Nginx restarted.'
 

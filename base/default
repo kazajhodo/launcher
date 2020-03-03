@@ -1,0 +1,28 @@
+# NGINX
+# FILE: /usr/local/etc/nginx/sites-enabled/default.conf
+
+server {
+    # Server settings
+    listen 80;
+    #listen 443 ssl;
+    server_name localhost.ash;
+
+    # Project location
+    root $HOME/Projects/localhost/;
+    index index.html index.htm index.php;
+
+    # security
+    # ssl_certificate $HOME/.ssl/localhost/localhost.crt;
+    # ssl_certificate_key $HOME/.ssl/localhost/localhost.key;
+
+    # Logging
+    access_log off;
+    error_log  /usr/local/var/log/nginx/error.log warn;
+
+    # Routes
+    include /usr/local/etc/nginx/conf.d/security.conf;
+    include /usr/local/etc/nginx/conf.d/assets.conf;
+
+    # Platform includes
+    # include /usr/local/etc/nginx/conf.d/drupal8.conf;
+}
