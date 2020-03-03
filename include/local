@@ -6,17 +6,29 @@ if type $terminus >/dev/null 2>&1; then
   if type terminus rsync >/dev/null 2>&1; then
 
     create_nginx () {
-      replace=''
-      nginxDir=${nginx/'default'/$replace}
-
-      if [[ ! -f "$nginxDir$1.conf" ]]; then
-        eval cp "$nginx $nginxDir$1.conf"
+      restart=false
+      if [[ ! -f "$nginx$1.conf" ]]; then
+        echo 'Creating nginx configuration file...'
+        eval cp "$nginxDefault $nginx$1.conf"
+        echo 'Nginx configuration file added.'
+        
+        restart=true
         
         # Run again to edit file.
         create_nginx "$1"
       else
-        sed -i '' "s/localhost/$directory/g" "$nginxDir$1.conf"
-        sed -i '' 's/#include \/usr\/local\/etc\/nginx\/conf.d\/drupal8.conf;/include \/usr\/local\/etc\/nginx\/conf.d\/drupal8.conf;/' "$nginxDir$1.conf"
+        echo 'Checking that nginx configuration is correct...'
+        sed -i '' "s/localhost/$directory/g" "$nginx$1.conf"
+        sed -i '' 's/#include \/usr\/local\/etc\/nginx\/conf.d\/drupal8.conf;/include \/usr\/local\/etc\/nginx\/conf.d\/drupal8.conf;/' "$nginx$1.conf"
+        echo 'Nginx configuration complete.'
+
+        if [[ $restart == true ]]; then
+          echo 'Restarting nginx, enter computer password when requested...'
+          sudo brew services restart nginx
+          echo 'Nginx restarted.'
+
+          restart=false
+        fi
       fi
     }
 
@@ -98,12 +110,7 @@ if type $terminus >/dev/null 2>&1; then
       
       # Create nginx configuration.
       if type 'nginx' >/dev/null 2>&1; then
-        echo 'Creating nginx configuration file...'
         create_nginx "$directory"
-        echo 'Nginx configuration file added.'
-        echo 'Restarting nginx, enter computer password when requested...'
-        sudo brew services restart nginx
-        echo 'Nginx resetarted.'
       fi
 
       # Add Drupal settings file
