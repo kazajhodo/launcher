@@ -34,6 +34,33 @@ if type $terminus >/dev/null 2>&1; then
         fi
       fi
 
+      get_connection () {
+        # If no $3, defaults to 'live'.
+        env=${3:-'live'}
+
+        sqlFile="$HOME/$projectsDirectory/$2/$2.sql"
+        connection=$(terminus connection:info $1.dev --field='MySQL Command')
+
+        # Make sure database is awake
+        testConnection=$(terminus env:wake "$localValue.dev")
+
+        message=''
+        eval $testConnection
+        
+        # if [[ $(terminus env:wake "$localValue.dev") =~ "OK" ]]; then
+        #   echo 'FINALLY'
+        # else
+        #   echo 'ok was not in there'
+        # fi
+
+        exit 0
+
+
+
+        connection=${connection/'mysql'/'mysqldump -v'}
+        connection="$connection > $sqlFile"
+      }
+
       # Get code.
       if [[ ! -d "$HOME/$projectsDirectory/$directory" ]]; then
         gitConnection=$(terminus connection:info $localValue.dev --fields='Git Command' --format=string)
@@ -45,15 +72,22 @@ if type $terminus >/dev/null 2>&1; then
       fi
 
       # Get database.
-      sqlFile="$HOME/$projectsDirectory/$directory/$directory.sql"
-      connection=$(terminus connection:info $localValue.live --field='MySQL Command')
-      connection=${connection/'mysql'/'mysqldump -v'}
-      connection="$connection > $sqlFile"
+      get_connection "$localValue" "$directory"
 
-      echo
-      echo 'Downloading database...'
-      eval $connection
-      echo 'Database download complete.'
+      if [[ $connection != *'trying to connect'*  ]]; then
+        echo
+        echo 'Downloading database...'
+        eval $connection
+        echo 'Database download complete.'
+      else
+        echo
+        echo 'Could not connect to live db, would you like another environments db? Which one? (dev, test, live)'
+        read env
+
+        if [[ $env ]]; then
+          get_connection "$localValue" "$directory" "$env"
+        fi
+      fi
 
       # Create local database.
       echo
