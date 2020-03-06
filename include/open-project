@@ -4,9 +4,8 @@
 get_subdirectory() {
   # Check if a known subdirectory exists.
   if [[ ! -d "$1$2/app" && ! -d "$1$2/sites" && ! -d "$1$2/wp-content" ]]; then
-    rows=$(cat .docroots)
-    for row in $rows; do
-      if [[ -d "$1$2$row" ]]; then
+    for row in $(cat .docroots); do
+      if [[ -d "$1$2/$row" ]]; then
         sub="$row"
         break
       fi
@@ -16,6 +15,9 @@ get_subdirectory() {
       echo
       echo 'No common framework subdirectory detected.'
       echo 'Here is a list of the root, whats the webroot?'
+      echo
+      ls -n $1$2
+      echo
       read sub
       echo
       echo "Got it, I'll remember to try this for future searches."
