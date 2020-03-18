@@ -79,6 +79,9 @@ if type $terminus >/dev/null 2>&1; then
         echo 'Grabbing code...'      
         eval $gitConnection
         echo 'Code complete.'
+      else
+        pull="cd $HOME/$projectsDirectory/$directory" && git pull"
+	eval $pull
       fi
 
       # Get database.
