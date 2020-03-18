@@ -60,5 +60,5 @@ phpExportTarget="$HOME/.zshrc"
 sqlUser=root
 
 # Nginx default configuration location.
-nginx='/usr/local/etc/nginx/sites-enabled/'
-nginxDefault='/usr/local/etc/nginx/sites-enabled/default'
+nginx='/usr/local/etc/nginx/servers/'
+nginxDefault='/usr/local/etc/nginx/servers/default'
