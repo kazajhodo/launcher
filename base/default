@@ -8,12 +8,12 @@ server {
     server_name localhost.ash;
 
     # Project location
-    root $HOME/Projects/localhost/;
+    root /Users/[username]/Projects/localhost/;
     index index.html index.htm index.php;
 
     # security
-    # ssl_certificate $HOME/.ssl/localhost/localhost.crt;
-    # ssl_certificate_key $HOME/.ssl/localhost/localhost.key;
+    # ssl_certificate /Users/[username]/.ssl/localhost/localhost.crt;
+    # ssl_certificate_key /Users/[username]/.ssl/localhost/localhost.key;
 
     # Logging
     access_log off;
