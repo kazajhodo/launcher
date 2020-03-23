@@ -11,19 +11,19 @@ do
     '5.4' | '5.6' | '7.0' | '7.1' | '7.2' | '7.3')
       phpchange=$item
       ;;
-    'terminus.'*)
+    'terminus.'* | 't.'*)
       terminusValue=${item#*.}
       ;;
-    'local.'*)
+    'local.'* | 'l.'*)
       localValue=${item#*.}
       ;;
-    'aliases.'*)
+    'aliases.'* | 'a.'*)
       aliasValue=${item#*.}
       ;;
     '-y')
       yes=$item
       ;;
-    '-help' | '--help')
+    '-h' | '-help' | '--help')
       help=$item
       ;;
     '-p')
