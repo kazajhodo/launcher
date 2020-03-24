@@ -51,7 +51,14 @@ if type $terminus >/dev/null 2>&1; then
         env=${3:-'live'}
 
         # Use Terminus wake command to check existence of database.
-        test=$(terminus env:wake $localValue.$env 2>&1)
+        test=$(terminus env:wake $1.$env 2>&1)
+
+        if [[ $test == *'error'* ]]; then
+          echo
+          echo 'Error returned:'
+          echo $test
+          echo
+        fi
 
         if [[ $test == *'OK'* ]]; then
           sqlFile="$HOME/$projectsDirectory/$2/$2.sql"
@@ -60,7 +67,7 @@ if type $terminus >/dev/null 2>&1; then
           connection="$connection > $sqlFile"
 
           eval $connection
-        else
+        else 
           echo
           echo 'Could not connect to live db, would you like another environments db? Which one? (dev, test, live)'
           read env
