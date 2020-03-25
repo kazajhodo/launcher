@@ -9,7 +9,7 @@ if type $terminus >/dev/null 2>&1; then
       restart=false
       if [[ ! -f "$nginx$1.conf" ]]; then
         echo 'Creating nginx configuration file...'
-        eval cp base/default "$nginx$1.conf"
+        eval cp ../base/default "$nginx$1.conf"
         echo 'Nginx configuration file added.'
 
         restart=true
