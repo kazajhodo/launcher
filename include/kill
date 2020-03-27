@@ -20,7 +20,13 @@ if [[ $kill == true && $project ]]; then
     # Can't get visual studio code close to work.
     # osascript -e "ignoring application responses" -e "tell application \"$ideapp\" to quit without saving" -e "end ignoring"
 
-    osascript -e "ignoring application responses" -e "tell application \"$gitapp\" to quit without saving" -e "end ignoring"
+  osascript <<EOD
+    set ideapp to "$ideapp"
+    set gitapp to "$gitapp"
+
+    tell application ideapp to quit
+    tell application gitapp to quit
+EOD
 
   fi
 fi
