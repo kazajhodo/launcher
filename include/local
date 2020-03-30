@@ -60,6 +60,12 @@ if type $terminus >/dev/null 2>&1; then
           echo
         fi
 
+        if [[ $test == *'frozen'* ]]; then
+          echo
+          echo 'Frozen site, bailing.'
+          exit 0
+        fi
+
         if [[ $test == *'OK'* ]]; then
           sqlFile="$HOME/$projectsDirectory/$2/$2.sql"
           connection=$(terminus connection:info $1.$env --field='MySQL Command')
