@@ -9,7 +9,7 @@ if type $terminus >/dev/null 2>&1; then
       restart=false
       if [[ ! -f "$nginx$1.conf" ]]; then
         echo 'Creating nginx configuration file...'
-        eval cp ../base/default "$nginx$1.conf"
+        eval cp "$nginxDefault $nginx$1.conf"
         echo 'Nginx configuration file added.'
 
         restart=true
@@ -32,18 +32,32 @@ if type $terminus >/dev/null 2>&1; then
       fi
     }
 
+    what_project () {
+      # Check with prefix.
+      if [[ ! -d "$HOME/$projectsDirectory/$localValue" ]]; then
+        echo
+        echo 'What project are we building? Name of directory.'
+        read directory
+      fi
+    }
+
     if [[ $localValue ]]; then
       # Check if provided directory exists locally.
       # Check without prefix first, as this is most likely.
       if [[ -d $HOME/$projectsDirectory/${localValue//$pantheonPrefix/} ]]; then
         directory=${localValue//$pantheonPrefix/}
+
+        echo "Is $directory ok? Or should we name it something else? Respond y or n."
+        read $response
+
+        if [[ $response == 'y' || $response == 'yes' ]]; then
+          echo '$directory it is. Continuing.'
+        else
+          what_project
+        fi
       else
         # Check with prefix.
-        if [[ ! -d "$HOME/$projectsDirectory/$localValue" ]]; then
-          echo
-          echo 'What project are we building? Name of directory.'
-          read directory
-        fi
+        what_project
       fi
 
       get_connection () {
@@ -95,6 +109,7 @@ if type $terminus >/dev/null 2>&1; then
       else
         pull="cd $HOME/$projectsDirectory/$directory && git pull"
 	      eval $pull
+        echo 'Code pulled.'
       fi
 
       # Get database.
@@ -145,6 +160,14 @@ if type $terminus >/dev/null 2>&1; then
         get_subdirectory "$HOME/$projectsDirectory/" "$directory"
 
         echo 'Fetching files...'
+
+        if [[ -z $env ]]; then
+          echo
+          echo 'Hold up, I need to know what environment to get the files from.'
+          echo 'dev, test or live?'
+          read env
+          echo 'Ok, running amok. Hang tight.'
+        fi
 
         # If no subdirectory is set, we know we are in the webroot.
         if [[ -z $sub ]]; then
