@@ -17,8 +17,6 @@ if type $terminus >/dev/null 2>&1; then
         # Run again to edit file.
         create_nginx "$1"
       else
-        echo in 'else'
-
         echo 'Checking that nginx configuration is correct...'
 
         get_subdirectory "$HOME/$projectsDirectory/" "$directory"
@@ -156,6 +154,7 @@ if type $terminus >/dev/null 2>&1; then
       fi
 
       # Add Drupal settings file
+      echo
       echo 'Coping over settings.local.php file...'
       if [[ -d "$HOME/$projectsDirectory/$directory/sites/default" ]]; then
         cp base/settings.local.php "$HOME/$projectsDirectory/$directory/sites/default"
@@ -170,6 +169,7 @@ if type $terminus >/dev/null 2>&1; then
       if [[ -d "$HOME/$projectsDirectory/$directory" ]]; then
         get_subdirectory "$HOME/$projectsDirectory/" "$directory"
 
+        echo
         echo 'Fetching files...'
 
         if [[ -z $env ]]; then
