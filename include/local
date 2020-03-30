@@ -33,7 +33,7 @@ if type $terminus >/dev/null 2>&1; then
 
         if [[ $restart == true ]]; then
           echo "Restarting nginx, enter $USER's password when requested..."
-          sudo brew services restart nginx
+          eval brew services restart nginx
           echo 'Nginx restarted.'
 
           restart=false
