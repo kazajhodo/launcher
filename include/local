@@ -61,7 +61,7 @@ if type $terminus >/dev/null 2>&1; then
         read response
 
         if [[ $response == 'y' || $response == 'yes' ]]; then
-          echo '$directory it is. Continuing.'
+          echo "$directory it is. Continuing."
         else
           what_project
         fi
