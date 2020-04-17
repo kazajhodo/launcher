@@ -33,7 +33,8 @@ if type $terminus >/dev/null 2>&1; then
 
         if [[ $restart == true ]]; then
           echo "Restarting nginx, enter $USER's password when requested..."
-          eval brew services restart nginx
+          restart=$(brew services restart nginx)
+          eval $restart
           echo 'Nginx restarted.'
 
           restart=false
@@ -57,7 +58,7 @@ if type $terminus >/dev/null 2>&1; then
         directory=${localValue//$pantheonPrefix/}
 
         echo "Is $directory ok? Or should we name it something else? Respond y or n."
-        read $response
+        read response
 
         if [[ $response == 'y' || $response == 'yes' ]]; then
           echo '$directory it is. Continuing.'
