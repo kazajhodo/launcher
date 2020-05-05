@@ -1,5 +1,5 @@
 #!/bin/zsh
 
 # Placeholder to notify user settings have been updated.
-updated=true
-notification=true
+updated=false
+notification=false
