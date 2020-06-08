@@ -27,7 +27,7 @@ if type $terminus >/dev/null 2>&1; then
           sed -i '' "s/\/localhost/\/$directory\/$sub/g" "$nginx$1.conf"
         fi
 
-        sed -i '' 's/localhost\./$directory\./g' "$nginx$1.conf"
+        sed -i '' "s/localhost\./$directory\./g" "$nginx$1.conf"
         
         sed -i '' 's/# include \/usr\/local\/etc\/nginx\/conf.d\/drupal8.conf;/include \/usr\/local\/etc\/nginx\/conf.d\/drupal8.conf;/' "$nginx$1.conf"
         
