@@ -10,10 +10,13 @@
 # This is done to allow switching to php [version] using the 'php@[version]'.
 
 # Get current php base version.
-# Output is always 'php x.x.x'.
-# Cut down to [x.x].
-basePhpVersion=$(brew list --versions php | grep -o --regexp='.....$' | cut -c1-3)
+# Output is always 'php [x.x.x]'.
+# Regex to '[x.x]' and remove leading whitespace.
+basePhpVersion=$(brew list --versions php | grep -oE --regexp=' ...' | tr -d '[[:space:]]')
 basePhpVersionNoDot=${basePhpVersion//.}
+
+echo $basePhpVersion
+echo $basePhpVersionNoDot
 
 php="/usr/local/Cellar/php$basePhpVersionNoDot"
 php_path="/usr/local/Cellar/php@$basePhpVersion"
