@@ -15,9 +15,6 @@
 basePhpVersion=$(brew list --versions php | grep -oE --regexp=' ...' | tr -d '[[:space:]]')
 basePhpVersionNoDot=${basePhpVersion//.}
 
-echo $basePhpVersion
-echo $basePhpVersionNoDot
-
 php="/usr/local/Cellar/php$basePhpVersionNoDot"
 php_path="/usr/local/Cellar/php@$basePhpVersion"
 
