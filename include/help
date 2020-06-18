@@ -15,6 +15,12 @@ if [[ $help ]]; then
   echo
   echo '  "kill"    Close all applications previously opened by launcher'
   echo
+  echo '  "t" Alias for "terminus"'
+  echo '    - Any command of "terminus." may be executed with "t."'
+  echo
+  echo '  "a" Alias for "aliases'
+  echo '    - Any command of "aliases." may be executed with "a."'
+  echo
   echo '  "terminus.[pantheon-sitename].[environment]"'
   echo '       Terminus site deployment.'
   echo '       Runs cr, updb, cim, commands- in that order, to the specified environment.'
