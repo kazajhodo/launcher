@@ -15,14 +15,17 @@ if [[ $help ]]; then
   echo
   echo '  "kill"    Close all applications previously opened by launcher'
   echo
-  echo '  "terminus.[pantheon-sitename].[environment]"'
+  echo '  "cu"      Composer update'
+  echo '       Runs rm -rf vendor composer.lock && composer install'
+  echo
+  echo '  "t.[pantheon-sitename].[environment]"'
   echo '       Terminus site deployment.'
   echo '       Runs cr, updb, cim, commands- in that order, to the specified environment.'
   echo '       Meaning if environment=test, will deploy to dev and test, running commands against dev and test.'
-  echo ' "terminus.[pantheon-sitename].php"'
+  echo ' "t.[pantheon-sitename].php"'
   echo '       Retreive environment site php version.'
   echo
-  echo ' "aliases.[search]" Search for a pantheon alias.'
+  echo ' "a.[search]" Search for a pantheon alias.'
   echo '       Unsure the Pantheon site name? Search for it.'
   echo
   echo 'Options:'
@@ -38,5 +41,6 @@ if [[ $help ]]; then
   echo 'Help:'
   echo '  -help, --help      View this list. Ironic.'
   echo
+
   exit 0
 fi
