@@ -1,8 +1,8 @@
 #!/bin/zsh
 
-if type $composer >/dev/null 2>&1; then
+if type $composer >/dev/null 2>&1 && type $drush >/dev/null 2>&1; then
   if [[ $cu ]]; then
-    cd "$HOME/$projectsDirectory/$cu" && rm -rf vendor $composer.lock && $composer install
+    cd "$HOME/$projectsDirectory/$cu" && rm -rf vendor $composer.lock && $composer install && $drush cr && $drush updb -y && $drush cex -y
   fi
 else
   echo

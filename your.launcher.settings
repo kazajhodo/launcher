@@ -67,3 +67,8 @@ nginxDefault='/usr/local/etc/nginx/servers/default'
 # There are going to be devs who have 'composer' aliased to 'c' or something.
 # This allows the composer command launcher uses to be customized.
 composer='composer'
+
+# DRUSH COMMAND
+# There are going to be devs who have 'drush' aliased to 'd' or something.
+# This allows the drush command launcher uses to be customized.
+drush='drush'
