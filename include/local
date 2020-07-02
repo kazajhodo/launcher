@@ -113,7 +113,10 @@ if type $terminus >/dev/null 2>&1; then
       # Get code.
       if [[ ! -d "$HOME/$projectsDirectory/$directory" ]]; then
         gitConnection=$(terminus connection:info $localValue.dev --fields='Git Command' --format=string)
+
         gitConnection=${gitConnection/'aai'/"$HOME/$projectsDirectory/"}
+        # Remove '8' from end of string.
+        gitConnection=${gitConnection%'8'}
 
         echo 'Grabbing code...'      
         eval $gitConnection

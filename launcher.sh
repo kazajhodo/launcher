@@ -62,5 +62,8 @@ cd "${0%/*}" && source 'include/open-project'
 # Local.
 cd "${0%/*}" && source 'include/local'
 
-# Aliases search
+# Aliases search.
 cd "${0%/*}" && source 'include/aliases'
+
+# Composer update.
+cd "${0%/*}" && source 'include/composer'

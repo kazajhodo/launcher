@@ -1,0 +1,13 @@
+#!/bin/zsh
+
+if type $composer >/dev/null 2>&1; then
+  if [[ $cu ]]; then
+    cd "$HOME/$projectsDirectory/$cu" && rm -rf vendor $composer.lock && $composer install
+  fi
+else
+  echo
+  echo 'Composer not installed or alias not defined in your.launcher.settings'
+  echo
+  echo 'Install composer, or make sure that $composer is defined as your composer alias.'
+  echo
+fi

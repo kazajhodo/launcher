@@ -62,3 +62,8 @@ sqlUser=root
 # Nginx default configuration location.
 nginx='/usr/local/etc/nginx/servers/'
 nginxDefault='/usr/local/etc/nginx/servers/default'
+
+# COMPOSER COMMAND
+# There are going to be devs who have 'composer' aliased to 'c' or something.
+# This allows the composer command launcher uses to be customized.
+composer='composer'
