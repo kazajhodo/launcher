@@ -115,8 +115,12 @@ if type $terminus >/dev/null 2>&1; then
         gitConnection=$(terminus connection:info $localValue.dev --fields='Git Command' --format=string)
 
         gitConnection=${gitConnection/'aai'/"$HOME/$projectsDirectory/"}
+        
+        # Custom strips.
         # Remove '8' from end of string.
         gitConnection=${gitConnection%'8'}
+        # Remove 'mna' from beginning of string.
+        gitConnection=${gitConnection#'mna'}
 
         echo 'Grabbing code...'      
         eval $gitConnection
