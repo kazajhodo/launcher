@@ -18,6 +18,7 @@ ideapp='Visual Studio Code'
 # CASE SENSITIVE
 git='gittower'
 gitapp='Tower'
+gitclient='git'
 
 # PROJECTS DIRECTORY
 # This is where all of your local sites are located.

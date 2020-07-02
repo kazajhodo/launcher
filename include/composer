@@ -3,10 +3,29 @@
 if type $composer >/dev/null 2>&1 && type $drush >/dev/null 2>&1; then
   if [[ $cu ]]; then
     cd "$HOME/$projectsDirectory/$cu" && rm -rf vendor $composer.lock && $composer install && $drush cr && $drush updb -y && $drush cex -y
+
+    echo 'Composer update complete.'
+    echo
+    echo 'Should I commit? (y/n)'
+    read commit
+
+    if [[ $commit == 'y' || $commit == 'yes' ]]; then
+      if type $gitclient >/dev/null 2>&1; then
+        cd "$HOME/$projectsDirectory/$cu" && $gitclient add . && $gitclient commit -m 'Core, module, composer, updates.'
+        echo
+        echo 'Core, module, composer, updates complete.'
+        echo
+      else
+        echo 'Git not installed or alias not defined in your.launcher.settings.'
+        echo
+        echo 'Install git, or make sure that $git is defined as your git alias.'
+        echo
+      fi
+    fi
   fi
 else
   echo
-  echo 'Composer not installed or alias not defined in your.launcher.settings'
+  echo 'Composer not installed or alias not defined in your.launcher.settings.'
   echo
   echo 'Install composer, or make sure that $composer is defined as your composer alias.'
   echo
