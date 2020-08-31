@@ -2,7 +2,7 @@
 
 if type $composer >/dev/null 2>&1 && type $drush >/dev/null 2>&1; then
   if [[ $cu ]]; then
-    cd "$HOME/$projectsDirectory/$cu" && rm -rf vendor $composer.lock && $composer install && $drush cr && $drush updb -y && $drush cex -y
+    cd "$HOME/$projectsDirectory/$cu" && $drush cr && $drush updb -y && $drush cex -y
 
     echo 'Composer update complete.'
     echo
