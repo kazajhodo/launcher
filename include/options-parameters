@@ -20,8 +20,8 @@ do
     'aliases.'* | 'a.'*)
       aliasValue=${item#*.}
       ;;
-    'cu.'*)
-      cu=${item#*.}
+    'du.'*)
+      du=${item#*.}
       ;;
     '-y')
       yes=$item

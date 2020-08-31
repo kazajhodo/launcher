@@ -1,8 +1,8 @@
 #!/bin/zsh
 
-if type $composer >/dev/null 2>&1 && type $drush >/dev/null 2>&1; then
-  if [[ $cu ]]; then
-    cd "$HOME/$projectsDirectory/$cu" && $drush cr && $drush updb -y && $drush cex -y
+if type $drush >/dev/null 2>&1; then
+  if [[ $du ]]; then
+    cd "$HOME/$projectsDirectory/$du && $drush cr && $drush updb -y && $drush cex -y"
 
     echo 'Composer update complete.'
     echo
@@ -11,7 +11,7 @@ if type $composer >/dev/null 2>&1 && type $drush >/dev/null 2>&1; then
 
     if [[ $commit == 'y' || $commit == 'yes' ]]; then
       if type $gitclient >/dev/null 2>&1; then
-        cd "$HOME/$projectsDirectory/$cu" && $gitclient add . && $gitclient commit -m 'Core, module, composer, updates.'
+        cd "$HOME/$projectsDirectory/$du" && $gitclient add . && $gitclient commit -m 'Core, module, composer, updates.'
         echo
         echo 'Core, module, composer, updates complete.'
         echo

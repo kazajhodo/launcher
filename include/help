@@ -15,9 +15,9 @@ if [[ $help ]]; then
   echo
   echo '  "kill"    Close all applications previously opened by launcher'
   echo
-  echo '  "cu [directory-name]"'
-  echo '       Composer update.'
-  echo '       Runs rm -rf vendor composer.lock && composer install'
+  echo '  "du.[directory-name]"'
+  echo '       Drush executions.'
+  echo '       Runs drush cr && drush updb -y && drush cex -y'
   echo
   echo '  "t.[pantheon-sitename].[environment]"'
   echo '       Terminus site deployment.'

@@ -66,4 +66,4 @@ cd "${0%/*}" && source 'include/local'
 cd "${0%/*}" && source 'include/aliases'
 
 # Composer update.
-cd "${0%/*}" && source 'include/composer'
+cd "${0%/*}" && source 'include/drush'
