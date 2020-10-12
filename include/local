@@ -6,7 +6,6 @@ if type $terminus >/dev/null 2>&1; then
   if type terminus rsync >/dev/null 2>&1; then
 
     create_nginx () {
-      restart=false
       if [[ ! -f "$nginx$1.conf" ]]; then
         echo 'Creating nginx configuration file...'
         eval cp "$nginxDefault $nginx$1.conf"
@@ -38,6 +37,7 @@ if type $terminus >/dev/null 2>&1; then
           restart=$(brew services restart nginx)
           eval $restart
           echo 'Nginx restarted.'
+          echo
 
           restart=false
         fi
@@ -50,20 +50,37 @@ if type $terminus >/dev/null 2>&1; then
         echo
         echo 'What project are we building? Name of directory.'
         read directory
+        echo
+      fi
+    }
+
+    is_ok () {
+      echo
+      echo "$1 (y or n)"
+      read response
+      echo
+
+      if [[ $response == 'y' || $response == 'yes' ]]; then
+        response=true
+      else
+        response=false
       fi
     }
 
     if [[ $localValue ]]; then
+      # Set for nginx creation process later.
+      restart=false
+
       # Check if provided directory exists locally.
       # Check without prefix first, as this is most likely.
       if [[ -d $HOME/$projectsDirectory/${localValue//$pantheonPrefix/} ]]; then
         directory=${localValue//$pantheonPrefix/}
 
-        echo "Is $directory ok? Or should we name it something else? Respond y or n."
-        read response
+        is_ok "Is $directory ok, or should we name it something else?"
 
-        if [[ $response == 'y' || $response == 'yes' ]]; then
+        if [[ $response == true ]]; then
           echo "$directory it is. Continuing."
+          echo
         else
           what_project
         fi
@@ -132,62 +149,71 @@ if type $terminus >/dev/null 2>&1; then
       fi
 
       # Get database.
-      get_connection "$localValue" "$directory"
+      is_ok 'Download and import database?'
 
-      # Create local database.
-      echo
-      echo "Creating/updating $directory database..."
-      create="mysql -u $sqlUser -p -e 'create database if not exists $directory'"
-      eval $create
-      echo 'Done.'
+      if [[ $response == true ]]; then
+        get_connection "$localValue" "$directory"
 
-      # Import local database.
-      echo
-      echo 'Importing downloaded database into local database...'
-      import="mysql -v -u $sqlUser -p $directory < $sqlFile"
-      eval $import
-      echo 'Done.'
-      echo
-
-      # Cleanup downloaded database file.
-      if [[ -f $sqlFile ]]; then
+        # Create local database.
         echo
-        echo 'Cleaning up imported database file...'
-        rm -rf $sqlFile
+        echo "Creating/updating $directory database..."
+        create="mysql -u $sqlUser -p -e 'create database if not exists $directory'"
+        eval $create
+        echo 'Done.'
+
+        # Import local database.
+        echo
+        echo 'Importing downloaded database into local database...'
+        import="mysql -v -u $sqlUser -p $directory < $sqlFile"
+        eval $import
         echo 'Done.'
         echo
+
+        # Cleanup downloaded database file.
+        if [[ -f $sqlFile ]]; then
+          echo
+          echo 'Cleaning up imported database file...'
+          rm -rf $sqlFile
+          echo 'Done.'
+          echo
+        fi
       fi
-      
+
       # Create nginx configuration.
       if type 'nginx' >/dev/null 2>&1; then
         create_nginx "$directory"
       fi
 
+      # TODO: Add settings file creation.
       # Add Drupal settings file
-      echo
-      echo 'Coping over settings.local.php file...'
-      if [[ -d "$HOME/$projectsDirectory/$directory/sites/default" ]]; then
-        cp base/settings.local.php "$HOME/$projectsDirectory/$directory/sites/default"
-        sed -i '' "s/\[database-name\]/$directory/" "$HOME/$projectsDirectory/$directory/sites/default/settings.local.php"
-      else
-        cp base/settings.local.php "$HOME/$projectsDirectory/$directory/web/sites/default"
-        sed -i '' "s/\[database-name\]/$directory/" "$HOME/$projectsDirectory/$directory/web/sites/default/settings.local.php"
-      fi
-      echo 'Settings file created.'
+      # echo
+      # echo 'Coping over settings.local.php file...'
+      # if [[ -d "$HOME/$projectsDirectory/$directory/sites/default" ]]; then
+      #   cp "base/settings.local.php $HOME/$projectsDirectory/$directory/sites/default"
+      #   sed -i '' "s/\[database-name\]/$directory/" "$HOME/$projectsDirectory/$directory/sites/default/settings.local.php"
+      # else
+      #   cp "base/settings.local.php $HOME/$projectsDirectory/$directory/web/sites/default"
+      #   sed -i '' "s/\[database-name\]/$directory/" "$HOME/$projectsDirectory/$directory/web/sites/default/settings.local.php"
+      # fi
+      # echo 'Settings file created.'
+
 
       # Get files.
       if [[ -d "$HOME/$projectsDirectory/$directory" ]]; then
         get_subdirectory "$HOME/$projectsDirectory/" "$directory"
 
-        echo
-        echo 'Download files? (y or n)'
-        read $files
+        is_ok 'Download files?'
 
-        if [[ $files == 'y' ]]; then
+        if [[ $response == true ]]; then
           # If no subdirectory is set, we know we are in the webroot.
           if [[ -z $sub ]]; then
             if [[ ! -d "$HOME/$projectsDirectory/$directory/sites/default/files" ]]; then
               mkdir "$HOME/$projectsDirectory/$directory/sites/default/files"
+            fi
+
+            # Default pull files from live environment.
+            if [[ -z $env ]]; then
+              env='live'
             fi
 
             sync="terminus rsync $localValue.$env:files/ $HOME/$projectsDirectory/$directory/sites/default/files -- --progress"
@@ -209,24 +235,21 @@ if type $terminus >/dev/null 2>&1; then
       fi
     fi
   else
-    echo
-    echo 'You need to install the awesomeness of terminus rsync, its a terminus plugin.'
-    echo 'Mind if I install it? Respond y or n.'
-    read response
+    is_ok 'You need to install the awesomeness of terminus rsync, its a terminus plugin. Mind if I install it?'
 
-    if [[ $response == 'y' || $response == 'yes' ]]; then
-      if [[ ! -d $HOME/.terminus/plugins ]]; then
+    if [[ $response == true ]]; then
+      if [[ ! -d "$HOME/.terminus/plugins" ]]; then
         echo 'Creating terminus plugins directory.'
-        mkdir -p $HOME/.terminus/plugins
+        mkdir "-p $HOME/.terminus/plugins"
         echo 'Created.'
       else
         echo
         echo 'Terminus plugins directory already exists, moving along...'
       fi
 
-      if [[ ! -d $HOME/.terminus/plugins/terminus-rsync-plugin ]]; then
+      if [[ ! -d "$HOME/.terminus/plugins/terminus-rsync-plugin" ]]; then
         echo 'Installing Terminus Rsync Plugin...'
-        composer create-project --no-dev -d $HOME/.terminus/plugins pantheon-systems/terminus-rsync-plugin:~1
+        composer "create-project --no-dev -d $HOME/.terminus/plugins pantheon-systems/terminus-rsync-plugin:~1"
         echo 'Plugin installed.'
       else
         echo 'Terminus Rsync Plugin is already installed... not sure how you got here, this is a bug. Add it to the issues queue: https://github.com/kazajhodo/launcher/issues'
