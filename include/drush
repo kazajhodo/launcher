@@ -2,7 +2,7 @@
 
 if type $drush >/dev/null 2>&1; then
   if [[ $du ]]; then
-    cd "$HOME/$projectsDirectory/$du && $drush cr && $drush updb -y && $drush cex -y"
+    cd "$HOME/$projectsDirectory/$du" && "$drush cr" && "$drush updb -y" && "$drush cex -y"
 
     echo 'Drush executions complete.'
     echo
@@ -11,7 +11,7 @@ if type $drush >/dev/null 2>&1; then
 
     if [[ $commit == 'y' || $commit == 'yes' ]]; then
       if type $gitclient >/dev/null 2>&1; then
-        cd "$HOME/$projectsDirectory/$du && $gitclient add . && $gitclient commit -m Core update complete."
+        cd "$HOME/$projectsDirectory/$du" && "$gitclient add ." && "$gitclient commit -m Core update complete."
         echo
         echo 'Core update complete.'
         echo
@@ -25,7 +25,7 @@ if type $drush >/dev/null 2>&1; then
   fi
 else
   echo
-  echo 'CompoDrush not installed or alias not defined in your.launcher.settings.'
+  echo 'Drush not installed or alias not defined in your.launcher.settings.'
   echo
   echo 'Install drush, or make sure that $drush is defined as your drush alias.'
   echo
