@@ -73,3 +73,8 @@ composer='composer'
 # There are going to be devs who have 'drush' aliased to 'd' or something.
 # This allows the drush command launcher uses to be customized.
 drush='drush'
+
+# HOME OVERRIDE
+# If you have your projects not in your $HOME, override it.
+# Example: HOME='/Volumes/external-drive-name'
+# HOME=''
