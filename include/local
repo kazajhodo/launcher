@@ -18,7 +18,7 @@ if type $terminus >/dev/null 2>&1; then
       else
         echo 'Checking that nginx configuration is correct...'
 
-        get_subdirectory "$HOME/$projectsDirectory/" "$directory"
+        get_subdirectory "$homeovr/$projectsDirectory/" "$directory"
 
         if [[ -z $sub ]]; then
           sed -i '' "s/\/localhost/\/$directory/g" "$nginx$1.conf"
@@ -46,7 +46,7 @@ if type $terminus >/dev/null 2>&1; then
 
     what_project () {
       # Check with prefix.
-      if [[ ! -d "$HOME/$projectsDirectory/$localValue" ]]; then
+      if [[ ! -d "$homeovr/$projectsDirectory/$localValue" ]]; then
         echo
         echo 'What project are we building? Name of directory.'
         read directory
@@ -73,7 +73,7 @@ if type $terminus >/dev/null 2>&1; then
 
       # Check if provided directory exists locally.
       # Check without prefix first, as this is most likely.
-      if [[ -d $HOME/$projectsDirectory/${localValue//$pantheonPrefix/} ]]; then
+      if [[ -d $homeovr/$projectsDirectory/${localValue//$pantheonPrefix/} ]]; then
         directory=${localValue//$pantheonPrefix/}
 
         is_ok "Is $directory ok, or should we name it something else?"
@@ -170,6 +170,8 @@ if type $terminus >/dev/null 2>&1; then
 
         # Import local database.
         echo
+        echo $directory
+        echo $sqlFile
         echo 'Importing downloaded database into local database...'
         import="mysql -v -u $sqlUser -p $directory < $sqlFile"
         eval $import
@@ -195,18 +197,18 @@ if type $terminus >/dev/null 2>&1; then
       # Add Drupal settings file
       # echo
       # echo 'Coping over settings.local.php file...'
-      # if [[ -d "$HOME/$projectsDirectory/$directory/sites/default" ]]; then
-      #   cp "base/settings.local.php $HOME/$projectsDirectory/$directory/sites/default"
-      #   sed -i '' "s/\[database-name\]/$directory/" "$HOME/$projectsDirectory/$directory/sites/default/settings.local.php"
+      # if [[ -d "$homeovr/$projectsDirectory/$directory/sites/default" ]]; then
+      #   cp "base/settings.local.php $homeovr/$projectsDirectory/$directory/sites/default"
+      #   sed -i '' "s/\[database-name\]/$directory/" "$homeovr/$projectsDirectory/$directory/sites/default/settings.local.php"
       # else
-      #   cp "base/settings.local.php $HOME/$projectsDirectory/$directory/web/sites/default"
-      #   sed -i '' "s/\[database-name\]/$directory/" "$HOME/$projectsDirectory/$directory/web/sites/default/settings.local.php"
+      #   cp "base/settings.local.php $homeovr/$projectsDirectory/$directory/web/sites/default"
+      #   sed -i '' "s/\[database-name\]/$directory/" "$homeovr/$projectsDirectory/$directory/web/sites/default/settings.local.php"
       # fi
       # echo 'Settings file created.'
 
 
       # Get files.
-      if [[ -d "$HOME/$projectsDirectory/$directory" ]]; then
+      if [[ -d "$homeovr/$projectsDirectory/$directory" ]]; then
         get_subdirectory "$homeovr/$projectsDirectory/" "$directory"
 
         is_ok 'Download files?'
