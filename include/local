@@ -12,7 +12,7 @@ if type $terminus >/dev/null 2>&1; then
         echo 'Nginx configuration file added.'
 
         restart=true
-        
+
         # Run again to edit file.
         create_nginx "$1"
       else
@@ -27,9 +27,9 @@ if type $terminus >/dev/null 2>&1; then
         fi
 
         sed -i '' "s/localhost\./$directory\./g" "$nginx$1.conf"
-        
+
         sed -i '' 's/# include \/usr\/local\/etc\/nginx\/conf.d\/drupal8.conf;/include \/usr\/local\/etc\/nginx\/conf.d\/drupal8.conf;/' "$nginx$1.conf"
-        
+
         echo 'Nginx configuration complete.'
 
         if [[ $restart == true ]]; then
@@ -109,14 +109,21 @@ if type $terminus >/dev/null 2>&1; then
           exit 0
         fi
 
+        if [[ $test == *'authenticate'* ]]; then
+          echo
+          echo 'You are not authenticated with terminus, run:'
+          echo 'terminus auth:login'
+          echo
+        fi
+
         if [[ $test == *'OK'* ]]; then
-          sqlFile="$HOME/$projectsDirectory/$2/$2.sql"
+          sqlFile="$homeovr/$projectsDirectory/$2/$2.sql"
           connection=$(terminus connection:info $1.$env --field='MySQL Command')
           connection=${connection/'mysql'/'mysqldump -v'}
           connection="$connection > $sqlFile"
 
           eval $connection
-        else 
+        else
           echo
           echo 'Could not connect to live db, would you like another environments db? Which one? (dev, test, live)'
           read env
@@ -128,22 +135,22 @@ if type $terminus >/dev/null 2>&1; then
       }
 
       # Get code.
-      if [[ ! -d "$HOME/$projectsDirectory/$directory" ]]; then
+      if [[ ! -d "$homeovr/$projectsDirectory/$directory" ]]; then
         gitConnection=$(terminus connection:info $localValue.dev --fields='Git Command' --format=string)
 
-        gitConnection=${gitConnection/'aai'/"$HOME/$projectsDirectory/"}
-        
+        gitConnection=${gitConnection/'aai'/"$homeovr/$projectsDirectory/"}
+
         # Custom strips.
         # Remove '8' from end of string.
         gitConnection=${gitConnection%'8'}
         # Remove 'mna' from beginning of string.
         gitConnection=${gitConnection#'mna-'}
 
-        echo 'Grabbing code...'      
+        echo 'Grabbing code...'
         eval $gitConnection
         echo 'Code complete.'
       else
-        pull="cd $HOME/$projectsDirectory/$directory && git pull"
+        pull="cd $homeovr/$projectsDirectory/$directory && git pull"
 	      eval $pull
         echo 'Code pulled.'
       fi
@@ -200,15 +207,15 @@ if type $terminus >/dev/null 2>&1; then
 
       # Get files.
       if [[ -d "$HOME/$projectsDirectory/$directory" ]]; then
-        get_subdirectory "$HOME/$projectsDirectory/" "$directory"
+        get_subdirectory "$homeovr/$projectsDirectory/" "$directory"
 
         is_ok 'Download files?'
 
         if [[ $response == true ]]; then
           # If no subdirectory is set, we know we are in the webroot.
           if [[ -z $sub ]]; then
-            if [[ ! -d "$HOME/$projectsDirectory/$directory/sites/default/files" ]]; then
-              mkdir "$HOME/$projectsDirectory/$directory/sites/default/files"
+            if [[ ! -d "$homeovr/$projectsDirectory/$directory/sites/default/files" ]]; then
+              mkdir "$homeovr/$projectsDirectory/$directory/sites/default/files"
             fi
 
             # Default pull files from live environment.
@@ -216,14 +223,14 @@ if type $terminus >/dev/null 2>&1; then
               env='live'
             fi
 
-            sync="terminus rsync $localValue.$env:files/ $HOME/$projectsDirectory/$directory/sites/default/files -- --progress"
+            sync="terminus rsync $localValue.$env:files/ $homeovr/$projectsDirectory/$directory/sites/default/files -- --progress"
             eval $sync
           else
-            if [[ ! -d "$HOME/$projectsDirectory/$directory/web/sites/default/files" ]]; then
-              mkdir "$HOME/$projectsDirectory/$directory/web/sites/default/files"
+            if [[ ! -d "$homeovr/$projectsDirectory/$directory/web/sites/default/files" ]]; then
+              mkdir "$homeovr/$projectsDirectory/$directory/web/sites/default/files"
             fi
 
-            sync="terminus rsync $localValue.$env:files/ $HOME/$projectsDirectory/$directory/web/sites/default/files -- --progress"
+            sync="terminus rsync $localValue.$env:files/ $homeovr/$projectsDirectory/$directory/web/sites/default/files -- --progress"
             eval $sync
           fi
 
