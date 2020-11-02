@@ -77,4 +77,4 @@ drush='drush'
 # HOME OVERRIDE
 # If you have your projects not in your $HOME, override it.
 # Example: HOME='/Volumes/external-drive-name'
-# HOME=''
+homeovr='/Volumes/salvation'
