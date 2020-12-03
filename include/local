@@ -145,6 +145,11 @@ if type $terminus >/dev/null 2>&1; then
         gitConnection=${gitConnection%'8'}
         # Remove 'mna' from beginning of string.
         gitConnection=${gitConnection#'mna-'}
+        
+        # Replace localvalue with new directory value if exists.
+        if [[ $directory ]]; then
+          gitConnection=${gitConnection/"$localValue"/"$directory"}
+        fi
 
         echo 'Grabbing code...'
         eval "cd $homeovr/$projectsDirectory && $gitConnection"
