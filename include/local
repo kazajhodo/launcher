@@ -194,13 +194,10 @@ if type $terminus >/dev/null 2>&1; then
         eval $create
         echo 'Done.'
 
-        # Import local database.
-        echo
-        echo $directory
-        echo $sqlFile
-
+        # Check if progress indication is available for mysql import.
         pv_check
 
+        # Import local database.
         echo 'Importing downloaded database into local database...'
 
         if [[ $pv == true ]]; then
