@@ -46,7 +46,7 @@ if [[ $project ]]; then
   if [[ $pantheon == 1 ]]; then
     projects="$HOME/Localdev/"
   else
-    projects="$HOME/$projectsDirectory/"
+    projects="$homeovr/$projectsDirectory/"
   fi
 
   # If -y option is passed.
