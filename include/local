@@ -147,7 +147,7 @@ if type $terminus >/dev/null 2>&1; then
         gitConnection=${gitConnection#'mna-'}
 
         echo 'Grabbing code...'
-        eval $gitConnection
+        eval "cd $homeovr/$projectsDirectory && $gitConnection"
         echo 'Code complete.'
       else
         pull="cd $homeovr/$projectsDirectory/$directory && git pull"
