@@ -5,6 +5,27 @@
 if type $terminus >/dev/null 2>&1; then
   if type terminus rsync >/dev/null 2>&1; then
 
+    pv_check () {
+      if type pv >/dev/null 2>&1; then
+        pv=true
+      else
+        pv=false
+        echo
+        echo 'We would like to install the pv module.'
+        echo 'This is for showing you mysql import progress, while retaining speed.'
+        
+        is_ok 'Is this ok?'
+
+        if [[ $response == true ]]; then
+          echo 'Installing pv module with homebrew.'
+          brew install pv
+          pv=true
+        else
+          echo 'Mysql import will run without showing progress.'
+        fi
+      fi
+    }
+
     create_nginx () {
       if [[ ! -f "$nginx$1.conf" ]]; then
         echo 'Creating nginx configuration file...'
@@ -177,8 +198,17 @@ if type $terminus >/dev/null 2>&1; then
         echo
         echo $directory
         echo $sqlFile
+
+        pv_check
+
         echo 'Importing downloaded database into local database...'
-        import="mysql -v -u $sqlUser -p $directory < $sqlFile"
+
+        if [[ $pv == true ]]; then
+          import="pv $sqlFile | mysql -u $sqlUser -p $directory < $sqlFile"
+        else
+          import="mysql -u $sqlUser -p $directory < $sqlFile"
+        fi
+
         eval $import
         echo 'Done.'
         echo
