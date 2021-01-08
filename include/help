@@ -15,6 +15,9 @@ if [[ $help ]]; then
   echo
   echo '  "kill"    Close all applications previously opened by launcher'
   echo
+  echo ' "a.[search]" Search for a pantheon alias.'
+  echo '       Unsure the Pantheon site name? Search for it.'
+  echo
   echo '  "du.[directory-name]"'
   echo '       Drush executions.'
   echo '       Runs drush cr && drush updb -y && drush cex -y'
@@ -26,8 +29,14 @@ if [[ $help ]]; then
   echo ' "t.[pantheon-sitename].php"'
   echo '       Retreive environment site php version.'
   echo
-  echo ' "a.[search]" Search for a pantheon alias.'
-  echo '       Unsure the Pantheon site name? Search for it.'
+  echo ' "l.[pantheon-sitename]"'
+  echo '       Build local from site.'
+  echo
+  echo ' "l.[pantheon-sitename].d"'
+  echo '       Build local database from site.'
+  echo
+  echo ' "l.[pantheon-sitename].f"'
+  echo '       Build local files from site.'
   echo
   echo 'Options:'
   echo '  -y          auto answer yes to prompts'
