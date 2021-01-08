@@ -14,8 +14,23 @@ do
     'terminus.'* | 't.'*)
       terminusValue=${item#*.}
       ;;
-    'local.'* | 'l.'*)
+    'local.'* | 'l.'* | 'l.'*'.f')
+      # d=database, f=files
+      targeted=('d' 'f')
+
+      # Strip localValue prefix an suffix.
       localValue=${item#*.}
+      localValue=${localValue%.*}
+
+      # If a targeted run.
+      if [[ ${targeted[@]} =~ ${item##*.}  ]]; then
+        targetedRun=true
+      fi
+
+      # Build local files only.
+      if [[ ${item##*.} == 'f' ]]; then
+        filesOnly=true
+      fi
       ;;
     'aliases.'* | 'a.'*)
       aliasValue=${item#*.}
@@ -30,7 +45,7 @@ do
       help=$item
       ;;
     '-p')
-      pantheon=1
+      pantheon=true
       ;;
     '-sub='*)
       sub=${item#*=}

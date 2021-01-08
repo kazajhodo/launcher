@@ -1,0 +1,20 @@
+#!/bin/zsh
+
+wp_or_drupal() {
+  # Set default.
+  framework=drupal
+
+  if [[ -f "$1/wp-config.php" ]]; then
+    framework=wordpress
+  fi
+
+  # Set drupal specific variables.
+  if [[ $framework == 'drupal' ]]; then
+    filesPath='sites/default/files'
+  fi
+
+  # Set wordpress specific variables.
+  if [[ $framework == 'wordpress' ]]; then
+    filesPath='wp-content/uploads'
+  fi
+}

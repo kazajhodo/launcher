@@ -88,6 +88,53 @@ if type $terminus >/dev/null 2>&1; then
       fi
     }
 
+    get_connection () {
+      # If no $3, defaults to 'live'.
+      env=${3:-'live'}
+
+      # Use Terminus wake command to check existence of database.
+      test=$(terminus env:wake $1.$env 2>&1)
+
+      if [[ $test == *'error'* ]]; then
+        echo
+        echo 'Error returned:'
+        echo $test
+        echo
+      fi
+
+      if [[ $test == *'frozen'* ]]; then
+        echo
+        echo 'Frozen site, bailing.'
+        exit 0
+      fi
+
+      if [[ $test == *'authenticate'* ]]; then
+        echo
+        echo 'You are not authenticated with terminus, run:'
+        echo 'terminus auth:login'
+        echo
+      fi
+
+      if [[ $test == *'OK'* ]]; then
+        sqlFile="$homeovr/$projectsDirectory/$2/$2.sql"
+        connection=$(terminus connection:info $1.$env --field='MySQL Command')
+        connection=${connection/'mysql'/'mysqldump -v'}
+        connection="$connection > $sqlFile"
+
+        eval $connection
+      else
+        echo
+        echo 'Could not connect to live db, would you like another environments db? Which one? (dev, test, live)'
+        read env
+
+        if [[ $env ]]; then
+          get_connection "$localValue" "$directory" "$env"
+        fi
+      fi
+    }
+
+
+
     if [[ $localValue ]]; then
       # Set for nginx creation process later.
       restart=false
@@ -110,119 +157,80 @@ if type $terminus >/dev/null 2>&1; then
         what_project
       fi
 
-      get_connection () {
-        # If no $3, defaults to 'live'.
-        env=${3:-'live'}
-
-        # Use Terminus wake command to check existence of database.
-        test=$(terminus env:wake $1.$env 2>&1)
-
-        if [[ $test == *'error'* ]]; then
-          echo
-          echo 'Error returned:'
-          echo $test
-          echo
-        fi
-
-        if [[ $test == *'frozen'* ]]; then
-          echo
-          echo 'Frozen site, bailing.'
-          exit 0
-        fi
-
-        if [[ $test == *'authenticate'* ]]; then
-          echo
-          echo 'You are not authenticated with terminus, run:'
-          echo 'terminus auth:login'
-          echo
-        fi
-
-        if [[ $test == *'OK'* ]]; then
-          sqlFile="$homeovr/$projectsDirectory/$2/$2.sql"
-          connection=$(terminus connection:info $1.$env --field='MySQL Command')
-          connection=${connection/'mysql'/'mysqldump -v'}
-          connection="$connection > $sqlFile"
-
-          eval $connection
-        else
-          echo
-          echo 'Could not connect to live db, would you like another environments db? Which one? (dev, test, live)'
-          read env
-
-          if [[ $env ]]; then
-            get_connection "$localValue" "$directory" "$env"
-          fi
-        fi
-      }
-
       # Get code.
-      if [[ ! -d "$homeovr/$projectsDirectory/$directory" ]]; then
-        gitConnection=$(terminus connection:info $localValue.dev --fields='Git Command' --format=string)
+      if [[ $targetedRun == false ]]; then
+        if [[ ! -d "$homeovr/$projectsDirectory/$directory" ]]; then
+          gitConnection=$(terminus connection:info $localValue.dev --fields='Git Command' --format=string)
 
-        gitConnection=${gitConnection/'aai'/"$homeovr/$projectsDirectory/"}
+          gitConnection=${gitConnection/'aai'/"$homeovr/$projectsDirectory/"}
 
-        # Custom strips.
-        # Remove '8' from end of string.
-        gitConnection=${gitConnection%'8'}
-        # Remove 'mna' from beginning of string.
-        gitConnection=${gitConnection#'mna-'}
-        
-        # Replace localvalue with new directory value if exists.
-        if [[ $directory ]]; then
-          gitConnection=${gitConnection/"$localValue"/"$directory"}
+          # Custom strips.
+          # Remove '8' from end of string.
+          gitConnection=${gitConnection%'8'}
+          # Remove 'mna' from beginning of string.
+          gitConnection=${gitConnection#'mna-'}
+          
+          # Replace localvalue with new directory value if exists.
+          if [[ $directory ]]; then
+            gitConnection=${gitConnection/"$localValue"/"$directory"}
+          fi
+
+          echo 'Grabbing code...'
+          eval "cd $homeovr/$projectsDirectory && $gitConnection"
+          echo 'Code complete.'
+        else
+          pull="cd $homeovr/$projectsDirectory/$directory && git pull"
+          eval $pull
+          echo 'Code pulled.'
         fi
-
-        echo 'Grabbing code...'
-        eval "cd $homeovr/$projectsDirectory && $gitConnection"
-        echo 'Code complete.'
-      else
-        pull="cd $homeovr/$projectsDirectory/$directory && git pull"
-	      eval $pull
-        echo 'Code pulled.'
       fi
 
       # Get database.
-      is_ok 'Download and import database?'
+      if [[ $targetedRun == false || $databaseOnly ]]; then
+        is_ok 'Download and import database?'
 
-      if [[ $response == true ]]; then
-        get_connection "$localValue" "$directory"
+        if [[ $response == true ]]; then
+          get_connection "$localValue" "$directory"
 
-        # Create local database.
-        echo
-        echo "Creating/updating $directory database..."
-        create="mysql -u $sqlUser -p -e 'create database if not exists $directory'"
-        eval $create
-        echo 'Done.'
-
-        # Check if progress indication is available for mysql import.
-        pv_check
-
-        # Import local database.
-        echo 'Importing downloaded database into local database...'
-
-        if [[ $pv == true ]]; then
-          import="pv $sqlFile | mysql -u $sqlUser -p $directory < $sqlFile"
-        else
-          import="mysql -u $sqlUser -p $directory < $sqlFile"
-        fi
-
-        eval $import
-        echo 'Done.'
-        echo
-
-        # Cleanup downloaded database file.
-        if [[ -f $sqlFile ]]; then
+          # Create local database.
           echo
-          echo 'Cleaning up imported database file...'
-          rm -rf $sqlFile
+          echo "Creating/updating $directory database..."
+          create="mysql -u $sqlUser -p -e 'create database if not exists $directory'"
+          eval $create
+          echo 'Done.'
+
+          # Check if progress indication is available for mysql import.
+          pv_check
+
+          # Import local database.
+          echo 'Importing downloaded database into local database...'
+
+          if [[ $pv == true ]]; then
+            import="pv $sqlFile | mysql -u $sqlUser -p $directory < $sqlFile"
+          else
+            import="mysql -u $sqlUser -p $directory < $sqlFile"
+          fi
+
+          eval $import
           echo 'Done.'
           echo
+
+          # Cleanup downloaded database file.
+          if [[ -f $sqlFile ]]; then
+            echo
+            echo 'Cleaning up imported database file...'
+            rm -rf $sqlFile
+            echo 'Done.'
+            echo
+          fi
         fi
       fi
 
       # Create nginx configuration.
-      if type 'nginx' >/dev/null 2>&1; then
-        create_nginx "$directory"
+      if [[ $targetedRun == false ]]; then
+        if type 'nginx' >/dev/null 2>&1; then
+          create_nginx "$directory"
+        fi
       fi
 
       # TODO: Add settings file creation.
@@ -238,42 +246,47 @@ if type $terminus >/dev/null 2>&1; then
       # fi
       # echo 'Settings file created.'
 
-
       # Get files.
-      if [[ -d "$homeovr/$projectsDirectory/$directory" ]]; then
-        get_subdirectory "$homeovr/$projectsDirectory/" "$directory"
+      if [[ $targetedRun == false || $filesOnly ]]; then
+        if [[ -d "$homeovr/$projectsDirectory/$directory" ]]; then
+          get_subdirectory "$homeovr/$projectsDirectory/" "$directory"
 
-        is_ok 'Download files?'
+          is_ok 'Download files?'
 
-        if [[ $response == true ]]; then
-          # If no subdirectory is set, we know we are in the webroot.
-          if [[ -z $sub ]]; then
-            if [[ ! -d "$homeovr/$projectsDirectory/$directory/sites/default/files" ]]; then
-              mkdir "$homeovr/$projectsDirectory/$directory/sites/default/files"
+          if [[ $response == true ]]; then
+            # Detect Drupal or Wordpress
+            wp_or_drupal "$homeovr/$projectsDirectory/$directory"
+
+            # If no subdirectory is set, we know we are in the webroot.
+            if [[ -z $sub ]]; then
+              if [[ ! -d "$homeovr/$projectsDirectory/$directory/$filesPath" ]]; then
+                mkdir "$homeovr/$projectsDirectory/$directory/$filesPath"
+              fi
+
+              # Default pull files from live environment.
+              if [[ -z $env ]]; then
+                env='live'
+              fi
+
+              sync="terminus rsync $localValue.$env:files/ $homeovr/$projectsDirectory/$directory/$filesPath -- --progress"
+              eval $sync
+            else
+              if [[ ! -d "$homeovr/$projectsDirectory/$directory/web/$filesPath" ]]; then
+                mkdir "$homeovr/$projectsDirectory/$directory/web/$filesPath"
+              fi
+
+              sync="terminus rsync $localValue.$env:files/ $homeovr/$projectsDirectory/$directory/web/$filesPath -- --progress"
+              eval $sync
             fi
 
-            # Default pull files from live environment.
-            if [[ -z $env ]]; then
-              env='live'
-            fi
-
-            sync="terminus rsync $localValue.$env:files/ $homeovr/$projectsDirectory/$directory/sites/default/files -- --progress"
-            eval $sync
+            echo 'Files retreived'
           else
-            if [[ ! -d "$homeovr/$projectsDirectory/$directory/web/sites/default/files" ]]; then
-              mkdir "$homeovr/$projectsDirectory/$directory/web/sites/default/files"
-            fi
-
-            sync="terminus rsync $localValue.$env:files/ $homeovr/$projectsDirectory/$directory/web/sites/default/files -- --progress"
-            eval $sync
+            echo 'Skipped downloading files, until next time.'
+            exit 0
           fi
-
-          echo 'Files retreived'
-        else
-          echo 'Skipped downloading files, until next time.'
-          exit 0
         fi
       fi
+
     fi
   else
     is_ok 'You need to install the awesomeness of terminus rsync, its a terminus plugin. Mind if I install it?'

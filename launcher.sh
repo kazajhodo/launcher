@@ -41,6 +41,9 @@ cd "${0%/*}" && source 'include/php-symlinks'
 # Include variable defaults.
 cd "${0%/*}" && source 'include/defaults'
 
+# Include function utilities.
+cd "${0%/*}" && source 'include/utilities'
+
 # Options and parameters detection.
 cd "${0%/*}" && source 'include/options-parameters'
 
