@@ -31,6 +31,11 @@ do
       if [[ ${item##*.} == 'f' ]]; then
         filesOnly=true
       fi
+
+      # Build local database only.
+      if [[ ${item##*.} == 'd' ]]; then
+        databaseOnly=true
+      fi
       ;;
     'aliases.'* | 'a.'*)
       aliasValue=${item#*.}
