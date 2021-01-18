@@ -158,7 +158,7 @@ if type $terminus >/dev/null 2>&1; then
       fi
 
       # Get code.
-      if [[ $targetedRun == false ]]; then
+      if [[ ! $targetedRun ]]; then
         if [[ ! -d "$homeovr/$projectsDirectory/$directory" ]]; then
           gitConnection=$(terminus connection:info $localValue.dev --fields='Git Command' --format=string)
 
@@ -186,7 +186,7 @@ if type $terminus >/dev/null 2>&1; then
       fi
 
       # Get database.
-      if [[ $targetedRun == false || $databaseOnly ]]; then
+      if [[ ! $targetedRun || $databaseOnly ]]; then
         is_ok 'Download and import database?'
 
         if [[ $response == true ]]; then
@@ -227,7 +227,7 @@ if type $terminus >/dev/null 2>&1; then
       fi
 
       # Create nginx configuration.
-      if [[ $targetedRun == false ]]; then
+      if [[ ! $targetedRun ]]; then
         if type 'nginx' >/dev/null 2>&1; then
           create_nginx "$directory"
         fi
@@ -247,7 +247,7 @@ if type $terminus >/dev/null 2>&1; then
       # echo 'Settings file created.'
 
       # Get files.
-      if [[ $targetedRun == false || $filesOnly ]]; then
+      if [[ ! $targetedRun || $filesOnly ]]; then
         if [[ -d "$homeovr/$projectsDirectory/$directory" ]]; then
           get_subdirectory "$homeovr/$projectsDirectory/" "$directory"
 
