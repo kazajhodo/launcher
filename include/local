@@ -32,7 +32,7 @@ if type $terminus >/dev/null 2>&1; then
         eval cp "$nginxDefault $nginx$1.conf"
         echo 'Nginx configuration file added.'
 
-        restart=true
+        # restart=true
 
         # Run again to edit file.
         create_nginx "$1"
@@ -92,45 +92,12 @@ if type $terminus >/dev/null 2>&1; then
       # If no $3, defaults to 'live'.
       env=${3:-'live'}
 
-      # Use Terminus wake command to check existence of database.
-      test=$(terminus env:wake $1.$env 2>&1)
+      sqlFile="$homeovr/$projectsDirectory/$2/$2.sql"
+      connection=$(terminus connection:info $1.$env --field='MySQL Command')
+      connection=${connection/'mysql'/'mysqldump -v'}
+      connection="$connection --skip-lock-tables --add-drop-table > $sqlFile"
 
-      if [[ $test == *'error'* ]]; then
-        echo
-        echo 'Error returned:'
-        echo $test
-        echo
-      fi
-
-      if [[ $test == *'frozen'* ]]; then
-        echo
-        echo 'Frozen site, bailing.'
-        exit 0
-      fi
-
-      if [[ $test == *'authenticate'* ]]; then
-        echo
-        echo 'You are not authenticated with terminus, run:'
-        echo 'terminus auth:login'
-        echo
-      fi
-
-      if [[ $test == *'OK'* ]]; then
-        sqlFile="$homeovr/$projectsDirectory/$2/$2.sql"
-        connection=$(terminus connection:info $1.$env --field='MySQL Command')
-        connection=${connection/'mysql'/'mysqldump -v'}
-        connection="$connection > $sqlFile"
-
-        eval $connection
-      else
-        echo
-        echo 'Could not connect to live db, would you like another environments db? Which one? (dev, test, live)'
-        read env
-
-        if [[ $env ]]; then
-          get_connection "$localValue" "$directory" "$env"
-        fi
-      fi
+      eval $connection
     }
 
 
