@@ -12,10 +12,11 @@ terminus_loop () {
 terminus_sync_check () {
   directory=${PWD##*/}
   ready=false
-  workflow=$(terminus workflow:info:status $site --fields=workflow,status --format=string)  
 
   until [[ $ready == true ]];
     do
+      workflow=$(terminus workflow:info:status $site --fields=workflow,status --format=string)
+
       # Check status and workflow fields.
       if [[ $workflow == *succeeded* && $workflow == *'Sync code on "dev"'* ]]; then
         ready=true
@@ -29,9 +30,15 @@ terminus_sync_check () {
           echo 'Initiating deploy to live.'
           echo
         else
+          echo
+          echo 'Use -d option if you want to deploy.'
+          echo
           exit 0
         fi
       else
+        echo
+        echo 'Not yet ready, attempting again shortly.'
+        echo
         sleep 14
       fi
     done
