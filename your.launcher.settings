@@ -72,7 +72,7 @@ composer='composer'
 # DRUSH COMMAND
 # There are going to be devs who have 'drush' aliased to 'd' or something.
 # This allows the drush command launcher uses to be customized.
-drush='drush'
+drush='/Volumes/LaCie/Projects/sisal/vendor/drush/drush/drush'
 
 # HOME OVERRIDE
 # If you have your projects not in your $HOME, override it.

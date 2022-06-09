@@ -15,7 +15,7 @@ if [[ $help ]]; then
   echo
   echo '  "kill"    Close all applications previously opened by launcher'
   echo
-  echo ' "a.[search]" Search for a pantheon alias.'
+  echo '  "a.[search]" Search for a pantheon alias.'
   echo '       Unsure the Pantheon site name? Search for it.'
   echo
   echo '  "du.[directory-name]"'
@@ -26,27 +26,31 @@ if [[ $help ]]; then
   echo '       Terminus site deployment.'
   echo '       Runs cr, updb, cim, commands- in that order, to the specified environment.'
   echo '       Meaning if environment=test, will deploy to dev and test, running commands against dev and test.'
-  echo ' "t.[pantheon-sitename].php"'
+  echo '  "t.[pantheon-sitename].php"'
   echo '       Retreive environment site php version.'
+  echo '  "t.[pantheon-sitename].sync"'
+  echo '       Check if code synced with dev.'
+  echo '       May pass -d to intiate deployment to live if check successful.'
   echo
-  echo ' "l.[pantheon-sitename]"'
+  echo '  "l.[pantheon-sitename]"'
   echo '       Build local from site.'
   echo
-  echo ' "l.[pantheon-sitename].d"'
+  echo '  "l.[pantheon-sitename].d"'
   echo '       Build local database from site.'
   echo
-  echo ' "l.[pantheon-sitename].f"'
+  echo '  "l.[pantheon-sitename].f"'
   echo '       Build local files from site.'
   echo
   echo 'Options:'
-  echo '  -y          auto answer yes to prompts'
-  echo '  -p          This is a pantheon site'
+  echo '  -y     Auto answer yes to prompts'
+  echo '  -p     This is a pantheon site'
   echo '  -sub=sub-directory-name'
   echo '         Specify sub-directory web-root for admin route detection'
   echo '         ex: if your webroot is in "docroot", -sub=docroot'
-  echo '  -noaai      This is not an aai project'
+  echo '  -noaai This is not an aai project'
   echo '         Used for magento admin urls.'
   echo '         AAI uses "manage", default is "admin"'
+  echo '  -d     Initiate deploy after command finishes.'
   echo
   echo 'Help:'
   echo '  -help, --help      View this list. Ironic.'

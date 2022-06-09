@@ -58,6 +58,9 @@ do
     '-noaai')
       noaai=true
       ;;
+    '-d')
+      deploy=true
+      ;;
     'kill')
       kill=true
       ;;

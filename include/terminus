@@ -9,6 +9,34 @@ terminus_loop () {
   fi
 }
 
+terminus_sync_check () {
+  directory=${PWD##*/}
+  ready=false
+  workflow=$(terminus workflow:info:status $site --fields=workflow,status --format=string)  
+
+  until [[ $ready == true ]];
+    do
+      # Check status and workflow fields.
+      if [[ $workflow == *succeeded* && $workflow == *'Sync code on "dev"'* ]]; then
+        ready=true
+        echo
+        echo "Code sync complete to $site."
+        echo
+
+        if [[ $deploy == true ]]; then
+          count=3
+          echo
+          echo 'Initiating deploy to live.'
+          echo
+        else
+          exit 0
+        fi
+      else
+        sleep 14
+      fi
+    done
+}
+
 # Check that terminus command exists.
 if type $terminus >/dev/null 2>&1; then
   if [[ $terminusValue ]]; then
@@ -31,6 +59,9 @@ if type $terminus >/dev/null 2>&1; then
         'php')
           $terminus env:info $site.live | grep 'PHP Version'
           exit 0
+          ;;
+        'sync')
+          terminus_sync_check
           ;;
         *)
           echo
