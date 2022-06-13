@@ -3,6 +3,7 @@
 terminus_loop () {
   # 0 is always dev, on dev never attempt to deploy.
   if [[ $2 == 'dev' || $3 == true ]]; then
+    terminus_sync_check
     $terminus drush "$site.$2" cr && $terminus -y drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
   else
     $terminus -y env:deploy "$site.$2" && $terminus drush "$site.$2" cr && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
@@ -12,6 +13,7 @@ terminus_loop () {
 terminus_sync_check () {
   directory=${PWD##*/}
   ready=false
+  delay=24
 
   until [[ $ready == true ]];
     do
@@ -37,9 +39,9 @@ terminus_sync_check () {
         fi
       else
         echo
-        echo 'Not yet ready, attempting again shortly.'
+        echo "Not yet ready, attempting again in $delay."
         echo
-        sleep 14
+        sleep $delay
       fi
     done
 }
