@@ -41,7 +41,7 @@ terminus_sync_check () {
         fi
       else
         echo
-        echo "Not yet ready, attempting again in $delay."
+        echo "Not yet ready, attempting again in $delay seconds."
         echo
         sleep $delay
       fi
