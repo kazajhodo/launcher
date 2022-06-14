@@ -22,28 +22,30 @@ terminus_sync_check () {
       workflow=$(terminus workflow:info:status $site --fields=workflow,status --format=string)
 
       # Check status and workflow fields.
-      if [[ $workflow == *succeeded* && $workflow == *'Sync code on "dev"'* ]]; then
-        ready=true
-        echo
-        echo "Code sync complete to $site."
-        echo
+      if [[ $workflow == *succeeded* ]]; then
+        if [[ $workflow == *'Sync code on "dev"'* || $workflow == *'Deploy code to "live"'* || $workflow == *'Clear cache for'* ]]; then
+          ready=true
+          echo
+          echo "Code sync complete to $site."
+          echo
 
-        if [[ $deploy == true ]]; then
-          count=3
-          echo
-          echo 'Initiating deploy to live.'
-          echo
+          if [[ $deploy == true ]]; then
+            count=3
+            echo
+            echo 'Initiating deploy to live.'
+            echo
+          else
+            echo
+            echo 'Use -d option if you want to deploy.'
+            echo
+            exit 0
+          fi
         else
           echo
-          echo 'Use -d option if you want to deploy.'
+          echo "Not yet ready, attempting again in $delay seconds."
           echo
-          exit 0
+          sleep $delay
         fi
-      else
-        echo
-        echo "Not yet ready, attempting again in $delay seconds."
-        echo
-        sleep $delay
       fi
     done
 }
