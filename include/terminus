@@ -40,6 +40,10 @@ terminus_sync_check () {
           exit 0
         fi
       else
+        if [[ $workflow == *succeeded* && $workflow == *'Deploy code to "live"'* ]]; then
+          ready=true
+          continue
+        fi
         echo
         echo "Not yet ready, attempting again in $delay seconds."
         echo
