@@ -20,8 +20,6 @@ terminus_sync_check () {
     do
       workflow=$(terminus workflow:info:status $site --fields=workflow,status --format=string)
 
-      echo $workflow
-
       # Check status and workflow fields.
       if [[ $workflow == *succeeded* ]]; then
         ready=true
