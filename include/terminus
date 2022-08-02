@@ -20,13 +20,21 @@ terminus_sync_check () {
     do
       workflow=$(terminus workflow:info:status $site --fields=workflow,status --format=string)
 
+      echo $workflow
+
       # Check status and workflow fields.
       if [[ $workflow == *succeeded* ]]; then
         ready=true
         echo
         echo "Code sync complete to $site."
         echo
+        exit 0
       else
+        if [[ $workflow == *failed* ]]; then
+          echo
+          echo 'Sync failed, something wrong with the code. Stopping.'
+          echo
+        fi
         echo
         echo "Not yet ready, attempting again in $delay seconds."
         echo
