@@ -1,3 +1,8 @@
+# execution
+Add an alias to your terminal such as:
+
+alias l="path-to-launcher-directory-parent/launcher/launcher.sh"
+
 # Launcher description
 Bash script that swaps system and terminal php versions using Homebrew php installs.
 

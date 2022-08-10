@@ -17,20 +17,21 @@ if [[ $help ]]; then
   echo
   echo '  "a.[search]" Search for a pantheon alias.'
   echo '       Unsure the Pantheon site name? Search for it.'
+  echo '       Returns nothing alot, could be improved.'
   echo
   echo '  "du.[directory-name]"'
   echo '       Drush executions.'
-  echo '       Runs drush cr && drush updb -y && drush cex -y'
+  echo '       Runs drush cr && drush updb -y && drush cex -y.'
+  echo '       Will ask if you would like to git commit and git push.'
   echo
   echo '  "t.[pantheon-sitename].[environment]"'
   echo '       Terminus site deployment.'
+  echo '       Checks if code is synced, then initiates deployment.'
   echo '       Runs cr, updb, cim, commands- in that order, to the specified environment.'
-  echo '       Meaning if environment=test, will deploy to dev and test, running commands against dev and test.'
+  echo '       Meaning if environment=test, will deploy to dev and test, running above commands against dev and test.'
+  echo
   echo '  "t.[pantheon-sitename].php"'
   echo '       Retreive environment site php version.'
-  echo '  "t.[pantheon-sitename].sync"'
-  echo '       Check if code synced with dev.'
-  echo '       May pass -d to intiate deployment to live if check successful.'
   echo
   echo '  "l.[pantheon-sitename]"'
   echo '       Build local from site.'

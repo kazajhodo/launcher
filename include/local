@@ -111,7 +111,7 @@ if type $terminus >/dev/null 2>&1; then
       if [[ -d $homeovr/$projectsDirectory/${localValue//$pantheonPrefix/} ]]; then
         directory=${localValue//$pantheonPrefix/}
 
-        is_ok "Is $directory ok, or should we name it something else?"
+        is_ok "Is $directory for the directory name ok?"
 
         if [[ $response == true ]]; then
           echo "$directory it is. Continuing."
