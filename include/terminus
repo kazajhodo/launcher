@@ -66,9 +66,6 @@ if type $terminus >/dev/null 2>&1; then
           $terminus env:info $site.live | grep 'PHP Version'
           exit 0
           ;;
-        'sync')
-          terminus_sync_check
-          ;;
         *)
           echo
           echo 'Attempting to run against multidev.'
