@@ -224,15 +224,15 @@ if type $terminus >/dev/null 2>&1; then
             # Detect Drupal or Wordpress
             wp_or_drupal "$homeovr/$projectsDirectory/$directory"
 
+            # Default pull files from live environment.
+            if [[ -z $env ]]; then
+              env='live'
+            fi
+
             # If no subdirectory is set, we know we are in the webroot.
             if [[ -z $sub ]]; then
               if [[ ! -d "$homeovr/$projectsDirectory/$directory/$filesPath" ]]; then
                 mkdir "$homeovr/$projectsDirectory/$directory/$filesPath"
-              fi
-
-              # Default pull files from live environment.
-              if [[ -z $env ]]; then
-                env='live'
               fi
 
               sync="terminus rsync $localValue.$env:files/ $homeovr/$projectsDirectory/$directory/$filesPath -- --progress"
