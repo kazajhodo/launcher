@@ -61,8 +61,8 @@ phpExportTarget="$HOME/.zshrc"
 sqlUser=root
 
 # Nginx default configuration location.
-nginx='/usr/local/etc/nginx/servers/'
-nginxDefault='/usr/local/etc/nginx/servers/default'
+nginx='/opt/homebrew/etc/nginx/servers/'
+nginxDefault='/opt/homebrew/etc/nginx/servers/default'
 
 # COMPOSER COMMAND
 # There are going to be devs who have 'composer' aliased to 'c' or something.
@@ -72,9 +72,9 @@ composer='composer'
 # DRUSH COMMAND
 # There are going to be devs who have 'drush' aliased to 'd' or something.
 # This allows the drush command launcher uses to be customized.
-drush='/Volumes/LaCie/Projects/sisal/vendor/drush/drush/drush'
+drush='/Users/kazajhodo/Projects/msp/vendor/bin/drush'
 
 # HOME OVERRIDE
 # If you have your projects not in your $HOME, override it.
 # Example: homeovr='/Volumes/external-drive-name/'
-homeovr='/Volumes/LaCie'
+homeovr=''

@@ -15,12 +15,12 @@
 basePhpVersion=$(brew list --versions php | grep -oE --regexp=' ...' | tr -d '[[:space:]]')
 basePhpVersionNoDot=${basePhpVersion//.}
 
-php="/usr/local/Cellar/php$basePhpVersionNoDot"
-php_path="/usr/local/Cellar/php@$basePhpVersion"
+php="/opt/homebrew/Cellar/php$basePhpVersionNoDot"
+php_path="/opt/homebrew/Cellar/php@$basePhpVersion"
 
 # Checks if symlink exists regardless of if what it points to exists (-L).
 # Check if symlink exists and what it points to exists, regardless of type (-e).
 # If both do not exist, we create them.
 if ! [[ -L $php && -L $php_path ]]; then
-  cd /usr/local/Cellar && ln -s php@$basePhpVersion php$basePhpVersionNoDot && ln -s /usr/local/bin/php php@$basePhpVersion 
+  cd /opt/homebrew/Cellar && ln -s php@$basePhpVersion php$basePhpVersionNoDot && ln -s /usr/local/bin/php php@$basePhpVersion 
 fi
