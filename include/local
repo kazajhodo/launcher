@@ -278,4 +278,15 @@ if type $terminus >/dev/null 2>&1; then
       fi
     fi
   fi
+else
+  if [[ ! -d "$HOME/.terminus" ]]; then
+    is_ok 'Terminus is not installed. Mind if I install it?'
+
+    if [[ $response == true ]]; then
+      brew install pantheon-systems/external/terminus
+    fi
+  else
+    echo 'Could not fire Terminus.'
+    echo 'Make sure your terminus alias within your.launcher.settings matches your local terminus command.'
+  fi
 fi
