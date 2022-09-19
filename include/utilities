@@ -18,3 +18,10 @@ wp_or_drupal() {
     filesPath='wp-content/uploads'
   fi
 }
+
+if_homeovr() {
+  # Set default if empty.
+  if [[ !$homeovr ]]; then
+    homeovr=$HOME
+  fi
+}

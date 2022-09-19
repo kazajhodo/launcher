@@ -106,10 +106,7 @@ if type $terminus >/dev/null 2>&1; then
       # Set for nginx creation process later.
       restart=false
 
-      # Set default if empty.
-      if [[ !$homeovr ]]; then
-        homeovr=$HOME
-      fi
+      if_homeovr
 
       # Check if provided directory exists locally.
       # Check without prefix first, as this is most likely.

@@ -2,7 +2,7 @@
 
 # Get subdirectory.
 get_subdirectory() {
-  # Check if a known subdirectory exists.
+  # Check if a known subdirectory exists.  
   if [[ ! -d "$1$2/app" && ! -d "$1$2/sites" && ! -d "$1$2/wp-content" ]]; then
     for row in $(cat .docroots); do
       if [[ -d "$1$2/$row" ]]; then
@@ -40,6 +40,8 @@ if [[ $project ]]; then
 
   # Checks if settings file specified ide is installed.
   # If it is, requests project you wish to open.
+
+  if_homeovr
 
   # Projects location variable.
   # To be used in all below editor opening blocks.
