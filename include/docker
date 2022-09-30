@@ -1,0 +1,19 @@
+#!/bin/zsh
+
+if [[ $murder ]]; then
+  # Running containers.
+  containers=$(docker ps -q)
+  docker kill $containers
+  
+  # Stopped containers.
+  stoppedContainers=$(docker ps -a -q)
+  docker rm $stoppedContainers
+
+  # Images
+  images=$(docker images -q)
+  docker rmi $images
+
+  # Volumes
+  volumes=$(docker volume ls -q)
+  docker volume rm $volumes
+fi

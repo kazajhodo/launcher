@@ -11,6 +11,9 @@ do
     '5.4' | '5.6' | '7.0' | '7.1' | '7.2' | '7.3' | '7.4')
       phpchange=$item
       ;;
+    'bloodbath')
+      murder=true
+      ;;
     'terminus.'* | 't.'*)
       terminusValue=${item#*.}
       ;;

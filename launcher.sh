@@ -70,3 +70,6 @@ cd "${0%/*}" && source 'include/aliases'
 
 # Composer update.
 cd "${0%/*}" && source 'include/drush'
+
+# Composer update.
+cd "${0%/*}" && source 'include/docker'
