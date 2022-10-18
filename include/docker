@@ -2,25 +2,25 @@
 
 if [[ $murder ]]; then
   # Running containers.
-  containers=$(docker ps -q)
+  containers="$(docker ps -a)"
   docker stop $containers
   
   # Stopped containers.
-  stoppedContainers=$(docker ps -a -q)
+  stoppedContainers="$(docker ps -a -q)"
   docker rm $stoppedContainers
 
   echo 'All existing containers:'
   docker ls -a
 
   # Images
-  images=$(docker images -q)
+  images="$(docker images -q)"
   docker rmi $images
 
   echo 'All existing images:'
   docker images ls
 
   # Volumes
-  volumes=$(docker volume ls -q)
+  volumes="$(docker volume ls -q)"
   docker volume rm $volumes
 
   echo 'All existing volumes:'
