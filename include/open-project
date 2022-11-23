@@ -113,6 +113,11 @@ if [[ $project ]]; then
       # Not sure why I need to '../'.
       # I think it has something to do with the open command moving to a different application.
       cd "../${0%/*}" && source 'tower'
+
+      # Ensure override is set.
+      if_homeovr
+
+      cd $projects$project
     fi
   fi
 fi
