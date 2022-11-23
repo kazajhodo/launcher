@@ -1,28 +1,15 @@
 #!/bin/zsh
 
 if [[ $murder ]]; then
-  # Running containers.
-  containers="$(docker ps -a)"
-  docker stop $containers
+  # Stop containers.
+  docker-compose stop
+
+  # Delete containers.
+  docker rm -f $(docker ps -a -q)
   
-  # Stopped containers.
-  stoppedContainers="$(docker ps -a -q)"
-  docker rm $stoppedContainers
+  # Delete volumes.
+  docker volume rm $(docker volume ls -q)
 
-  echo 'All existing containers:'
-  docker ls -a
-
-  # Images
-  images="$(docker images -q)"
-  docker rmi $images
-
-  echo 'All existing images:'
-  docker images ls
-
-  # Volumes
-  volumes="$(docker volume ls -q)"
-  docker volume rm $volumes
-
-  echo 'All existing volumes:'
-  docker volume ls
+  # Delete images
+  docker rmi $(docker images -q)
 fi
