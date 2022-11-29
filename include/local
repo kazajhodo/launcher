@@ -237,14 +237,14 @@ if type $terminus >/dev/null 2>&1; then
                 mkdir "$homeovr/$projectsDirectory/$directory/$filesPath"
               fi
 
-              sync="terminus rsync $localValue.$env:files/ $homeovr/$projectsDirectory/$directory/$filesPath -- --progress"
+              sync="terminus rsync $localValue.$env:files/ $homeovr/$projectsDirectory/$directory/$filesPath -- --progress --exclude '*.pdf' --exclude '*.txt' --exclude '*.zip' --exclude '*.docx'"
               eval $sync
             else
               if [[ ! -d "$homeovr/$projectsDirectory/$directory/web/$filesPath" ]]; then
                 mkdir "$homeovr/$projectsDirectory/$directory/web/$filesPath"
               fi
 
-              sync="terminus rsync $localValue.$env:files/ $homeovr/$projectsDirectory/$directory/web/$filesPath -- --progress"
+              sync="terminus rsync $localValue.$env:files/ $homeovr/$projectsDirectory/$directory/web/$filesPath -- --progress --exclude '*.pdf' --exclude '*.txt' --exclude '*.zip' --exclude '*.docx'"
               eval $sync
             fi
 
