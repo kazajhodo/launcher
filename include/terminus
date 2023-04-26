@@ -17,6 +17,8 @@ terminus_loop () {
     else
       $terminus -y env:deploy "$site.$2" && $terminus drush "$site.$2" cr && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
     fi
+  else
+    $terminus -y env:deploy "$site.$2" && $terminus drush "$site.$2" cr && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
   fi
 }
 
