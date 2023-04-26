@@ -65,16 +65,6 @@ if type $terminus >/dev/null 2>&1; then
       fi
     }
 
-    what_project () {
-      # Check with prefix.
-      if [[ ! -d "$homeovr/$projectsDirectory/$localValue" ]]; then
-        echo
-        echo 'What project are we building? Name of directory.'
-        read directory
-        echo
-      fi
-    }
-
     is_ok () {
       echo
       echo "$1 (y or n)"

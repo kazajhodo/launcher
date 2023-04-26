@@ -3,16 +3,24 @@
 terminus_loop () {
   terminus_sync_check
 
-  # 0 is always dev, on dev never attempt to deploy.
-  if [[ $2 == 'dev' || $3 == true ]] && [[ $ready == true ]]; then    
-    $terminus drush "$site.$2" cr && $terminus -y drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
-  else
-    $terminus -y env:deploy "$site.$2" && $terminus drush "$site.$2" cr && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
+  if_homeovr
+  wp_or_drupal "$homeovr/$projectsDirectory/$site"
+
+  if [[ -z $framework ]]; then
+    what_project
+    wp_or_drupal "$homeovr/$projectsDirectory/$directory"
+  fi
+
+  if [[ $framwork == 'drupal' ]]; then
+    if [[ $2 == 'dev' || $3 == true ]] && [[ $ready == true ]]; then    
+      $terminus drush "$site.$2" cr && $terminus -y drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
+    else
+      $terminus -y env:deploy "$site.$2" && $terminus drush "$site.$2" cr && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
+    fi
   fi
 }
 
 terminus_sync_check () {
-  directory=${PWD##*/}
   ready=false
   delay=24
 
@@ -23,7 +31,7 @@ terminus_sync_check () {
       # Check status and workflow fields.
       # Checks for 'succeeded' in status field response.
       # This will also be present in sync, clone files/databases workflows.
-      if [[ $workflow == *succeeded* ]]; then
+      if [[ $workflow == *succeeded* || $workflow == *backup* ]]; then
         ready=true
         echo
         echo "Code sync complete to $site."

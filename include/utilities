@@ -1,8 +1,9 @@
 #!/bin/zsh
 
 wp_or_drupal() {
-  # Set default.
-  framework=drupal
+  if [[ -d "$1/web" ]]; then
+    framework=drupal
+  fi
 
   if [[ -f "$1/wp-config.php" ]]; then
     framework=wordpress
@@ -23,5 +24,14 @@ if_homeovr() {
   # Set default if empty.
   if [[ !$homeovr ]]; then
     homeovr=$HOME
+  fi
+}
+
+what_project () {
+  if [[ !$localValue || ! -d "$homeovr/$projectsDirectory/$localValue" ]]; then
+    echo
+    echo 'What project are we building? Name of directory.'
+    read directory
+    echo
   fi
 }

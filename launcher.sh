@@ -50,9 +50,6 @@ cd "${0%/*}" && source 'include/options-parameters'
 # Help.
 cd "${0%/*}" && source 'include/help'
 
-# Run terminus deployment.
-cd "${0%/*}" && source 'include/terminus'
-
 # Php change.
 cd "${0%/*}" && source 'include/phpchange'
 
@@ -64,6 +61,9 @@ cd "${0%/*}" && source 'include/open-project'
 
 # Local.
 cd "${0%/*}" && source 'include/local'
+
+# Run terminus deployment.
+cd "${0%/*}" && source 'include/terminus'
 
 # Aliases search.
 cd "${0%/*}" && source 'include/aliases'
