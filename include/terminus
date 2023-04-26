@@ -11,12 +11,8 @@ terminus_loop () {
     wp_or_drupal "$homeovr/$projectsDirectory/$directory"
   fi
 
-  if [[ $framwork == 'drupal' ]]; then
-    if [[ $2 == 'dev' || $3 == true ]] && [[ $ready == true ]]; then    
-      $terminus drush "$site.$2" cr && $terminus -y drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
-    else
-      $terminus -y env:deploy "$site.$2" && $terminus drush "$site.$2" cr && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
-    fi
+  if [[ $2 == 'dev' || $3 == true ]] && [[ $framework == 'drupal' ]] && [[ $ready == true ]]; then    
+    $terminus drush "$site.$2" cr && $terminus -y drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
   else
     $terminus -y env:deploy "$site.$2" && $terminus drush "$site.$2" cr && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
   fi
