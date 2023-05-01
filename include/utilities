@@ -28,7 +28,10 @@ if_homeovr() {
 }
 
 what_project () {
-  if [[ !$localValue || ! -d "$homeovr/$projectsDirectory/$localValue" ]]; then
+  localValue=${terminusValue%.*}
+  localValue=${localValue#'aai'}
+
+  if [[ ! -d "$homeovr/$projectsDirectory/$localValue" ]]; then
     echo
     echo 'What project are we building? Name of directory.'
     read directory
