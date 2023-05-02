@@ -28,8 +28,10 @@ if_homeovr() {
 }
 
 what_project () {
+  # Strip down to directory name.
   localValue=${terminusValue%.*}
   localValue=${localValue#'aai'}
+  localValue=${localValue%'8'}
 
   if [[ ! -d "$homeovr/$projectsDirectory/$localValue" ]]; then
     echo
