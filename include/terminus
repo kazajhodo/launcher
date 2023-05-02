@@ -13,14 +13,19 @@ check_site() {
 terminus_loop () {
   terminus_sync_check
 
-  if [[ $framework == 'drupal' ]]; then
-    if [[ $2 == 'dev' || $3 == true ]] && [[ $ready == true ]]; then   
-      $terminus drush "$site.$2" cr && $terminus -y drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
+  # If framework is not set, only deploy.
+  if [[ $framework ]]; then
+    if [[ $framework == 'drupal' ]]; then
+      if [[ $2 == 'dev' || $3 == true ]] && [[ $ready == true ]]; then   
+        $terminus drush "$site.$2" cr && $terminus -y drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
+      else
+        $terminus -y env:deploy "$site.$2" && $terminus drush "$site.$2" cr && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
+      fi
     else
-      $terminus -y env:deploy "$site.$2" && $terminus drush "$site.$2" cr && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
+      $terminus -y env:deploy "$site.$2" && $terminus wp "$site.$2" pantheon cache purge-all -- --yes
     fi
   else
-    $terminus -y env:deploy "$site.$2" && $terminus wp "$site.$2" pantheon cache purge-all -- --yes
+    $terminus -y env:deploy "$site.$2"
   fi
 }
 
