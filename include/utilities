@@ -29,9 +29,11 @@ if_homeovr() {
 
 what_project () {
   # Strip down to directory name.
+  # Accounts for a variety of variance.
   localValue=${terminusValue%.*}
   localValue=${localValue#'aai'}
   localValue=${localValue%'8'}
+  localValue=${localValue%'-v2'}
 
   if [[ ! -d "$homeovr/$projectsDirectory/$localValue" ]]; then
     echo
