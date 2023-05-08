@@ -28,13 +28,15 @@ if_homeovr() {
 }
 
 what_project () {
-  # Strip down to directory name.
-  # Accounts for a variety of variance.
-  localValue=${terminusValue%.*}
-  localValue=${localValue#'aai'}
-  localValue=${localValue#'mna-'}
-  localValue=${localValue%'8'}
-  localValue=${localValue%'-v2'}
+  if [[ $databaseOnly != true ]]; then
+    # Strip down to directory name.
+    # Accounts for a variety of variance.
+    localValue=${terminusValue%.*}
+    localValue=${localValue#'aai'}
+    localValue=${localValue#'mna-'}
+    localValue=${localValue%'8'}
+    localValue=${localValue%'-v2'}
+  fi
 
   if [[ ! -d "$homeovr/$projectsDirectory/$localValue" ]]; then
     echo
