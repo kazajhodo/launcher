@@ -1,5 +1,18 @@
 #!/bin/zsh
 
+is_ok () {
+  echo
+  echo "$1 (y or n)"
+  read response
+  echo
+
+  if [[ $response == 'y' || $response == 'yes' ]]; then
+    response=true
+  else
+    response=false
+  fi
+}
+
 wp_or_drupal() {
   if [[ -d "$1/$localValue/web" ]]; then
     framework=drupal
@@ -28,7 +41,7 @@ if_homeovr() {
 }
 
 what_project () {
-  if [[ $databaseOnly != true ]]; then
+  if [[ $databaseOnly != true && $automate != true ]]; then
     # Strip down to directory name.
     # Accounts for a variety of variance.
     localValue=${terminusValue%.*}
@@ -36,6 +49,7 @@ what_project () {
     localValue=${localValue#'mna-'}
     localValue=${localValue%'8'}
     localValue=${localValue%'-v2'}
+    localValue=${localValue%'airport'}
   fi
 
   if [[ ! -d "$homeovr/$projectsDirectory/$localValue" ]]; then
@@ -43,5 +57,38 @@ what_project () {
     echo 'What project are we building? Name of directory.'
     read directory
     echo
+  fi
+}
+
+check_brew() {
+  installedBrew=false
+  
+  # Check if homebrew is installed.
+  # If not, stop the machinations.
+  if type brew >/dev/null 2>&1; then
+    installedBrew=true
+  else
+    echo "Brew is not installed on your system, this won't work"
+    echo 'Install homebrew or gtfo. Smiley face.'
+    exit 0
+  fi
+}
+
+check_jq() {
+  installedJq=false
+
+  if type jq >/dev/null 2>&1; then
+    installedJq=true
+  else
+    if [[ $installedBrew ]]; then
+      is_ok "jq is not installed on your system, mind if I install it with brew?"
+
+      if [[ $response ]]; then
+        brew install jq
+        installedJq=true
+      fi
+    else
+      check_brew
+    fi
   fi
 }

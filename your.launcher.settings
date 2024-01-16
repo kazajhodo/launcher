@@ -29,7 +29,7 @@ projectsDirectory='Projects'
 
 # DOMAIN SUFFIX
 # No '.'
-suffix='ash'
+suffix='.ddev.site'
 
 # BROWSER
 # Nothing for IE. I refuse.

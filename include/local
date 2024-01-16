@@ -65,20 +65,9 @@ if type $terminus >/dev/null 2>&1; then
       fi
     }
 
-    is_ok () {
-      echo
-      echo "$1 (y or n)"
-      read response
-      echo
-
-      if [[ $response == 'y' || $response == 'yes' ]]; then
-        response=true
-      else
-        response=false
-      fi
-    }
-
     get_connection () {
+      if_homeovr
+      
       # If no $3, defaults to 'live'.
       env=${3:-'live'}
 
@@ -92,7 +81,7 @@ if type $terminus >/dev/null 2>&1; then
 
 
 
-    if [[ $localValue ]]; then
+    if [[ $localValue && ! $automate ]]; then
       # Set for nginx creation process later.
       restart=false
 
@@ -152,41 +141,44 @@ if type $terminus >/dev/null 2>&1; then
           get_connection "$localValue" "$directory"
 
           # Create local database.
-          echo
-          echo "Creating/updating $directory database..."
-          create="mysql -u $sqlUser -p -e 'create database if not exists $directory'"
-          eval $create
-          echo 'Done.'
+          # echo
+          # echo "Creating/updating $directory database..."
+          # create="mysql -u $sqlUser -p -e 'create database if not exists $directory'"
+          # eval $create
+          # echo 'Done.'
 
           # Check if progress indication is available for mysql import.
           pv_check
 
           # Import local database.
-          echo 'Importing downloaded database into local database...'
+          echo 'Importing into ddev...'
+
+          echo $directory
+          echo "$homeover/$projectsDirectory/$directory/$sqlFile"
 
           if [[ $pv == true ]]; then
-            import="pv $sqlFile | mysql -u $sqlUser -p $directory < $sqlFile"
+            import="pv $sqlFile | ddev import-db $directory --target-db=db --src=$homeover/$projectsDirectory/$directory/$sqlFile"
           else
-            import="mysql -u $sqlUser -p $directory < $sqlFile"
+            import="ddev import-db $directory --target-db=db --src=$homeover/$projectsDirectory/$directory/$sqlFile"
           fi
 
           eval $import
           echo 'Done.'
           echo
 
-          # Cleanup downloaded database file.
-          if [[ -f $sqlFile ]]; then
-            echo
-            echo 'Cleaning up imported database file...'
-            rm -rf $sqlFile
-            echo 'Done.'
-            echo
-          fi
+          # Cleanup database file.
+          # if [[ -f $sqlFile ]]; then
+          #   echo
+          #   echo 'Cleaning up imported database file...'
+          #   rm -rf $sqlFile
+          #   echo 'Done.'
+          #   echo
+          # fi
         fi
       fi
 
       # Create nginx configuration.
-      if [[ ! $targetedRun ]]; then
+      if [[ ! $targetedRun && ! $automate ]]; then
         if type 'nginx' >/dev/null 2>&1; then
           create_nginx "$directory"
         fi

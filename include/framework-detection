@@ -33,11 +33,11 @@ set_subdirectory "$projects" "$project" "$sub"
 
 
 # Open project homepage.
-open "http://$project.ash"
+open "http://$project$suffix"
 
 # Open project framework management page.
 if [[ $app ]]; then
-  open "http://$project.ash/$app"
+  open "http://$project$suffix/$app"
 fi
 
 

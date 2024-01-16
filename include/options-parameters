@@ -67,6 +67,10 @@ do
     'kill')
       kill=true
       ;;
+    'u' | 'u.'*)
+      automate=true
+      localValue=${item#*.}
+      ;;
     *)
       # Do a '-' check to make sure this isn't an option.
       # If it has a check we should return to use -help.

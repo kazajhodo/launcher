@@ -20,6 +20,9 @@
 # Build a site locally from Pantheon.
 # launcher local.[site-name]
 
+# Include function utilities.
+cd "${0%/*}" && source 'include/utilities'
+
 # Check that homebrew is installed.
 cd "${0%/*}" && source 'include/homebrew-check'
 
@@ -35,14 +38,11 @@ cd "${0%/*}" && source 'include/migrate'
 # Update user settings file.
 cd "${0%/*}" && source 'include/overwrite'
 
-# Setup php73 symlinks to work with launcher.
+# Setup php symlinks to work with launcher.
 cd "${0%/*}" && source 'include/php-symlinks'
 
 # Include variable defaults.
 cd "${0%/*}" && source 'include/defaults'
-
-# Include function utilities.
-cd "${0%/*}" && source 'include/utilities'
 
 # Options and parameters detection.
 cd "${0%/*}" && source 'include/options-parameters'
@@ -59,6 +59,9 @@ cd "${0%/*}" && source 'include/kill'
 # Open.
 cd "${0%/*}" && source 'include/open-project'
 
+# Automated website updates.
+# cd "${0%/*}" && source 'include/updates'
+
 # Local.
 cd "${0%/*}" && source 'include/local'
 
@@ -68,8 +71,8 @@ cd "${0%/*}" && source 'include/terminus'
 # Aliases search.
 cd "${0%/*}" && source 'include/aliases'
 
-# Composer update.
+# Drush.
 cd "${0%/*}" && source 'include/drush'
 
-# Composer update.
+# Docker.
 cd "${0%/*}" && source 'include/docker'

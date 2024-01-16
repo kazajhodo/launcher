@@ -1,0 +1,28 @@
+#!/bin/zsh
+
+if [[ $automate ]]; then
+  if [[ $localValue ]]; then
+    targetedRun=true
+    if_homeovr
+    what_project
+    check_jq
+
+    if [[ ! installedBrew ]]; then
+      exit 0;
+    fi
+
+    comparison=$(composer --working-dir="$homeovr/$projectsDirectory/$localValue" outdated "drupal/*" -f json | jq '.installed')
+
+    echo $comparison
+    echo $updated
+
+    for module in $comparison; do
+      updates+=$module | jq '.name'
+    done
+
+    echo $updates
+
+
+    Attempting to figure out how to loop over json and check what can be updated.
+  fi
+fi
