@@ -4,10 +4,10 @@ Add an alias to your terminal such as:
 alias l="path-to-launcher-directory-parent/launcher/launcher.sh"
 
 # Launcher description
-Bash script that swaps system and terminal php versions using Homebrew php installs.
+Bash script that swaps system/terminal php versions using Homebrew php installs.
 
 # Dependencies
-Homebrew.
+Homebrew, script will check if you have it.
 
 Feel free to use/modify. Developed for personal use.
 
@@ -24,25 +24,11 @@ _Message will only show once. Once launcher is ran again current settings will b
 
 # Setup
 
-## Dev controlled functionality
-Starting at the '# Project loaders.' comment line there are additional functionality options.
-
-Define your local projects location in the 'projects' variable.
-
-## ide detection block
-Uses 'try' to detect if ide is installed.
-Check on command line by running ```try [ide-name]```.
-```
-if try subl >/dev/null 2>&1; then
-  echo
-  echo 'Which project are you working in? Exact directory name.'
-  read project
-  subl $projects$project
-fi
-```
+## Set your variables
+Edit variables within your.launcher.settings.
 
 ## PHP path setup.
-Script automatically detects your php path include location, if it is located within a hidden file under your user root.
+Script attempts to automatically detect your php path include location.
 
 
 # Paramaters
@@ -50,20 +36,11 @@ Script automatically detects your php path include location, if it is located wi
 ## PHP version
 Ex. ```launcher 7.2```
 
-*Script adds symlinking so that 7.3 works for local 'php' unnumbered 7.3 version.
-
 ## Project Opening
 Ex. ```launcher [project-name]```
 
-You may pass your project parent folder to be opened by your ide.
-
-This assumes you have ide setup. Reference 'ide detection block' section.
-
 ## Close items opened by launcher
-Specified items that launcher opens are automatically closed before opening new items.
-
-TODO:: Closes browser tabs with specified local domain suffix.
-Currently this is working... but not completely bug free.
+Specified items that launcher opens are automatically closed before opening new items. Except for browser tabs, haven't got that working yet.
 
 ## Multiple parameter passing
 Ex. ```launcher 7.2 [project-name]```
@@ -73,11 +50,11 @@ You may pass multiple parameters at once.
 ## Options
 Ex. ```launcher [-help | --help]```
 
-_Use '-help | --help' to view help details._
+_Use '-help or --help' to view help details._
 
 
 # Functionality walkthrough
-# Above each section is the corresponding filename.
+# Below headings are files within /include/[filename].
 
 ### defaults
 Default variable definitions.
@@ -97,13 +74,13 @@ Detects if Homebrew is installed, if not exits.
 Warns if settings options have changed within your.launcher.settings.
 
 ### overwrite
-Actually overwrites/creates '.launcher.settings'file from user defined 'your.launcher.settings' file.
+Actually overwrites/creates '.launcher.settings'file from 'your.launcher.settings' file.
 
 ### options-parameters
 Options and parameters handling definitions.
 
-### php73-symlinks
-Adds symlinks for osx php version 7.3.
+### php-symlinks
+Adds symlinks for various php versions.
 
 ### phpchange
 Requests php version you would like to switch to, if not passed as an option.
@@ -117,20 +94,16 @@ Automatically outputs terminal php version with ‘php -v’.
 
 ### kill
 Closes open ide windows.
-Closes open browser tabs with urls containing defined project suffix. Suffix defined within your.launcher.settings file.
-Closes open tower windows.
+Closes open gittower windows.
 
 ### open-project
-Opens project in ide editor.
+Opens project in ide editor and your.launcher.settings defined browser.
 
 ### framework-detection
-Opens project url and admin route url if defined.
+Opens project url and login route if defined.
 
 ### tower
 Opens project in tower.
-
-### local
-Creates local build from Pantheon site.
 
 ### aliases
 Search Pantheon aliases for a site. For instance searching by client code.
