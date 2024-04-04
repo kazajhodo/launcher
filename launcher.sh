@@ -72,7 +72,7 @@ cd "${0%/*}" && source 'include/terminus'
 cd "${0%/*}" && source 'include/aliases'
 
 # Drush.
-cd "${0%/*}" && source 'include/drush'
+# cd "${0%/*}" && source 'include/drush'
 
 # Docker.
 cd "${0%/*}" && source 'include/docker'
