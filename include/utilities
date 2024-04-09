@@ -46,6 +46,7 @@ what_project () {
     # Accounts for a variety of variance.
     localValue=${terminusValue%.*}
     localValue=${localValue#'aai'}
+    localValue=${localValue#'ar-'}
     localValue=${localValue#'mna-'}
     localValue=${localValue%'8'}
     localValue=${localValue%'-v2'}
