@@ -49,6 +49,7 @@ what_project () {
     localValue=${localValue#'ar-'}
     localValue=${localValue#'mna-'}
     localValue=${localValue%'8'}
+    localValue=${localValue%'-8'}
     localValue=${localValue%'-v2'}
     localValue=${localValue%'airport'}
   fi
