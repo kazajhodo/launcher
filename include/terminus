@@ -5,7 +5,11 @@ check_site() {
   wp_or_drupal "$homeovr/$projectsDirectory/$site"
 
   if [[ -z $framework ]]; then
-    what_project
+
+    if [[ -z $directory ]]; then
+      what_project
+    fi
+
     wp_or_drupal "$homeovr/$projectsDirectory/$directory"
   fi
 }
@@ -17,19 +21,18 @@ terminus_loop () {
   if [[ $framework ]]; then
     if [[ $framework == 'drupal' ]]; then
       if [[ $2 == 'dev' || $3 == true ]] && [[ $ready == true ]]; then   
-        $terminus drush "$site.$2" cr && $terminus -y drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
+        $terminus drush "$site.$2" cr && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
       else
-        $terminus -y env:deploy "$site.$2" && $terminus drush "$site.$2" cr && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
+        $terminus env:deploy "$site.$2" && $terminus drush "$site.$2" cr && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
       fi
-    else
-      # Assuming wordpress.
-      if [[ $2 == 'dev' ]]; then
-        $terminus wp "$site.$2" pantheon cache purge-all -- --yes
-      else
-        $terminus -y env:deploy "$site.$2" && $terminus wp "$site.$2" pantheon cache purge-all -- --yes
     fi
   else
-    $terminus -y env:deploy "$site.$2"
+    # Assume wordpress.
+    if [[ $2 == 'dev' ]]; then
+      $terminus wp "$site.$2" -- cache flush
+    else
+      $terminus env:deploy "$site.$2" && $terminus wp "$site.$2" -- cache flush
+    fi
   fi
 }
 
