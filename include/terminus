@@ -19,6 +19,7 @@ terminus_loop () {
 
   # If framework is not set, only deploy.
   if [[ $framework ]]; then
+  
     if [[ $framework == 'drupal' ]]; then
       if [[ $2 == 'dev' || $3 == true ]] && [[ $ready == true ]]; then   
         $terminus drush "$site.$2" cr && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
@@ -26,12 +27,13 @@ terminus_loop () {
         $terminus env:deploy "$site.$2" && $terminus drush "$site.$2" cr && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
       fi
     fi
-  else
-    # Assume wordpress.
-    if [[ $2 == 'dev' ]]; then
-      $terminus wp "$site.$2" -- cache flush
-    else
-      $terminus env:deploy "$site.$2" && $terminus wp "$site.$2" -- cache flush
+
+    if [[ $framework == 'wordpress' ]]; then
+      if [[ $2 == 'dev' ]]; then
+        $terminus wp "$site.$2" -- cli cache clear
+      else
+        $terminus env:deploy "$site.$2" && $terminus wp "$site.$2" -- cli cache clear
+      fi
     fi
   fi
 }
