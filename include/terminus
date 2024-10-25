@@ -22,7 +22,11 @@ terminus_loop () {
         $terminus -y env:deploy "$site.$2" && $terminus drush "$site.$2" cr && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
       fi
     else
-      $terminus -y env:deploy "$site.$2" && $terminus wp "$site.$2" pantheon cache purge-all -- --yes
+      # Assuming wordpress.
+      if [[ $2 == 'dev' ]]; then
+        $terminus wp "$site.$2" pantheon cache purge-all -- --yes
+      else
+        $terminus -y env:deploy "$site.$2" && $terminus wp "$site.$2" pantheon cache purge-all -- --yes
     fi
   else
     $terminus -y env:deploy "$site.$2"
