@@ -11,40 +11,11 @@ do
     '7.4' | '8.1' | '8.2' | '8.3' | '8.4' | '8.5')
       phpchange=$item
       ;;
-    'bloodbath')
-      murder=true
-      ;;
     'terminus.'* | 't.'*)
       terminusValue=${item#*.}
       ;;
-    'local.'* | 'l.'* | 'l.'*'.f')
-      # d=database, f=files
-      targeted=('d' 'f')
-
-      # Strip localValue prefix an suffix.
-      localValue=${item#*.}
-      localValue=${localValue%.*}
-
-      # If a targeted run.
-      if [[ ${targeted[@]} =~ ${item##*.}  ]]; then
-        targetedRun=true
-      fi
-
-      # Build local files only.
-      if [[ ${item##*.} == 'f' ]]; then
-        filesOnly=true
-      fi
-
-      # Build local database only.
-      if [[ ${item##*.} == 'd' ]]; then
-        databaseOnly=true
-      fi
-      ;;
     'aliases.'* | 'a.'*)
       aliasValue=${item#*.}
-      ;;
-    'du.'*)
-      du=${item#*.}
       ;;
     '-y')
       yes=$item
@@ -67,10 +38,6 @@ do
     'kill')
       kill=true
       ;;
-    'u' | 'u.'*)
-      automate=true
-      localValue=${item#*.}
-      ;;
     *)
       # Do a '-' check to make sure this isn't an option.
       # If it has a check we should return to use -help.
@@ -83,7 +50,6 @@ do
         echo
         exit 0
       else
-        project=$item
         kill=$kill
       fi
   esac

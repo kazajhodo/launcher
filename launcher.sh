@@ -56,9 +56,6 @@ cd "${0%/*}" && source 'include/phpchange'
 # Kill.
 cd "${0%/*}" && source 'include/kill'
 
-# Open.
-cd "${0%/*}" && source 'include/open-project'
-
 # Run terminus deployment.
 cd "${0%/*}" && source 'include/terminus'
 
