@@ -19,15 +19,6 @@ if [[ $phpversion && $phpversion == $phpchange ]]; then
   echo
   php -v
   echo
-
-  # If a project is set.
-  # We're still going to do stuff.
-  if [[ $project ]]; then
-    echo
-    echo "I'll still open a project for a lunk though."
-    echo "Opening $project."
-    echo
-  fi
 elif [[ ! -z $phpchange ]]; then
   # Update php version and reload source.
   # Remove any php@ references within .zshrc file.
@@ -36,9 +27,6 @@ elif [[ ! -z $phpchange ]]; then
   # Export new php version to path
   echo "export PATH=\"/usr/local/opt/php@$phpchange/bin:/usr/local/opt/php@$phpchange/sbin:\$PATH\"" >> $phpExportTarget
 
-  # Reload source to ensure we have current php version.
-  source $phpExportTarget
-
   echo 'Swapping...'
 
   # Changing php version.
@@ -46,18 +34,9 @@ elif [[ ! -z $phpchange ]]; then
   brew unlink php@$phpversion && brew link php@$phpchange --force
   brew services start php@$phpchange
 
-  # Reload source again to ensure we have switched php version.
-  source $phpExportTarget
-
-  # Show running version of php.
-  echo
-  echo 'Current system php version:'
-  ps aux | grep php
-  echo
-
   #Show running console version of php.
   echo
-  echo 'Current terminal php version:'
+  echo 'Running:'
   echo
   php -v
   echo
