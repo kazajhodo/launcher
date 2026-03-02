@@ -59,20 +59,8 @@ cd "${0%/*}" && source 'include/kill'
 # Open.
 cd "${0%/*}" && source 'include/open-project'
 
-# Automated website updates.
-# cd "${0%/*}" && source 'include/updates'
-
-# Local.
-cd "${0%/*}" && source 'include/local'
-
 # Run terminus deployment.
 cd "${0%/*}" && source 'include/terminus'
 
 # Aliases search.
 cd "${0%/*}" && source 'include/aliases'
-
-# Drush.
-# cd "${0%/*}" && source 'include/drush'
-
-# Docker.
-cd "${0%/*}" && source 'include/docker'
