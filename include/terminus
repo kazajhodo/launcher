@@ -21,18 +21,15 @@ terminus_loop () {
   if [[ $framework ]]; then
   
     if [[ $framework == 'drupal' ]]; then
-      if [[ $cacheTags ]]; then
-        # Convert "foo,bar" to "'foo','bar'" for PHP
+      if [[ -n $cacheTags ]]; then
         phpTags=$(echo "$cacheTags" | sed "s/,/','/g")
-        clear="$terminus drush $site.$2 ev -- \"\Drupal\Core\Cache\Cache::invalidateTags(['$phpTags']);\""
-      else
-        clear="$terminus drush $site.$2 cr"
+        eval "$terminus drush $site.$2 ev -- \"\Drupal\Core\Cache\Cache::invalidateTags(['$phpTags']);\""
       fi
 
       if [[ $2 == 'dev' || $3 == true ]] && [[ $ready == true ]]; then
-        eval "$clear" && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
+        $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
       else
-        $terminus env:deploy "$site.$2" && eval "$clear" && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
+        $terminus env:deploy "$site.$2" && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
       fi
     fi
 
