@@ -18,10 +18,10 @@ if [[ $help ]]; then
   echo '       Unsure the Pantheon site name? Search for it.'
   echo '       Returns nothing alot, could be improved.'
   echo
-  echo '  "t.[pantheon-sitename].[environment]"'
+  echo '  "t.[pantheon-sitename].[environment] [-ct=cachetag,cachetag,cachetag]"'
   echo '       Terminus site deployment.'
   echo '       Checks if code is synced, then initiates deployment.'
-  echo '       Runs cr, updb, cim. In that order, to the specified environment.'
+  echo '       Runs cr or Cache::invalidateTags(), updb, cim. In that order, to the specified environment.'
   echo '       Meaning if environment=test, will deploy to dev and test, running above commands against both.'
   echo
   echo '  "t.[pantheon-sitename].php"'

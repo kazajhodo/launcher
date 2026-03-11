@@ -39,6 +39,7 @@ suffix='.ddev.site'
 # 'Firefox Developer Edition'
 # 'Google Chrome'
 # 'Safari'
+# 'Zen'
 browserapp='Firefox Developer Edition'
 
 # TERMINUS COMMAND

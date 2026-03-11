@@ -17,14 +17,22 @@ check_site() {
 terminus_loop () {
   terminus_sync_check
 
-  # If framework is not set, only deploy.
+  # # If framework is not set, only deploy.
   if [[ $framework ]]; then
   
     if [[ $framework == 'drupal' ]]; then
-      if [[ $2 == 'dev' || $3 == true ]] && [[ $ready == true ]]; then   
-        $terminus drush "$site.$2" cr && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
+      if [[ $cacheTags ]]; then
+        # Convert "foo,bar" to "'foo','bar'" for PHP
+        phpTags=$(echo "$cacheTags" | sed "s/,/','/g")
+        clear="$terminus drush $site.$2 ev -- \"\Drupal\Core\Cache\Cache::invalidateTags(['$phpTags']);\""
       else
-        $terminus env:deploy "$site.$2" && $terminus drush "$site.$2" cr && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
+        clear="$terminus drush $site.$2 cr"
+      fi
+
+      if [[ $2 == 'dev' || $3 == true ]] && [[ $ready == true ]]; then
+        eval "$clear" && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
+      else
+        $terminus env:deploy "$site.$2" && eval "$clear" && $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
       fi
     fi
 
