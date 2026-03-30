@@ -52,6 +52,7 @@ what_project () {
     echo 'What project are we building? Name of directory.'
     read directory
     echo
+    localValue=$directory
   fi
 }
 

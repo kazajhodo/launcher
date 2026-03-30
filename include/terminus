@@ -2,7 +2,7 @@
 
 check_site() {
   if_homeovr
-  wp_or_drupal "$homeovr/$projectsDirectory/$site"
+  wp_or_drupal "$homeovr/$projectsDirectory"
 
   if [[ -z $framework ]]; then
 
@@ -10,14 +10,13 @@ check_site() {
       what_project
     fi
 
-    wp_or_drupal "$homeovr/$projectsDirectory/$directory"
+    wp_or_drupal "$homeovr/$projectsDirectory"
   fi
 }
 
 terminus_loop () {
   terminus_sync_check
 
-  # # If framework is not set, only deploy.
   if [[ $framework ]]; then
   
     if [[ $framework == 'drupal' ]]; then
@@ -34,10 +33,8 @@ terminus_loop () {
     fi
 
     if [[ $framework == 'wordpress' ]]; then
-      if [[ $2 == 'dev' ]]; then
-        $terminus wp "$site.$2" -- cli cache clear
-      else
-        $terminus env:deploy "$site.$2" && $terminus wp "$site.$2" -- cli cache clear
+      if [[ $2 != 'dev' ]]; then
+        $terminus env:deploy "$site.$2"
       fi
     fi
   fi
