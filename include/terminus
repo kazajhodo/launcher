@@ -20,7 +20,9 @@ terminus_loop () {
   if [[ $framework ]]; then
   
     if [[ $framework == 'drupal' ]]; then
-      if [[ -n $cacheTags ]]; then
+      if [[ $cacheClear == true ]]; then
+        $terminus drush "$site.$2" -- cr
+      elif [[ -n $cacheTags ]]; then
         phpTags=$(echo "$cacheTags" | sed "s/,/','/g")
         eval "$terminus drush $site.$2 ev -- \"\Drupal\Core\Cache\Cache::invalidateTags(['$phpTags']);\""
       fi

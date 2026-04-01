@@ -36,6 +36,7 @@ if [[ $help ]]; then
   echo '  -noaai This is not an aai project'
   echo '         Used for magento admin urls.'
   echo '         AAI uses "manage", default is "admin"'
+  echo '  -c     Clear all caches during terminus deployment'
   echo '  -d     Initiate deploy after command finishes.'
   echo
   echo 'Help:'
