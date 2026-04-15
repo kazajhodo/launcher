@@ -12,17 +12,16 @@ if [[ $help ]]; then
   echo '  "[directory-name]"'
   echo '       project directory name to open'
   echo
-  echo '  "kill"    Close all applications previously opened by launcher'
-  echo
   echo '  "a.[search]" Search for a pantheon alias.'
   echo '       Unsure the Pantheon site name? Search for it.'
   echo '       Returns nothing alot, could be improved.'
   echo
-  echo '  "t.[pantheon-sitename].[environment] [-ct=cachetag,cachetag,cachetag]"'
+  echo '  "t.[pantheon-sitename].[environment] [-c -ct=cachetag,cachetag,cachetag]"'
   echo '       Terminus site deployment.'
   echo '       Checks if code is synced, then initiates deployment.'
-  echo '       Runs cr or Cache::invalidateTags(), updb, cim. In that order, to the specified environment.'
-  echo '       Meaning if environment=test, will deploy to dev and test, running above commands against both.'
+  echo '       Full cache clear -c.'
+  echo '       -ct to pass values to Cache::invalidateTags()'
+  echo '       After cache, runs updb, cim. In that order, to the specified environment.'
   echo
   echo '  "t.[pantheon-sitename].php"'
   echo '       Retreive environment site php version.'
@@ -36,11 +35,10 @@ if [[ $help ]]; then
   echo '  -noaai This is not an aai project'
   echo '         Used for magento admin urls.'
   echo '         AAI uses "manage", default is "admin"'
-  echo '  -c     Clear all caches during terminus deployment'
   echo '  -d     Initiate deploy after command finishes.'
   echo
   echo 'Help:'
-  echo '  -help, --help      View this list. Ironic.'
+  echo '-h,  -help, --help      View this list. Ironic.'
   echo
 
   exit 0
