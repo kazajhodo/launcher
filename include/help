@@ -16,12 +16,10 @@ if [[ $help ]]; then
   echo '       Unsure the Pantheon site name? Search for it.'
   echo '       Returns nothing alot, could be improved.'
   echo
-  echo '  "t.[pantheon-sitename].[environment] [-c -ct=cachetag,cachetag,cachetag]"'
+  echo '  "t.[pantheon-sitename].[environment]"'
   echo '       Terminus site deployment.'
   echo '       Checks if code is synced, then initiates deployment.'
-  echo '       Full cache clear -c.'
-  echo '       -ct to pass values to Cache::invalidateTags()'
-  echo '       After cache, runs updb, cim. In that order, to the specified environment.'
+  echo '       Runs drush deploy (updb, cim, cr) on the specified environment.'
   echo
   echo '  "t.[pantheon-sitename].php"'
   echo '       Retreive environment site php version.'

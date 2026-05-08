@@ -24,14 +24,7 @@ terminus_loop () {
         $terminus env:deploy "$site.$2"
       fi
 
-      if [[ $cacheClear == true ]]; then
-        $terminus drush "$site.$2" -- cr
-      elif [[ -n $cacheTags ]]; then
-        phpTags=$(echo "$cacheTags" | sed "s/,/','/g")
-        eval "$terminus drush $site.$2 ev -- \"\Drupal\Core\Cache\Cache::invalidateTags(['$phpTags']);\""
-      fi
-
-      $terminus drush "$site.$2" -- updb -y && $terminus drush "$site.$2" -- cim -y
+      $terminus drush "$site.$2" -- deploy -y
     fi
 
     if [[ $framework == 'wordpress' ]]; then

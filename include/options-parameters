@@ -35,13 +35,7 @@ do
     '-d')
       deploy=true
       ;;
-    '-c')
-      cacheClear=true
-      ;;
-    '-ct='*)
-      cacheTags=${item#*=}
-      ;;
-    'kill')
+'kill')
       kill=true
       ;;
     *)
