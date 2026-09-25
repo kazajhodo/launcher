@@ -14,58 +14,138 @@ check_site() {
   fi
 }
 
+##
+# Progress line naming the environment and the step.
+#
+# The old output was "Not yet ready, attempting again in 24 seconds." with no
+# indication of which of the three environments it referred to, which step of
+# the chain it was on, or what it was waiting for. On a dev->test->live run
+# that is the same sentence up to a dozen times, and it is the only thing on
+# screen for several minutes.
+##
+step_say () {
+  echo
+  echo "── [$1/$count] $2 — $3"
+  echo
+}
+
+step_ok () {
+  echo
+  echo "✓  [$1/$count] $2 — $3"
+  echo
+}
+
+step_fail () {
+  echo
+  echo "✖  [$1/$count] $2 — $3"
+  echo
+}
+
 terminus_loop () {
-  terminus_sync_check
+  local idx=$1
+  local env=$2
+  local multi=$3
 
-  if [[ $framework ]]; then
-  
-    if [[ $framework == 'drupal' ]]; then
-      if [[ $2 != 'dev' && $3 != true ]] || [[ $ready != true ]]; then
-        $terminus env:deploy "$site.$2"
+  # ⚠ Only dev needs a pre-wait, and only dev ever did. It is waiting on the
+  # build that `git push` kicked off, which is asynchronous. For test and live
+  # the code arrives via `env:deploy` BELOW, and that call is synchronous —
+  # terminus blocks and draws its own progress bar — so waiting beforehand
+  # watches a workflow belonging to the PREVIOUS environment and tells us
+  # nothing about this one.
+  if [[ $idx -eq 1 && $multi != true ]]; then
+    terminus_sync_check "$env" "$idx" || return 1
+  fi
+
+  if [[ $framework == 'drupal' ]]; then
+    if [[ $env != 'dev' && $multi != true ]]; then
+      step_say "$idx" "$env" "promoting code"
+      if ! $terminus env:deploy "$site.$env"; then
+        step_fail "$idx" "$env" "env:deploy failed — stopping, nothing goes further"
+        return 1
       fi
-
-      $terminus drush "$site.$2" -- deploy -y
     fi
 
-    if [[ $framework == 'wordpress' ]]; then
-      if [[ $2 != 'dev' ]]; then
-        $terminus env:deploy "$site.$2"
+    step_say "$idx" "$env" "drush deploy (updb → cim → cache rebuild → deploy hooks)"
+
+    # ⚠ THE guard. Without checking this status a failed cim on test still
+    # promoted the same code to live — and a config import failing on test is
+    # precisely the signal saying do not put this on live. The loop used to
+    # discard it and carry on.
+    if ! $terminus drush "$site.$env" -- deploy -y; then
+      step_fail "$idx" "$env" "drush deploy FAILED — stopping before anything reaches the next environment"
+      return 1
+    fi
+
+    step_ok "$idx" "$env" "done"
+  fi
+
+  if [[ $framework == 'wordpress' ]]; then
+    if [[ $env != 'dev' && $multi != true ]]; then
+      step_say "$idx" "$env" "promoting code"
+      if ! $terminus env:deploy "$site.$env"; then
+        step_fail "$idx" "$env" "env:deploy failed — stopping"
+        return 1
       fi
     fi
+    step_ok "$idx" "$env" "done"
   fi
 }
 
+##
+# Blocks while any workflow is still in flight on the site.
+#
+# ⚠ The old check accepted any 'succeeded' on the SITE, and 'backup'
+# explicitly. Both are the same mistake: a nightly backup, a file clone or
+# another environment's sync satisfies it, so it could green-light a deploy
+# that had nothing to do with the code just pushed.
+#
+# ⚠ Matching the workflow's env to the target is NOT the fix, though it looks
+# like it. `l t.<site>.dev` with no fresh push is a legitimate re-run, and the
+# newest workflow then belongs to whatever ran last — often another
+# environment entirely — so an env match waits forever. Tested against this
+# very repo after a live deploy, where it hung.
+#
+# What the wait is actually for is not colliding with work already running, so
+# that is what it tests: in flight -> wait, failed -> stop, otherwise proceed.
+#
+# ⚠ Residual race, deliberately left: between `git push` and Pantheon creating
+# the sync_code workflow there is a window where nothing is running and this
+# returns immediately. Closing it properly means comparing the deployed commit
+# from `terminus env:code-log $site.dev` against local HEAD, which needs the
+# project path this function does not reliably have. Worth doing if a deploy
+# is ever seen running against stale code.
+##
 terminus_sync_check () {
+  local want=$1
+  local idx=$2
+  local line wenv wname wstatus
   ready=false
   delay=24
 
   until [[ $ready == true ]];
     do
-      workflow=$(terminus workflow:info:status $site --fields=workflow,status --format=string)
+      # One call, three fields, tab separated — rather than three calls, which
+      # would triple the API rate-limit cost of every poll.
+      # $terminus, not a bare `terminus` — the binary is configurable in
+      # your.launcher.settings, and this was the one call ignoring it.
+      line=$($terminus workflow:info:status $site --fields=env,workflow,status --format=string 2>/dev/null | tail -1)
+      wenv=$(echo "$line" | cut -f1)
+      wname=$(echo "$line" | cut -f2)
+      wstatus=$(echo "$line" | cut -f3)
 
-      # Check status and workflow fields.
-      # Checks for 'succeeded' in status field response.
-      # This will also be present in sync, clone files/databases workflows.
-      if [[ $workflow == *succeeded* || $workflow == *backup* ]]; then
+      if [[ $wstatus == *failed* ]]; then
+        step_fail "$idx" "$want" "${wname:-workflow} failed on ${wenv:-the site} — stopping, the code never landed"
+        return 1
+      fi
+
+      if [[ $wstatus == *running* || $wstatus == *queued* || $wstatus == *started* ]]; then
+        check_site
+        echo "   [$idx/$count] $want — waiting on ${wname:-workflow} (${wstatus}${wenv:+ on $wenv}); retry in ${delay}s"
+        sleep $delay
+      else
         ready=true
         check_site
-
-        echo
-        echo "Code sync complete to $site."
-        echo
-      else
-        if [[ $workflow == *failed* ]]; then
-          echo
-          echo 'Sync failed, something wrong with the code. Stopping.'
-          echo
-          exit 0
-        fi
-        check_site
-
-        echo
-        echo "Not yet ready, attempting again in $delay seconds."
-        echo
-        sleep $delay
+        step_ok "$idx" "$want" "nothing in flight, code is on $want"
       fi
     done
 }
@@ -99,17 +179,28 @@ if type $terminus >/dev/null 2>&1; then
           echo
           multidev=$env
           multi=true
+          count=1
       esac
 
       i=1
-      if [[ $count ]]; then
+      if [[ $multi != true ]]; then
         while [[ $i -le $count ]]
         do
-          terminus_loop "$i" "${steps[$i]}"
+          # ⚠ break, not continue. The whole point of checking the status is
+          # that a failure upstream must not reach the environment downstream.
+          if ! terminus_loop "$i" "${steps[$i]}" "$multi"; then
+            echo
+            echo "Deploy stopped at ${steps[$i]}. Environments after it were left untouched."
+            echo
+            exit 1
+          fi
           ((i++))
         done
+        echo
+        echo "✓  Deploy complete: ${steps[1]}$([[ $count -ge 2 ]] && echo " → ${steps[2]}")$([[ $count -ge 3 ]] && echo " → ${steps[3]}")"
+        echo
       else
-        terminus_loop "$i" "$multidev" "$multi"
+        terminus_loop "$i" "$multidev" "$multi" || exit 1
       fi
     fi
   fi
