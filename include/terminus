@@ -87,7 +87,41 @@ terminus_loop () {
         return 1
       fi
     fi
+
+    # WordPress's answer to drush deploy: database updates for core, and for
+    # WooCommerce when it's active. Both are no-ops when nothing is pending.
+    wp_step "$idx" "$env" "core database update" core update-db || return 1
+    if $terminus wp "$site.$env" -- plugin is-active woocommerce >/dev/null 2>&1; then
+      wp_step "$idx" "$env" "WooCommerce database update" wc update || return 1
+    fi
+
     step_ok "$idx" "$env" "done"
+  fi
+}
+
+##
+# Run one WP-CLI command on the environment and insist it actually ran.
+#
+# ⚠ Exit 0 is not enough. `terminus wp` can exit 0 and print nothing at all,
+# when the site's composer installed the WP-CLI framework without its command
+# bundle, or when wp-config.php reads $_SERVER unguarded under CLI. A missing
+# command and a completed one are then indistinguishable. Both of these
+# commands print a "Success:" line on every real run, including "already at
+# latest" and "No updates required", so no Success line means it didn't run.
+##
+wp_step () {
+  local idx=$1 env=$2 label=$3
+  shift 3
+  local out
+
+  step_say "$idx" "$env" "$label"
+  out=$($terminus wp "$site.$env" -- "$@" 2>&1)
+  local rc=$?
+  echo "$out" | grep -v 'Object Cache Pro'
+
+  if [[ $rc -ne 0 || $out != *Success:* ]]; then
+    step_fail "$idx" "$env" "$label did not report success — stopping before anything reaches the next environment (check: terminus wp $site.$env -- help --skip-plugins)"
+    return 1
   fi
 }
 

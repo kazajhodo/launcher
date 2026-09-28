@@ -20,6 +20,7 @@ if [[ $help ]]; then
   echo '       Terminus site deployment.'
   echo '       Checks if code is synced, then initiates deployment.'
   echo '       Runs drush deploy (updb, cim, cr) on the specified environment.'
+  echo '       WordPress: runs wp core update-db, and wp wc update when WooCommerce is active.'
   echo
   echo '  "t.[pantheon-sitename].php"'
   echo '       Retreive environment site php version.'
