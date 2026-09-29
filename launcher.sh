@@ -20,6 +20,11 @@
 # Build a site locally from Pantheon.
 # launcher local.[site-name]
 
+# Where the launcher was run from, before the includes below move into the
+# launcher's own directory. The terminus deploy reads the project's git
+# remote from here to know which commit was pushed.
+launch_dir=$PWD
+
 # Include function utilities.
 cd "${0%/*}" && source 'include/utilities'
 
