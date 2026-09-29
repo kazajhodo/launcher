@@ -28,6 +28,6 @@ if [[ $notification = true ]]; then
   echo 'This has been a message brought you by your friendly neighborhood developer.'
 
   # Change notification variable to false
-  sed -i '' 's/notification=true/notification=false/' '.updated'
+  sed -i '' 's/notification=true/notification=false/' "$launcher_dir/.updated"
   exit 0
 fi

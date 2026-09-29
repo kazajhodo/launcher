@@ -20,49 +20,50 @@
 # Build a site locally from Pantheon.
 # launcher local.[site-name]
 
-# Where the launcher was run from, before the includes below move into the
-# launcher's own directory. The terminus deploy reads the project's git
-# remote from here to know which commit was pushed.
-launch_dir=$PWD
+# The launcher's own directory, resolved once (:A follows symlinks). Every
+# include is sourced by absolute path from here rather than by cd'ing into it,
+# so the working directory stays wherever the launcher was run from — the
+# terminus deploy reads the project's git remote from it.
+launcher_dir=${0:A:h}
 
 # Include function utilities.
-cd "${0%/*}" && source 'include/utilities'
+source "$launcher_dir/include/utilities"
 
 # Check that homebrew is installed.
-cd "${0%/*}" && source 'include/homebrew-check'
+source "$launcher_dir/include/homebrew-check"
 
 # Check if user configuration settings have been updated.
-cd "${0%/*}" && source '.updated'
+source "$launcher_dir/.updated"
 
 # Warn user to migrate settings file if updated, before overwrite.
-cd "${0%/*}" && source 'include/notification'
+source "$launcher_dir/include/notification"
 
 # Warn user to migrate settings file if updated, before overwrite.
-cd "${0%/*}" && source 'include/migrate'
+source "$launcher_dir/include/migrate"
 
 # Update user settings file.
-cd "${0%/*}" && source 'include/overwrite'
+source "$launcher_dir/include/overwrite"
 
 # Setup php symlinks to work with launcher.
-cd "${0%/*}" && source 'include/php-symlinks'
+source "$launcher_dir/include/php-symlinks"
 
 # Include variable defaults.
-cd "${0%/*}" && source 'include/defaults'
+source "$launcher_dir/include/defaults"
 
 # Options and parameters detection.
-cd "${0%/*}" && source 'include/options-parameters'
+source "$launcher_dir/include/options-parameters"
 
 # Help.
-cd "${0%/*}" && source 'include/help'
+source "$launcher_dir/include/help"
 
 # Php change.
-cd "${0%/*}" && source 'include/phpchange'
+source "$launcher_dir/include/phpchange"
 
 # Kill.
-cd "${0%/*}" && source 'include/kill'
+source "$launcher_dir/include/kill"
 
 # Run terminus deployment.
-cd "${0%/*}" && source 'include/terminus'
+source "$launcher_dir/include/terminus"
 
 # Aliases search.
-cd "${0%/*}" && source 'include/aliases'
+source "$launcher_dir/include/aliases"

@@ -141,23 +141,23 @@ wp_step () {
 # is found by the site's id in its URL, so a repo that is not this site's —
 # or no repo at all — skips the check and deploys exactly as before.
 #
-# ⚠ Reads the repo at $launch_dir, where the launcher was run from. By the time
-# this runs, launcher.sh has cd'd into its own directory, and asking git there
-# finds the LAUNCHER's repo — whose remote never names the site — so the check
-# silently skipped itself on its first real run.
+# ⚠ Reads the repo in the working directory, where the launcher was run from.
+# That only holds because launcher.sh sources its includes by absolute path:
+# it used to cd into its own directory for each one, and the first real run of
+# this check read the LAUNCHER's repo — whose remote never names the site —
+# and silently skipped itself.
 ##
 terminus_commit_check () {
   local want=$1
   local idx=$2
   local uuid remote pushed deployed waited=0 limit=900 delay=15
 
-  [[ -n $launch_dir ]] || return 0
-  git -C "$launch_dir" rev-parse --git-dir >/dev/null 2>&1 || return 0
+  git rev-parse --git-dir >/dev/null 2>&1 || return 0
   uuid=$($terminus site:info $site --field=id 2>/dev/null)
   [[ -n $uuid ]] || return 0
-  remote=$(git -C "$launch_dir" remote -v | awk -v u="$uuid" 'index($2, u) && $3 == "(push)" { print $1; exit }')
+  remote=$(git remote -v | awk -v u="$uuid" 'index($2, u) && $3 == "(push)" { print $1; exit }')
   [[ -n $remote ]] || return 0
-  pushed=$(git -C "$launch_dir" rev-parse --verify --quiet "refs/remotes/$remote/master")
+  pushed=$(git rev-parse --verify --quiet "refs/remotes/$remote/master")
   [[ -n $pushed ]] || return 0
 
   until [[ $deployed == $pushed ]];
