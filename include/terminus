@@ -57,6 +57,16 @@ terminus_loop () {
     terminus_sync_check "$env" "$idx" || return 1
   fi
 
+  # ⚠ The framework was only ever detected inside the dev sync check above,
+  # which a multidev skips — so a multidev run matched neither branch below
+  # and returned 0 having done nothing. Detect it here for every path, and
+  # refuse to report success when it still can't be told.
+  [[ -z $framework ]] && check_site
+  if [[ $framework != 'drupal' && $framework != 'wordpress' ]]; then
+    step_fail "$idx" "$env" "couldn't tell whether this is Drupal or WordPress — stopping, nothing deployed"
+    return 1
+  fi
+
   if [[ $framework == 'drupal' ]]; then
     if [[ $env != 'dev' && $multi != true ]]; then
       step_say "$idx" "$env" "promoting code"
