@@ -46,13 +46,18 @@ terminus_loop () {
   local env=$2
   local multi=$3
 
-  # ⚠ Only dev needs a pre-wait, and only dev ever did. It is waiting on the
+  # ⚠ Only the environment a push lands on needs a pre-wait: dev, or a
+  # multidev, whose branch is pushed straight to it. It is waiting on the
   # build that `git push` kicked off, which is asynchronous. For test and live
   # the code arrives via `env:deploy` BELOW, and that call is synchronous —
   # terminus blocks and draws its own progress bar — so waiting beforehand
   # watches a workflow belonging to the PREVIOUS environment and tells us
   # nothing about this one.
-  if [[ $idx -eq 1 && $multi != true ]]; then
+  #
+  # ⚠ Multidevs used to skip it. Seen on sisal, 2026-10-08: run straight after
+  # a push to the guide branch, drush deploy ran while "Sync code on guide"
+  # was still building, imported nothing, and reported success on the old code.
+  if [[ $idx -eq 1 ]]; then
     terminus_commit_check "$env" "$idx" || return 1
     terminus_sync_check "$env" "$idx" || return 1
   fi
@@ -137,7 +142,9 @@ wp_step () {
 }
 
 ##
-# Blocks until dev's code log shows the commit that was pushed.
+# Blocks until the pushed-to environment's code log shows the commit that was
+# pushed: dev's for master, or a multidev's for its own branch, which Pantheon
+# always names after the environment.
 #
 # ⚠ Seen on ar-md, 2026-09-29: run straight after a push, the sync check found
 # nothing in flight — Pantheon had not yet created the build for the push —
@@ -161,28 +168,33 @@ terminus_commit_check () {
   local want=$1
   local idx=$2
   local uuid remote pushed deployed waited=0 limit=900 delay=15
+  local codeenv=dev branch=master
+  if [[ $multi == true ]]; then
+    codeenv=$want
+    branch=$want
+  fi
 
   git rev-parse --git-dir >/dev/null 2>&1 || return 0
   uuid=$($terminus site:info $site --field=id 2>/dev/null)
   [[ -n $uuid ]] || return 0
   remote=$(git remote -v | awk -v u="$uuid" 'index($2, u) && $3 == "(push)" { print $1; exit }')
   [[ -n $remote ]] || return 0
-  pushed=$(git rev-parse --verify --quiet "refs/remotes/$remote/master")
+  pushed=$(git rev-parse --verify --quiet "refs/remotes/$remote/$branch")
   [[ -n $pushed ]] || return 0
 
   until [[ $deployed == $pushed ]];
     do
-      deployed=$($terminus env:code-log $site.dev --fields=hash --format=string 2>/dev/null | head -1)
+      deployed=$($terminus env:code-log $site.$codeenv --fields=hash --format=string 2>/dev/null | head -1)
       [[ $deployed == $pushed ]] && break
       if (( waited >= limit )); then
-        step_fail "$idx" "$want" "dev never showed ${pushed:0:8} (newest is ${deployed:0:8}) — stopping, nothing promoted"
+        step_fail "$idx" "$want" "$codeenv never showed ${pushed:0:8} (newest is ${deployed:0:8}) — stopping, nothing promoted"
         return 1
       fi
-      echo "   [$idx/$count] $want — waiting for ${pushed:0:8} to reach dev (newest is ${deployed:0:8}); retry in ${delay}s"
+      echo "   [$idx/$count] $want — waiting for ${pushed:0:8} to reach $codeenv (newest is ${deployed:0:8}); retry in ${delay}s"
       sleep $delay
       (( waited += delay ))
     done
-  step_say "$idx" "$want" "dev has ${pushed:0:8}"
+  step_say "$idx" "$want" "$codeenv has ${pushed:0:8}"
 }
 
 ##
