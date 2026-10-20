@@ -221,7 +221,7 @@ terminus_commit_check () {
 terminus_sync_check () {
   local want=$1
   local idx=$2
-  local line wenv wname wstatus
+  local line wenv wname wstatus inflight
   ready=false
   delay=24
 
@@ -239,6 +239,20 @@ terminus_sync_check () {
       if [[ $wstatus == *failed* ]]; then
         step_fail "$idx" "$want" "${wname:-workflow} failed on ${wenv:-the site} — stopping, the code never landed"
         return 1
+      fi
+
+      # The newest workflow is not the only one that can be in flight. A
+      # pantheon.yml database bump starts "Change database version" and then a
+      # Converge that finishes first, so the newest reads succeeded while the
+      # DB change is still running — and a drush deploy inside it dies
+      # mid-cim on a misleading ConsoleErrorEvent fatal (mspairport,
+      # 2026-10-20). Scan the recent list for anything still in flight.
+      inflight=$($terminus workflow:list $site --fields=env,workflow,status --format=tsv 2>/dev/null \
+        | awk -F'\t' '$3 ~ /running|queued|started/ { print; exit }')
+      if [[ -n $inflight ]]; then
+        wenv=$(echo "$inflight" | cut -f1)
+        wname=$(echo "$inflight" | cut -f2)
+        wstatus=$(echo "$inflight" | cut -f3)
       fi
 
       if [[ $wstatus == *running* || $wstatus == *queued* || $wstatus == *started* ]]; then
