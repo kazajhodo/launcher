@@ -111,6 +111,16 @@ terminus_loop () {
       wp_step "$idx" "$env" "WooCommerce database update" wc update || return 1
     fi
 
+    # Nothing else clears caches on a WordPress deploy (drush deploy does it on
+    # Drupal): flush the object cache so updated options and schema are read
+    # fresh, then Pantheon's edge so visitors get pages built on the new code.
+    wp_step "$idx" "$env" "object cache flush" cache flush || return 1
+    step_say "$idx" "$env" "clearing the edge cache"
+    if ! $terminus env:clear-cache "$site.$env"; then
+      step_fail "$idx" "$env" "env:clear-cache failed — stopping"
+      return 1
+    fi
+
     step_ok "$idx" "$env" "done"
   fi
 }
