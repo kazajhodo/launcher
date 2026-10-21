@@ -47,6 +47,12 @@ what_project () {
     localValue=${localValue%'airport'}
   fi
 
+  # A folder that doesn't match the site name (aaiatrix lives in atr): when run
+  # from inside the project, as a deploy is, take the folder we're in.
+  if [[ ! -d "$homeovr/$projectsDirectory/$localValue" && $PWD == "$homeovr/$projectsDirectory/"* ]]; then
+    localValue=${${PWD#$homeovr/$projectsDirectory/}%%/*}
+  fi
+
   if [[ ! -d "$homeovr/$projectsDirectory/$localValue" ]]; then
     echo
     echo 'What project are we building? Name of directory.'
