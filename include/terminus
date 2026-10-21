@@ -15,6 +15,85 @@ check_site() {
 }
 
 ##
+# Deploy state for the Claude Code status line.
+#
+# Inside a Claude session the deploy's output only arrives when the command
+# ends, so a long promote looks the same as a hung one. This file is the
+# live view instead: ~/.claude/statusline.sh reads it and shows the step,
+# the phase, how long it has been in it, and a heart that keeps beating while
+# Pantheon keeps confirming the work is moving. It is removed on any exit.
+#
+# "beat" is the last time something CONFIRMED progress — a Pantheon poll
+# that answered, a workflow still reported running, a line of drush output —
+# never just the clock. That's what lets a stale beat mean "go look".
+##
+zmodload zsh/datetime
+deploy_state_dir=${XDG_CACHE_HOME:-$HOME/.cache}/launcher/deploys
+deploy_state_file=
+
+deploy_state_write () {
+  [[ -n $deploy_state_file ]] || return 0
+  local tmp="$deploy_state_file.tmp.$1"
+  print -r -- "pid=$$
+site=$site
+idx=$ds_idx
+count=$count
+env=$ds_env
+phase=$ds_phase
+since=$ds_since
+beat=$ds_beat" > "$tmp" && mv -f "$tmp" "$deploy_state_file"
+}
+
+# A new phase: resets the phase clock and counts as a beat.
+deploy_phase () {
+  ds_idx=$1 ds_env=$2 ds_phase=${3%% \(*}
+  ds_since=$EPOCHSECONDS ds_beat=$EPOCHSECONDS
+  deploy_state_write main
+}
+
+deploy_beat () {
+  ds_beat=$EPOCHSECONDS
+  deploy_state_write ${1:-main}
+}
+
+##
+# Run a blocking command and keep beating while it is provably working.
+#
+# workflow: poll Pantheon every 15s and beat only while a workflow is still
+#           in flight — for env:deploy, which prints nothing until it's done.
+# output:   beat on every line the command prints — for drush deploy, which
+#           runs over SSH where no workflow exists to ask about. stderr is
+#           folded in because that is where drush logs its progress.
+##
+with_pulse () {
+  local mode=$1 rc pulse
+  shift
+
+  if [[ $mode == workflow ]]; then
+    {
+      local st
+      while sleep 15; do
+        st=$($terminus workflow:list $site --fields=status --format=tsv 2>/dev/null \
+          | awk '/running|queued|started/ { print; exit }')
+        [[ -n $st ]] && deploy_beat pulse
+      done
+    } &
+    pulse=$!
+    "$@"
+    rc=$?
+    kill $pulse 2>/dev/null
+    wait $pulse 2>/dev/null
+    return $rc
+  fi
+
+  "$@" 2>&1 | while IFS= read -r line; do
+    print -r -- "$line"
+    deploy_beat
+  done
+  return ${pipestatus[1]}
+}
+
+##
 # Progress line naming the environment and the step.
 #
 # The old output was "Not yet ready, attempting again in 24 seconds." with no
@@ -24,6 +103,7 @@ check_site() {
 # screen for several minutes.
 ##
 step_say () {
+  deploy_phase "$1" "$2" "$3"
   echo
   echo "── [$1/$count] $2 — $3"
   echo
@@ -75,7 +155,7 @@ terminus_loop () {
   if [[ $framework == 'drupal' ]]; then
     if [[ $env != 'dev' && $multi != true ]]; then
       step_say "$idx" "$env" "promoting code"
-      if ! $terminus env:deploy "$site.$env"; then
+      if ! with_pulse workflow $terminus env:deploy "$site.$env"; then
         step_fail "$idx" "$env" "env:deploy failed — stopping, nothing goes further"
         return 1
       fi
@@ -87,7 +167,7 @@ terminus_loop () {
     # promoted the same code to live — and a config import failing on test is
     # precisely the signal saying do not put this on live. The loop used to
     # discard it and carry on.
-    if ! $terminus drush "$site.$env" -- deploy -y; then
+    if ! with_pulse output $terminus drush "$site.$env" -- deploy -y; then
       step_fail "$idx" "$env" "drush deploy FAILED — stopping before anything reaches the next environment"
       return 1
     fi
@@ -98,7 +178,7 @@ terminus_loop () {
   if [[ $framework == 'wordpress' ]]; then
     if [[ $env != 'dev' && $multi != true ]]; then
       step_say "$idx" "$env" "promoting code"
-      if ! $terminus env:deploy "$site.$env"; then
+      if ! with_pulse workflow $terminus env:deploy "$site.$env"; then
         step_fail "$idx" "$env" "env:deploy failed — stopping"
         return 1
       fi
@@ -116,7 +196,7 @@ terminus_loop () {
     # fresh, then Pantheon's edge so visitors get pages built on the new code.
     wp_step "$idx" "$env" "object cache flush" cache flush || return 1
     step_say "$idx" "$env" "clearing the edge cache"
-    if ! $terminus env:clear-cache "$site.$env"; then
+    if ! with_pulse workflow $terminus env:clear-cache "$site.$env"; then
       step_fail "$idx" "$env" "env:clear-cache failed — stopping"
       return 1
     fi
@@ -192,9 +272,11 @@ terminus_commit_check () {
   pushed=$(git rev-parse --verify --quiet "refs/remotes/$remote/$branch")
   [[ -n $pushed ]] || return 0
 
+  deploy_phase "$idx" "$want" "waiting for ${pushed:0:8} to reach $codeenv"
   until [[ $deployed == $pushed ]];
     do
       deployed=$($terminus env:code-log $site.$codeenv --fields=hash --format=string 2>/dev/null | head -1)
+      [[ -n $deployed ]] && deploy_beat
       [[ $deployed == $pushed ]] && break
       if (( waited >= limit )); then
         step_fail "$idx" "$want" "$codeenv never showed ${pushed:0:8} (newest is ${deployed:0:8}) — stopping, nothing promoted"
@@ -231,7 +313,7 @@ terminus_commit_check () {
 terminus_sync_check () {
   local want=$1
   local idx=$2
-  local line wenv wname wstatus inflight
+  local line wenv wname wstatus inflight waiting_on
   ready=false
   delay=24
 
@@ -265,7 +347,13 @@ terminus_sync_check () {
         wstatus=$(echo "$inflight" | cut -f3)
       fi
 
+      [[ -n $line ]] && deploy_beat
+
       if [[ $wstatus == *running* || $wstatus == *queued* || $wstatus == *started* ]]; then
+        if [[ $wname != $waiting_on ]]; then
+          waiting_on=$wname
+          deploy_phase "$idx" "$want" "waiting on ${wname:-workflow}"
+        fi
         check_site
         echo "   [$idx/$count] $want — waiting on ${wname:-workflow} (${wstatus}${wenv:+ on $wenv}); retry in ${delay}s"
         sleep $delay
@@ -308,6 +396,15 @@ if type $terminus >/dev/null 2>&1; then
           multi=true
           count=1
       esac
+
+      # Top level, not in a function: zsh fires a function's EXIT trap when
+      # the function returns, which would delete this mid-deploy. INT/TERM
+      # are routed through exit so a Ctrl-C cleans up too.
+      deploy_state_file=$deploy_state_dir/$site
+      mkdir -p "$deploy_state_dir"
+      trap 'rm -f "$deploy_state_file" "$deploy_state_file".tmp.*(N)' EXIT
+      trap 'exit 130' INT
+      trap 'exit 143' TERM
 
       i=1
       if [[ $multi != true ]]; then
